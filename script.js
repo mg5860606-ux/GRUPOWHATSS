@@ -29,7 +29,7 @@ const CONFIG = {
 
 const app = initializeApp(CONFIG.firebase);
 const db = getFirestore(app);
-let IMGBB_API_KEY = "6787fec9ff6e418023cbcf965cb7ca60"; // Fallback inicial (carregado dinamicamente do Firestore)
+let IMGBB_API_KEY = ""; // Carregado dinamicamente do Firestore
 // Inicializa EmailJS
 if (typeof emailjs !== "undefined") { emailjs.init(CONFIG.emailjs.publicKey); }
 // Aguarda o script carregar se ainda nao estiver disponivel
