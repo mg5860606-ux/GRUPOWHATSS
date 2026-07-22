@@ -4,12 +4,17 @@ service cloud.firestore {
     
     // REGRAS DE SEGURANÇA GRUPOSWHATS.APP
     
+    // Função auxiliar: Verifica se quem está acessando é um Admin Autenticado via Email/Senha (não anônimo)
+    function isAdmin() {
+      return request.auth != null && request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+    
     // 1. Grupos Aprovados (Público)
     match /grupos/{groupId} {
       allow read: if true;
       
-      // Permite que o ADMIN (Autenticado) faça qualquer alteração
-      allow create, delete, update: if request.auth != null;
+      // Permite que apenas o ADMIN (Autenticado via Email/Senha) faça qualquer alteração
+      allow create, delete, update: if isAdmin();
 
       // Permite que PÚBLICO apenas incremente 1 por vez para evitar bots
       allow update: if request.auth == null && request.resource.data.diff(resource.data).affectedKeys()
@@ -21,40 +26,40 @@ service cloud.firestore {
         );
     }
 
-    // 2. Grupos Pendentes (Submissão)
+    // 2. Grupos Pendentes (Submissão pública de novos grupos)
     match /gruposPendentes/{groupId} {
       allow create, read: if true; 
-      allow update, delete: if request.auth != null; // Apenas Admin remove ou altera após aprovado
+      allow update, delete: if isAdmin(); // Apenas Admin aprova, edita ou remove
     }
 
     // 3. Denúncias e Logs
     match /reportes/{reportId} {
       allow create: if true;
-      allow read, update, delete: if request.auth != null;
+      allow read, update, delete: if isAdmin();
     }
 
     // 4. Sistema de Vendas e Pagamentos
     match /vendas/{vendaId} {
       allow read, create: if true;
-      allow update, delete: if request.auth != null;
+      allow update, delete: if isAdmin();
     }
 
     // 5. Configurações Globais do Site
     match /configuracoes/{docId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
 
     // 6. Sistema de Códigos VIP
     match /codigos/{codigoId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
 
     // 7. Blacklist (Banimentos)
     match /blacklist/{userId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
   }
 }

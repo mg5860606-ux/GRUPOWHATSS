@@ -217,7 +217,8 @@
             <p>Painel Administrativo - Acesso Restrito</p>
             <div id="loginError" class="login-error"></div>
             <form id="loginForm">
-                <input type="password" id="loginPassword" placeholder="Senha de acesso" autocomplete="current-password">
+                <input type="email" id="loginEmail" placeholder="E-mail do administrador" required style="width:100%;padding:14px;margin-bottom:12px;border:1px solid #30363d;background:#0d1117;color:#fff;border-radius:8px;font-size:1rem;" autocomplete="username">
+                <input type="password" id="loginPassword" placeholder="Senha do administrador" required style="width:100%;padding:14px;margin-bottom:15px;border:1px solid #30363d;background:#0d1117;color:#fff;border-radius:8px;font-size:1rem;" autocomplete="current-password">
                 <button type="submit" id="loginBtn">ENTRAR NO PAINEL</button>
             </form>
             <a href="index.html" style="display:inline-block;margin-top:20px;color:#8b949e;font-size:.8rem;text-decoration:none">← Voltar ao site</a>
@@ -575,7 +576,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, deleteDoc, setDoc, query, where, orderBy, limit as fbLimit, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         const CONFIG = {
             firebase: {
@@ -655,52 +656,38 @@
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
             const pass = document.getElementById('loginPassword').value.trim();
             const btn = document.getElementById('loginBtn');
             const errEl = document.getElementById('loginError');
-            btn.textContent = 'Verificando...';
+            btn.textContent = 'Autenticando...';
             btn.disabled = true;
             errEl.style.display = 'none';
             try {
-                const configSnap = await getDoc(doc(db, "configuracoes", "global"));
-                let masterPass = null;
-                if (configSnap.exists()) masterPass = configSnap.data().adminPassword;
-                const isMaster = masterPass && pass === masterPass;
-                const isFallback = !masterPass && btoa(pass) === "Z2Fzb2xlOTY=";
-                if (isMaster || isFallback) {
-                    await signInAnonymously(auth);
-                    localStorage.setItem('gw_admin_auth', 'true');
-                    loginOverlay.style.display = 'none';
-                    adminLayout.style.display = 'flex';
-                    await loadAdminData();
-                } else {
-                    errEl.textContent = 'Senha incorreta!';
-                    errEl.style.display = 'block';
-                }
+                await signInWithEmailAndPassword(auth, email, pass);
             } catch (err) {
-                errEl.textContent = 'Erro de conexão.';
+                console.error(err);
+                errEl.textContent = 'E-mail ou senha incorretos!';
                 errEl.style.display = 'block';
             }
             btn.textContent = 'ENTRAR NO PAINEL';
             btn.disabled = false;
         });
 
-        if (localStorage.getItem('gw_admin_auth') === 'true') {
-            (async () => {
-                try {
-                    await signInAnonymously(auth);
-                    loginOverlay.style.display = 'none';
-                    adminLayout.style.display = 'flex';
-                    await loadAdminData();
-                } catch {
-                    localStorage.removeItem('gw_admin_auth');
-                }
-            })();
-        }
+        onAuthStateChanged(auth, async (user) => {
+            if (user && !user.isAnonymous) {
+                loginOverlay.style.display = 'none';
+                adminLayout.style.display = 'flex';
+                await loadAdminData();
+            } else {
+                loginOverlay.style.display = 'flex';
+                adminLayout.style.display = 'none';
+            }
+        });
 
-        document.getElementById('btnLogout').addEventListener('click', (e) => {
+        document.getElementById('btnLogout').addEventListener('click', async (e) => {
             e.preventDefault();
-            localStorage.removeItem('gw_admin_auth');
+            await signOut(auth);
             location.reload();
         });
 
