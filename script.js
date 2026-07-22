@@ -318,7 +318,7 @@ function renderGroups() {
             next.style.display = 'none';
         }
 
-        window.scrollTo({ top: grid.offsetTop - 80, behavior: 'smooth' });
+        // Auto-scroll removido para manter o topo do site ao carregar/atualizar a página
     } else if (bar) {
         bar.style.display = 'none';
     }
