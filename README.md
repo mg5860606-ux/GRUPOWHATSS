@@ -4,6 +4,10 @@
 
 ### O Maior Diretório de Grupos de WhatsApp do Brasil
 
+[![Site ao Vivo](https://img.shields.io/badge/🌐%20SITE%20AO%20VIVO-ACCESS%20NOW-25D366?style=for-the-badge)](https://mg5860606-ux.github.io/GRUPOWHATSS/)
+
+### 🌐 **Site no ar:** [https://mg5860606-ux.github.io/GRUPOWHATSS/](https://mg5860606-ux.github.io/GRUPOWHATSS/)
+
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-222?style=flat&logo=githubpages&logoColor=white)](https://mg5860606-ux.github.io/GRUPOWHATSS/)
 ![GitHub repo size](https://img.shields.io/github/repo-size/mg5860606-ux/GRUPOWHATSS)
 ![GitHub last commit](https://img.shields.io/github/last-commit/mg5860606-ux/GRUPOWHATSS)
@@ -12,9 +16,8 @@
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
 ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=firebase&logoColor=black)
-![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-222?style=flat&logo=githubpages&logoColor=white)
 
-[**Site ao vivo**](https://mg5860606-ux.github.io/GRUPOWHATSS/) • [**Enviar Grupo**](https://mg5860606-ux.github.io/GRUPOWHATSS/send-group.html) • [**Meus Grupos**](https://mg5860606-ux.github.io/GRUPOWHATSS/user-groups.html) • [**Planos VIP**](https://mg5860606-ux.github.io/GRUPOWHATSS/vip.html)
+[**🌐 Acessar Site Ao Vivo**](https://mg5860606-ux.github.io/GRUPOWHATSS/) • [**Enviar Grupo**](https://mg5860606-ux.github.io/GRUPOWHATSS/send-group.html) • [**Meus Grupos**](https://mg5860606-ux.github.io/GRUPOWHATSS/user-groups.html) • [**Planos VIP**](https://mg5860606-ux.github.io/GRUPOWHATSS/vip.html)
 
 ---
 
