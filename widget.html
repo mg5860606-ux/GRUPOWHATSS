@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GruposWhats Widget</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: transparent; padding: 10px; color: #333; }
+        .widget-container { border: 1px solid #ddd; border-radius: 8px; background: white; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .widget-header { background: #1a252f; color: white; padding: 15px; text-align: center; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .widget-header img { width: 24px; }
+        .group-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #eee; text-decoration: none; color: inherit; transition: background 0.2s; }
+        .group-item:hover { background: #f8f9fa; }
+        .group-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; margin-right: 12px; border: 2px solid #28a745; }
+        .group-info { flex: 1; min-width: 0; }
+        .group-name { font-weight: 700; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
+        .group-cat { font-size: 0.75rem; color: #666; font-weight: 600; text-transform: uppercase; }
+        .btn-enter { background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: 800; font-size: 0.75rem; cursor: pointer; }
+        .widget-footer { padding: 10px; text-align: center; background: #f8f9fa; font-size: 0.8rem; font-weight: 700; }
+        .widget-footer a { color: #28a745; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="widget-container">
+        <a href="https://mg5860606-ux.github.io/GRUPOWHATSS" target="_blank" class="widget-header">
+            <img src="https://mg5860606-ux.github.io/GRUPOWHATSS/logo.svg" alt="GruposWhats"> GruposWhats
+        </a>
+        <div id="widgetList">
+            <div style="padding: 20px; text-align: center; font-size: 0.9rem; color: #888;">Carregando grupos...</div>
+        </div>
+        <div class="widget-footer">
+            <a href="https://mg5860606-ux.github.io/GRUPOWHATSS" target="_blank">Ver todos os grupos</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, collection, query, where, getDocs, limit, orderBy } from "https://mg5860606-ux.github.io/GRUPOWHATSS/script.js";
+        
+        async function loadWidgetGroups() {
+            try {
+                const q = query(collection(db, "grupos"), where("status", "==", "aprovado"), orderBy("visitas", "desc"), limit(5));
+                const snap = await getDocs(q);
+                
+                if (snap.empty) {
+                    document.getElementById('widgetList').innerHTML = '<div style="padding: 20px; text-align: center;">Nenhum grupo encontrado.</div>';
+                    return;
+                }
+                
+                let html = '';
+                snap.forEach(doc => {
+                    const g = doc.data();
+                    html += `
+                        <a href="https://mg5860606-ux.github.io/GRUPOWHATSS/group-details.html?id=${doc.id}" target="_blank" class="group-item">
+                            <img src="${g.imagem}" alt="${g.nome}" class="group-img">
+                            <div class="group-info">
+                                <div class="group-name">${g.nome}</div>
+                                <div class="group-cat">${g.categoria}</div>
+                            </div>
+                            <button class="btn-enter">Entrar</button>
+                        </a>
+                    `;
+                });
+                
+                document.getElementById('widgetList').innerHTML = html;
+            } catch (e) {
+                console.error("Erro Widget:", e);
+                document.getElementById('widgetList').innerHTML = '<div style="padding: 20px; text-align: center; color: red;">Erro ao carregar grupos.</div>';
+            }
+        }
+        
+        loadWidgetGroups();
+    </script>
+</body>
+</html>

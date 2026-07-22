@@ -1,0 +1,541 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    
+    <!-- PRELOAD CRÃTICO -->
+    <link rel="preload" href="styles.css?v=2.0" as="style">
+    <link rel="preload" href="script.js?v=2.0" as="script" crossorigin>
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+    <link rel="dns-prefetch" href="https://grupos-whats-app.firebaseapp.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
+    <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com">
+    
+    <!-- PRELOAD FIREBASE SDK (carrega em paralelo com o HTML) -->
+    <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js">
+    <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js">
+    <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js">
+    
+    <title>Links de Grupos de WhatsApp 2026 | GruposWhats Brasil - Ativos e Seguros</title>
+    <meta name="description" content="O maior e melhor diretÃ³rio de links de grupos de WhatsApp do Brasil em 2026. Encontre grupos de amizade, figurinhas, namoro, games e muito mais. Links 100% ativos e seguros.">
+    <meta name="keywords" content="links de grupos de whatsapp, grupos de whatsapp 2026, entrar em grupos de whatsapp, grupos ativos brasil, links de convite whatsapp, grupos de figurinhas, grupos de amizade whatsapp, grupos de namoro whatsapp, grupos de games whatsapp">
+    <link rel="canonical" href="https://mg5860606-ux.github.io/GRUPOWHATSS/">
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+    <link rel="stylesheet" href="styles.css?v=2.0">
+    
+    <!-- FONT AWESOME NON-BLOCKING (media="print" onload) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#28a745">
+    
+    <!-- SEO REFORÃ‡ADO 2026 -->
+    <meta name="author" content="Corvo">
+    <meta name="geo.region" content="BR">
+    <meta name="geo.placename" content="Brasil">
+    <meta name="language" content="pt-BR">
+    <meta name="revisit-after" content="3 days">
+    <meta name="rating" content="general">
+    <meta name="distribution" content="global">
+    
+    <!-- OPEN GRAPH / FACEBOOK / WHATSAPP / INSTAGRAM / LINKEDIN -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="GruposWhats">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:locale:alternate" content="pt_BR">
+    <meta property="og:title" content="GruposWhats | O Maior DiretÃ³rio de Grupos de WhatsApp do Brasil 2026">
+    <meta property="og:description" content="Encontre os melhores grupos de WhatsApp ativos e seguros. Mais de 10.000 grupos categorizados de amizade, figurinhas, namoro, games, economia e muito mais.">
+    <meta property="og:image" content="https://mg5860606-ux.github.io/GRUPOWHATSS/preview-vip.jpg?v=2.1">
+    <meta property="og:image:secure_url" content="https://mg5860606-ux.github.io/GRUPOWHATSS/preview-vip.jpg?v=2.1">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="GruposWhats - DiretÃ³rio de Grupos de WhatsApp do Brasil">
+    <meta property="og:url" content="https://mg5860606-ux.github.io/GRUPOWHATSS/">
+    
+    <!-- TWITTER / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@gruposwhats">
+    <meta name="twitter:creator" content="@gruposwhats">
+    <meta name="twitter:title" content="GruposWhats | O Maior DiretÃ³rio de Grupos de WhatsApp do Brasil 2026">
+    <meta name="twitter:description" content="Encontre os melhores grupos de WhatsApp ativos e seguros. Mais de 10.000 grupos categorizados.">
+    <meta name="twitter:image" content="https://mg5860606-ux.github.io/GRUPOWHATSS/preview-vip.jpg?v=2.1">
+    <meta name="twitter:image:alt" content="GruposWhats - DiretÃ³rios de Grupos de WhatsApp">
+    
+    <!-- PINTEREST -->
+    <meta name="pin-description" content="Encontre os melhores grupos de WhatsApp ativos e seguros no Brasil. Grupos de amizade, figurinhas, namoro e mais.">
+    <meta name="pin-media" content="https://mg5860606-ux.github.io/GRUPOWHATSS/preview-vip.jpg?v=2.1">
+    
+    <!-- WHATSAPP / INSTAGRAM / LINKEDIN / MISC -->
+    <meta itemprop="name" content="GruposWhats | O Maior DiretÃ³rio de Grupos de WhatsApp do Brasil 2026">
+    <meta itemprop="description" content="Encontre os melhores grupos de WhatsApp ativos e seguros. Mais de 10.000 grupos categorizados.">
+    <meta itemprop="image" content="https://mg5860606-ux.github.io/GRUPOWHATSS/preview-vip.jpg?v=2.1">
+    
+    <!-- APPLE -->
+    <meta name="apple-mobile-web-app-title" content="GruposWhats">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- MICROSOFT / BING -->
+    <meta name="msapplication-TileColor" content="#28a745">
+    <meta name="msapplication-TileImage" content="logo.svg">
+    <meta name="msvalidate.01" content="">
+    
+    <!-- YANDEX -->
+    <meta name="yandex-verification" content="">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+    <!-- CSS CRÃTICO INLINE (above-the-fold instantÃ¢neo) -->
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+        html,body{overflow-x:hidden;width:100%}
+        body{background:#fff;color:#212529;line-height:1.5}
+        .header{background:#1a1c1e;padding:12px 0;position:relative;z-index:1000;width:100%}
+        .header .container-fluid{display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;padding:0 15px}
+        .logo-area{display:flex;align-items:center;gap:8px;text-decoration:none}
+        .logo-img{width:48px;height:48px;object-fit:contain}
+        .logo-text{color:#fff;font-size:1.3rem;font-weight:900;letter-spacing:-1px;text-transform:uppercase}
+        .logo-text .whats{color:#25D366}
+        .header-actions{display:flex;gap:10px;align-items:center}
+        .btn-header-white{background:#fff!important;color:#1a1c1e!important;padding:10px 20px;border-radius:8px;font-weight:800;font-size:.95rem;text-decoration:none;text-transform:uppercase;display:flex;align-items:center;white-space:nowrap;transition:all .2s;border:none;height:48px}
+        .menu-toggle-btn{background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer;padding:0;margin-left:5px;display:flex;align-items:center}
+        .skeleton-card{height:300px;background:#e9ecef;border-radius:4px;position:relative;overflow:hidden;border:1.5px solid #000}
+        .skeleton-card::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 1.5s infinite}
+        @keyframes shimmer{100%{transform:translateX(100%)}}
+        .groups-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:15px}
+        .container-fluid{max-width:1200px;margin:0 auto;padding:0 15px}
+        .search-section{background:#fff;padding:30px 0;border-bottom:1px solid #dee2e6}
+        .search-wrapper{max-width:650px;margin:0 auto;border:1px solid #ced4da;border-radius:8px;overflow:hidden;display:flex;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+        .category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;padding:0 15px;max-height:50px;overflow:hidden;transition:max-height .3s}
+        .cat-item{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:#333;gap:8px;transition:.2s}
+        .cat-item i{font-size:1.6rem;color:#333}
+        .cat-item span{font-size:.7rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
+        .footer{background:#1a1c1e;color:#fff;padding:25px 0;margin-top:30px;border-top:1px solid rgba(255,255,255,.1)}
+    </style>
+
+    <script>
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        }
+    </script>
+
+    <!-- Structured Data: WebSite -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "GruposWhats",
+      "alternateName": ["Grupos de WhatsApp", "GruposWhats Brasil", "Grupos de Whats"],
+      "url": "https://mg5860606-ux.github.io/GRUPOWHATSS/",
+      "description": "O maior e melhor diretÃ³rio de links de grupos de WhatsApp do BRASIL em 2026. Encontre grupos ativos de amizade, figurinhas, namoro, games e muito mais.",
+      "inLanguage": "pt-BR",
+      "isAccessibleForFree": true,
+      "copyrightYear": 2026,
+      "aggregateRating": {"@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "12540", "bestRating": "5", "worstRating": "1"},
+      "potentialAction": {"@type": "SearchAction", "target": {"@type": "EntryPoint", "urlTemplate": "https://mg5860606-ux.github.io/GRUPOWHATSS/?q={search_term_string}"}, "query-input": "required name=search_term_string"}
+    }
+    </script>
+    <!-- Structured Data: Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "GruposWhats",
+      "url": "https://mg5860606-ux.github.io/GRUPOWHATSS/",
+      "logo": {"@type": "ImageObject", "url": "https://mg5860606-ux.github.io/GRUPOWHATSS/logo.svg", "width": 200, "height": 200},
+      "description": "O maior diretÃ³rio de grupos de WhatsApp do Brasil",
+      "foundingDate": "2024",
+      "sameAs": ["https://mg5860606-ux.github.io/GRUPOWHATSS/"],
+      "contactPoint": {"@type": "ContactPoint", "contactType": "customer service", "availableLanguage": "Portuguese"}
+    }
+    </script>
+    <!-- Structured Data: FAQPage -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {"@type": "Question", "name": "O que Ã© o GruposWhats?", "acceptedAnswer": {"@type": "Answer", "text": "Ã‰ o maior diretÃ³rio de links de grupos de WhatsApp do Brasil, onde vocÃª encontra grupos ativos e seguros de diversos temas como amizade, figurinhas, namoro, games, economia e muito mais."}},
+        {"@type": "Question", "name": "Como entrar em um grupo de WhatsApp?", "acceptedAnswer": {"@type": "Answer", "text": "Basta escolher o grupo desejado, clicar em 'Entrar no Grupo' e vocÃª serÃ¡ redirecionado para o convite oficial do WhatsApp. Toque em 'Entrar no Grupo' no prÃ³prio WhatsApp para participar."}},
+        {"@type": "Question", "name": "Os grupos sÃ£o seguros?", "acceptedAnswer": {"@type": "Answer", "text": "Sim! Todos os grupos passam por anÃ¡lise antes de serem aprovados. Verificamos o link, a descriÃ§Ã£o e as regras para garantir que vocÃª tenha uma experiÃªncia segura e de qualidade."}},
+        {"@type": "Question", "name": "Como cadastrar meu grupo de WhatsApp?", "acceptedAnswer": {"@type": "Answer", "text": "Clique em 'Enviar Grupo', preencha o formulÃ¡rio com o nome, categoria, descriÃ§Ã£o e link de convite do seu grupo. ApÃ³s envio, faremos uma anÃ¡lise rÃ¡pida e aprovaremos seu grupo."}},
+        {"@type": "Question", "name": "O que Ã© o plano VIP?", "acceptedAnswer": {"@type": "Answer", "text": "O plano VIP destaca seu grupo no topo da lista, com selo de verificado e brilho dourado, aumentando em atÃ© 10x o nÃºmero de visitas e cliques no seu link de convite."}}
+      ]
+    }
+    </script>
+    <!-- Structured Data: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{"@type": "ListItem", "position": 1, "name": "PÃ¡gina Inicial", "item": "https://mg5860606-ux.github.io/GRUPOWHATSS/"}]
+    }
+    </script>
+    
+    <style>
+        .admin-tab-btn{background:#eee;border:none;padding:8px 15px;border-radius:6px;font-weight:800;cursor:pointer;font-size:.8rem;color:#666;transition:all .2s;white-space:nowrap}
+        .admin-tab-btn.active{background:#1a252f;color:#fff}
+        .admin-tab-content{display:none}
+        .stat-card i{display:block;margin-bottom:10px}
+    </style>
+</head>
+
+<body>
+
+    
+    <header class="header">
+        <div class="container-fluid">
+            <a href="index.html" class="logo-area">
+                <img src="logo.svg" alt="Logo" class="logo-img">
+                <span class="logo-text">GRUPOS<span class="whats">WHATS</span></span>
+            </a>
+            <div class="header-actions">
+                <a href="send-group.html" class="btn-header-white">Enviar grupo</a>
+                <a href="user-groups.html" class="btn-header-white">Meus grupos</a>
+                <button onclick="toggleSidebar()" class="menu-toggle-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- SIDEBAR -->
+    <div id="sideMenu" class="side-menu">
+        <div class="side-header">
+            <img src="logo.svg" alt="Logo" style="width:40px;">
+            <div style="font-weight:800;font-size:1.2rem;">Grupos<strong>Whats</strong></div>
+        </div>
+        <div class="side-links">
+            <a href="index.html" class="side-link"><i class="fas fa-home"></i> Inicio</a>
+            <a href="send-group.html" class="side-link"><i class="fas fa-plus-circle"></i> Enviar Grupo</a>
+            <a href="user-groups.html" class="side-link"><i class="fas fa-tasks"></i> Meus Grupos</a>
+            <a href="vip.html" class="side-link"><i class="fas fa-star"></i> Planos VIP</a>
+            <a href="https://wa.me/5511947285405?text=OlÃ¡,%20preciso%20de%20suporte%20sobre%20o%20site%20Grupos%20de%20Whats" target="_blank" class="side-link" style="color:#25d366;"><i class="fab fa-whatsapp"></i> Suporte</a>
+        </div>
+        <div class="side-footer">
+            <a href="admin.html" class="side-link" style="font-size:.8rem;opacity:.7;">
+                <i class="fas fa-lock"></i> Painel Admin
+            </a>
+        </div>
+    </div>
+    <div id="sideOverlay" class="side-overlay" onclick="toggleSidebar()"></div>
+
+    <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Links de Grupos de WhatsApp 2026 - GruposWhats Brasil</h1>
+
+    <div class="search-section">
+        <div class="container-fluid">
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" placeholder="Buscar um grupo..." onkeyup="searchGroups()" style="background:#fff;border:none;flex:1;padding:15px;font-size:1rem;">
+                <button onclick="searchGroups()" style="background:#1a252f;color:#fff;border:none;padding:0 30px;font-weight:700;font-size:1rem;cursor:pointer;">Buscar</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="category-section" style="padding:15px 0;">
+        <div class="category-grid-wrapper" style="text-align:center;margin-top:20px;position:relative;">
+            <div id="categoryGrid" class="category-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px;padding:0 15px;max-height:50px;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1);margin-bottom:10px;">
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('amizade')"><i class="fas fa-users"></i><span>Amizade</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('amor-romance')"><i class="fas fa-heart"></i><span>Amor e Romance</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('carros-motos')"><i class="fas fa-car"></i><span>Carros e Motos</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('cidades')"><i class="fas fa-city"></i><span>Cidades</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('compra-venda')"><i class="fas fa-shopping-cart"></i><span>Compra e Venda</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('concursos')"><i class="fas fa-file-alt"></i><span>Concursos</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('desenhos-animes')"><i class="fas fa-palette"></i><span>Desenhos e Animes</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('divulgacao')"><i class="fas fa-bullhorn"></i><span>DivulgaÃ§Ã£o</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('educacao')"><i class="fas fa-graduation-cap"></i><span>EducaÃ§Ã£o</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('emagrecimento')"><i class="fas fa-fire"></i><span>Emagrecimento</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('esportes')"><i class="fas fa-futbol"></i><span>Esportes</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('eventos')"><i class="fas fa-calendar-alt"></i><span>Eventos</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('fans')"><i class="fas fa-star"></i><span>FÃ£s</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('figurinhas')"><i class="fas fa-sticky-note"></i><span>Figurinhas</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('filmes-series')"><i class="fas fa-film"></i><span>Filmes e SÃ©ries</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('frases-mensagens')"><i class="fas fa-comment-dots"></i><span>Frases e Mensagens</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('futebol')"><i class="fas fa-trophy"></i><span>Futebol</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('games')"><i class="fas fa-gamepad"></i><span>Games e Jogos</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('ganhar-dinheiro')"><i class="fas fa-dollar-sign"></i><span>Ganhar Dinheiro</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('imobiliaria')"><i class="fas fa-home"></i><span>ImobiliÃ¡ria</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('investimentos')"><i class="fas fa-chart-line"></i><span>Investimentos</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('links')"><i class="fas fa-link"></i><span>Links</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('memes')"><i class="fas fa-laugh-squint"></i><span>Memes e Zoeira</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('moda-beleza')"><i class="fas fa-spa"></i><span>Moda e Beleza</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('musica')"><i class="fas fa-music"></i><span>MÃºsica</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('namoro')"><i class="fas fa-kiss-wink-heart"></i><span>Namoro</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('negocios')"><i class="fas fa-briefcase"></i><span>NegÃ³cios</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('noticias')"><i class="fas fa-newspaper"></i><span>NotÃ­cias</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('outros')"><i class="fas fa-ellipsis-h"></i><span>Outros</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('politica')"><i class="fas fa-landmark"></i><span>PolÃ­tica</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('profissoes')"><i class="fas fa-user-tie"></i><span>ProfissÃµes</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('receitas')"><i class="fas fa-utensils"></i><span>Receitas</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('redes-sociais')"><i class="fas fa-share-alt"></i><span>Redes Sociais</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('religiao')"><i class="fas fa-pray"></i><span>ReligiÃ£o</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('shitpost')"><i class="fas fa-poo"></i><span>Shitpost</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('tecnologia')"><i class="fas fa-microchip"></i><span>Tecnologia</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('tv')"><i class="fas fa-tv"></i><span>TV</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('vagas-emprego')"><i class="fas fa-hard-hat"></i><span>Vagas de Emprego</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('viagem-turismo')"><i class="fas fa-plane-departure"></i><span>Viagem e Turismo</span></a>
+                <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('videos')"><i class="fas fa-video"></i><span>VÃ­deos</span></a>
+            </div>
+            <button id="btnToggleCats" onclick="toggleCategories()" style="border-radius:999px;border:1px solid #e2e8f0;background:#fff;padding:10px 28px;font-size:.8rem;font-weight:700;color:#1a252f;cursor:pointer;transition:all .3s;box-shadow:0 1px 2px rgba(41,47,59,.04),0 8px 24px -12px rgba(41,47,59,.18);">Ver mais</button>
+            <div style="margin-top:40px;text-align:center;padding:0 15px;margin-bottom:20px;">
+                <h1 class="main-title" style="font-size:2.2rem;color:#1a252f;font-weight:900;">Grupos de WhatsApp</h1>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .cat-item:hover{transform:scale(1.05)}
+        .cat-item.active i,.cat-item.active span{color:#28a745}
+        #paginationBar a:hover{border-color:#cbd5e1;color:#0f172a}
+    </style>
+    
+    <script>
+        function toggleCategories(){const g=document.getElementById('categoryGrid'),b=document.getElementById('btnToggleCats');if(g.style.maxHeight==='50px'||g.style.maxHeight===''){g.style.maxHeight='2000px';b.textContent='Ver menos'}else{g.style.maxHeight='50px';b.textContent='Ver mais'}}
+        var _searchTimer=null;
+        function searchGroups(){clearTimeout(_searchTimer);_searchTimer=setTimeout(function(){window.currentPage=1;var u=new URL(window.location);u.searchParams.delete('page');history.replaceState(null,'',u);window.renderGroups&&window.renderGroups();},200);}
+        function logoutAdmin(){localStorage.removeItem('gw_admin_auth');window.location.href='index.html';}
+        (function(){
+            var btn=document.getElementById('btnLoadMore');
+            if(!btn)return;
+            var observer=new IntersectionObserver(function(entries){
+                if(entries[0].isIntersecting){
+                    window.visibleCount=(window.visibleCount||20)+20;
+                    if(window.renderGroups)window.renderGroups();
+                    btn.style.display='none';
+                }
+            },{rootMargin:'200px'});
+            observer.observe(btn);
+        })();
+    </script>
+
+    <main class="container-fluid">
+        <section class="section">
+            <div id="trendingGrid" class="groups-grid" style="margin-bottom:25px;"></div>
+        </section>
+
+        <div id="groupsGrid" class="groups-grid">
+            <!-- SKELETON UI (instantÃ¢neo via CSS crÃ­tico) -->
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+        </div>
+        <div id="noResults" style="display:none;text-align:center;padding:40px;">
+            <i class="fas fa-search" style="font-size:3rem;color:#ddd;margin-bottom:15px;"></i>
+            <p>Nenhum grupo encontrado com este nome.</p>
+            <button onclick="clearFilters()" class="btn-join" style="width:auto;padding:10px 20px;margin-top:10px;">Ver todos os grupos</button>
+        </div>
+        
+        <div id="paginationBar" style="display:none;justify-content:center;gap:8px;margin:24px 0;">
+            <a id="btnPrevPage" href="#" onclick="return false;" rel="prev" style="border:1px solid #e2e8f0;border-radius:8px;padding:8px 16px;font-size:0.9rem;font-weight:600;color:#64748b;text-decoration:none;transition:all .15s;display:none;">â€¹ Anterior</a>
+            <span id="pageInfo" style="font-size:0.9rem;font-weight:600;color:#64748b;padding:8px 8px;"></span>
+            <a id="btnNextPage" href="#" onclick="return false;" rel="next" style="border:1px solid #e2e8f0;border-radius:8px;padding:8px 16px;font-size:0.9rem;font-weight:600;color:#64748b;text-decoration:none;transition:all .15s;display:none;">PrÃ³xima â€º</a>
+        </div>
+    </main>
+
+    <!-- FRASES PARA STATUS -->
+    <section class="seo-promotion" style="background:#f8f9fa;padding:50px 0;border-top:1px solid #eee;">
+        <div class="container-fluid" style="max-width:1000px;margin:0 auto;padding:0 15px;">
+            <h2 style="font-size:1.8rem;font-weight:900;color:#1a252f;text-align:center;margin-bottom:10px;">Frases para Status do WhatsApp</h2>
+            <p style="color:#666;font-size:0.95rem;text-align:center;margin-bottom:30px;max-width:650px;margin-left:auto;margin-right:auto;">Milhares de frases prontas para copiar e colar no seu status. Escolha uma categoria e use com um clique.</p>
+            
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(220px,100%),1fr));gap:12px;margin-bottom:30px;">
+                <a href="frases-para-status-academia.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
+                    <i class="fas fa-dumbbell" style="color:#25d366;font-size:1.1rem;"></i> Frases para Status Academia
+                </a>
+                <a href="frases-para-status-amor.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
+                    <i class="fas fa-heart" style="color:#e74c3c;font-size:1.1rem;"></i> Frases para Status Amor
+                </a>
+                <a href="frases-para-status-boa-noite.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
+                    <i class="fas fa-moon" style="color:#8e44ad;font-size:1.1rem;"></i> Frases para Status Boa noite
+                </a>
+                <a href="frases-para-status-bom-dia.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
+                    <i class="fas fa-sun" style="color:#f39c12;font-size:1.1rem;"></i> Frases para Status Bom dia
+                </a>
+                <a href="frases-para-status-curtas.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
+                    <i class="fas fa-bolt" style="color:#e67e22;font-size:1.1rem;"></i> Frases para Status Curtas
+                </a>
+                <a href="frases-para-status-deus.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
+                    <i class="fas fa-cross" style="color:#2c3e50;font-size:1.1rem;"></i> Frases para Status Deus
+                </a>
+                <a href="frases-para-status-engracadas.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
+                    <i class="fas fa-laugh" style="color:#f1c40f;font-size:1.1rem;"></i> Frases para Status EngraÃ§adas
+                </a>
+                <a href="frases-para-status-evangelica.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
+                    <i class="fas fa-bible" style="color:#9b59b6;font-size:1.1rem;"></i> Frases para Status EvangÃ©lica
+                </a>
+                <a href="frases-para-status-gratidao.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
+                    <i class="fas fa-hands" style="color:#27ae60;font-size:1.1rem;"></i> Frases para Status GratidÃ£o
+                </a>
+                <a href="frases-para-status-indiretas.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
+                    <i class="fas fa-comment-dots" style="color:#e74c3c;font-size:1.1rem;"></i> Frases para Status Indiretas
+                </a>
+                <a href="frases-para-status-motivacao.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
+                    <i class="fas fa-fire" style="color:#e67e22;font-size:1.1rem;"></i> Frases para Status MotivaÃ§Ã£o
+                </a>
+                <a href="frases-para-status-musicas.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
+                    <i class="fas fa-music" style="color:#1abc9c;font-size:1.1rem;"></i> Frases para Status MÃºsicas
+                </a>
+                <a href="frases-para-status-reflexao.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
+                    <i class="fas fa-brain" style="color:#3498db;font-size:1.1rem;"></i> Frases para Status ReflexÃ£o
+                </a>
+                <a href="frases-para-status-sozinha.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
+                    <i class="fas fa-user" style="color:#95a5a6;font-size:1.1rem;"></i> Frases para Status Sozinha
+                </a>
+                <a href="frases-para-status-triste.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
+                    <i class="fas fa-sad-tear" style="color:#7f8c8d;font-size:1.1rem;"></i> Frases para Status Triste
+                </a>
+            </div>
+            
+            <div style="text-align:center;">
+                <a href="frases-para-status.html" style="display:inline-block;background:#25d366;color:#fff;padding:14px 30px;border-radius:8px;text-decoration:none;font-weight:800;font-size:1rem;transition:all .2s;">Ver todas as frases para status â†’</a>
+            </div>
+        </div>
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="container-fluid" style="padding:10px 15px;text-align:center;">
+            <div style="display:flex;justify-content:center;gap:20px;margin-bottom:15px;flex-wrap:wrap;">
+                <a href="blog.html" style="color:rgba(255,255,255,.7);text-decoration:none;font-size:.85rem;font-weight:600;">Blog</a>
+                <a href="termos.html" style="color:rgba(255,255,255,.7);text-decoration:none;font-size:.85rem;font-weight:600;">Termos de Uso</a>
+                <a href="privacidade.html" style="color:rgba(255,255,255,.7);text-decoration:none;font-size:.85rem;font-weight:600;">PolÃ­tica de Privacidade</a>
+                <a href="faq.html" style="color:rgba(255,255,255,.7);text-decoration:none;font-size:.85rem;font-weight:600;">FAQ</a>
+                <a href="https://wa.me/5599999999999" target="_blank" style="color:rgba(255,255,255,.7);text-decoration:none;font-size:.85rem;font-weight:600;">Fale Conosco</a>
+            </div>
+            <p style="margin:0;font-size:.85rem;color:#999;">&copy; 2026 GruposWhats | Todos os direitos reservados ao Corvo</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top -->
+    <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;bottom:20px;right:20px;width:45px;height:45px;background:#1a252f;color:#fff;border:none;border-radius:50%;display:none;align-items:center;justify-content:center;z-index:99;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.3);"><i class="fas fa-arrow-up"></i></button>
+    <script>window.onscroll=function(){const b=document.getElementById('backToTop');if(document.body.scrollTop>500||document.documentElement.scrollTop>500)b.style.display='flex';else b.style.display='none'}</script>
+
+    <!-- Admin Modal -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content" style="max-width:900px;padding:0;overflow:hidden;border-radius:12px;">
+            <div class="modal-header" style="background:#1a252f;color:#fff;padding:20px;display:flex;justify-content:space-between;align-items:center;">
+                <h2 style="margin:0;"><i class="fas fa-crown"></i> Painel Administrativo</h2>
+                <button class="close-modal" onclick="closeAdminModal()" style="color:#fff;font-size:2rem;background:none;border:none;cursor:pointer;">&times;</button>
+            </div>
+            <div id="adminLoginSection" style="padding:40px;text-align:center;">
+                <p style="color:#666;margin-bottom:20px;">Acesso restrito para administradores.</p>
+                <form onsubmit="loginAdmin(event)" style="max-width:300px;margin:0 auto;">
+                    <input type="password" id="adminPassword" placeholder="Senha Mestra" style="width:100%;padding:15px;margin-bottom:15px;border:1px solid #ddd;border-radius:8px;text-align:center;font-size:1.1rem;">
+                    <button type="submit" class="btn-join" style="width:100%;padding:15px;font-weight:800;">ENTRAR NO PAINEL</button>
+                </form>
+            </div>
+            <div id="adminPanelSection" style="display:none;height:80vh;flex-direction:column;">
+                <div class="admin-tabs" style="display:flex;gap:8px;background:#f8f9fa;border-bottom:1px solid #eee;overflow-x:auto;padding:10px 15px;align-items:center;">
+                    <button class="admin-tab-btn active" onclick="switchAdminTab('stats')" style="flex-shrink:0;">EstatÃ­sticas</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('pending')" style="flex-shrink:0;">ModeraÃ§Ã£o</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('vips')" style="flex-shrink:0;">VIPs Ativos</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('sales')" style="flex-shrink:0;">Vendas</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('config')" style="flex-shrink:0;">ConfiguraÃ§Ã£o</button>
+                    <div style="margin-left:auto;display:flex;gap:5px;">
+                        <button onclick="closeAdminModal()" style="background:#6c757d;border:none;color:#fff;padding:8px 12px;border-radius:6px;font-weight:800;cursor:pointer;white-space:nowrap;"><i class="fas fa-times"></i> FECHAR</button>
+                        <button onclick="logoutAdmin()" style="background:#dc3545;border:none;color:#fff;padding:8px 12px;border-radius:6px;font-weight:800;cursor:pointer;white-space:nowrap;"><i class="fas fa-sign-out-alt"></i> SAIR</button>
+                    </div>
+                </div>
+                <div style="flex:1;overflow-y:auto;padding:20px;">
+                    <div id="adminStatsTab" class="admin-tab-content">
+                        <div class="admin-stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;margin-bottom:30px;">
+                            <div class="stat-card" style="background:#fff;border:1px solid #eee;padding:20px;border-radius:0;text-align:center;"><i class="fas fa-users" style="font-size:1.5rem;color:#007bff;margin-bottom:10px;"></i><h3 id="statTotalGrupos" style="margin:5px 0;font-size:1.8rem;font-weight:900;">0</h3><p style="margin:0;color:#888;font-size:.8rem;text-transform:uppercase;">Grupos</p></div>
+                            <div class="stat-card" style="background:#fff;border:1px solid #eee;padding:20px;border-radius:0;text-align:center;"><i class="fas fa-eye" style="font-size:1.5rem;color:#28a745;margin-bottom:10px;"></i><h3 id="statTotalVisitas" style="margin:5px 0;font-size:1.8rem;font-weight:900;">0</h3><p style="margin:0;color:#888;font-size:.8rem;text-transform:uppercase;">Visitas</p></div>
+                            <div class="stat-card" style="background:#fff;border:1px solid #eee;padding:20px;border-radius:0;text-align:center;"><i class="fas fa-flag" style="font-size:1.5rem;color:#dc3545;margin-bottom:10px;"></i><h3 id="statTotalReportes" style="margin:5px 0;font-size:1.8rem;font-weight:900;">0</h3><p style="margin:0;color:#888;font-size:.8rem;text-transform:uppercase;">Reportes</p></div>
+                            <div class="stat-card" style="background:#fff;border:1px solid #eee;padding:20px;border-radius:0;text-align:center;"><i class="fas fa-dollar-sign" style="font-size:1.5rem;color:#ffc107;margin-bottom:10px;"></i><h3 id="statTotalVendas" style="margin:5px 0;font-size:1.8rem;font-weight:900;">0</h3><p style="margin:0;color:#888;font-size:.8rem;text-transform:uppercase;">Vendas (R$)</p></div>
+                        </div>
+                        <h4 style="font-weight:900;color:#333;margin-bottom:15px;"><i class="fas fa-history"></i> Atividade Recente</h4>
+                        <div id="activityLog" style="background:#fdfdfd;border:1px solid #eee;border-radius:8px;padding:15px;font-size:.85rem;"></div>
+                    </div>
+                    <div id="adminPendingTab" class="admin-tab-content" style="display:none;">
+                        <h4 style="font-weight:900;"><i class="fas fa-clock"></i> Aguardando AprovaÃ§Ã£o</h4>
+                        <div id="pendingGroupsList" style="display:grid;gap:15px;"></div>
+                        <hr style="margin:30px 0;border:0;border-top:1px solid #eee;">
+                        <h4 style="font-weight:900;"><i class="fas fa-search"></i> Gerenciar Banco de Dados</h4>
+                        <div style="margin-bottom:20px;"><input type="text" id="adminSearchInput" onkeyup="adminSearchGroups()" placeholder="Pesquisar por nome ou ID..." style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;"></div>
+                        <div id="adminGroupsManageList" style="display:grid;gap:10px;"></div>
+                    </div>
+                    <div id="adminVipsTab" class="admin-tab-content" style="display:none;">
+                        <h4 style="font-weight:900;"><i class="fas fa-star" style="color:#ffc107;"></i> VIPs em Destaque Agora</h4>
+                        <div id="activeVipsList" style="display:grid;gap:10px;"></div>
+                    </div>
+                    <div id="adminSalesTab" class="admin-tab-content" style="display:none;">
+                        <h4 style="font-weight:900;"><i class="fas fa-receipt"></i> HistÃ³rico de Vendas PIX</h4>
+                        <div id="salesList" style="display:grid;gap:10px;margin-bottom:30px;"></div>
+                        <h4 style="font-weight:900;"><i class="fas fa-plus-circle"></i> Gerador Manual de CÃ³digos</h4>
+                        <div style="background:#f8f9fa;padding:20px;border-radius:12px;border:1px solid #eee;">
+                            <div style="display:flex;gap:10px;margin-bottom:15px;">
+                                <input type="number" id="genQty" value="1" min="1" max="100" style="width:80px;padding:12px;border-radius:8px;border:1px solid #ddd;">
+                                <select id="genType" style="flex:1;padding:12px;border-radius:8px;border:1px solid #ddd;">
+                                    <option value="single">VIP Ãšnico (12h)</option>
+                                    <option value="pack_bronze">Pack Bronze (10)</option>
+                                    <option value="pack_prata">Pack Prata (25)</option>
+                                    <option value="pack_ouro">Pack Ouro (50)</option>
+                                    <option value="pack_diamante">Pack Diamante (100)</option>
+                                </select>
+                            </div>
+                            <button onclick="generateManualCodes()" class="btn-join" style="width:100%;background:#28a745;padding:15px;font-weight:800;">GERAR E COPIAR CÃ“DIGOS</button>
+                            <div id="generatedCodesOutput" style="margin-top:15px;font-family:monospace;font-size:.85rem;background:#222;color:#0f0;padding:15px;border-radius:8px;display:none;white-space:pre-wrap;word-break:break-all;"></div>
+                        </div>
+                    </div>
+                    <div id="adminConfigTab" class="admin-tab-content" style="display:none;">
+                        <h4 style="font-weight:900;"><i class="fas fa-tools"></i> ConfiguraÃ§Ãµes do Sistema</h4>
+                        <div class="config-form" style="display:flex;flex-direction:column;gap:20px;">
+                            <div><label style="display:block;font-weight:800;margin-bottom:8px;font-size:.9rem;">Aviso da Home</label><textarea id="cfgHomeNotice" placeholder="Ex: PromoÃ§Ã£o VIP de Carnaval!" style="width:100%;height:80px;padding:12px;border-radius:8px;border:1px solid #ddd;"></textarea></div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                                <div><label style="display:block;font-weight:800;margin-bottom:8px;font-size:.9rem;">Token PROMISSE (PIX)</label><input type="password" id="cfgPromisseToken" placeholder="Chave da API" style="width:100%;padding:12px;border-radius:8px;border:1px solid #ddd;"></div>
+                                <div><label style="display:block;font-weight:800;margin-bottom:8px;font-size:.9rem;">Nova Senha do Painel</label><input type="password" id="cfgAdminPassword" placeholder="Deixe em branco para nÃ£o alterar" style="width:100%;padding:12px;border-radius:8px;border:1px solid #ddd;"></div>
+                            </div>
+                            <div style="background:#f8f9fa;padding:15px;border-radius:8px;border-left:4px solid #28a745;">
+                                <h4 style="margin:0 0 15px 0;font-size:.9rem;"><i class="fas fa-envelope"></i> ConfiguraÃ§Ã£o EmailJS</h4>
+                                <div style="margin-bottom:10px;"><label style="display:block;font-size:.75rem;font-weight:700;margin-bottom:5px;">Public Key:</label><input type="text" id="cfgEmailjsPublicKey" placeholder="Ex: Y4pByrrLorqTgCJ8b" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:4px;font-size:.8rem;"></div>
+                                <div style="margin-bottom:10px;"><label style="display:block;font-size:.75rem;font-weight:700;margin-bottom:5px;">Service ID:</label><input type="text" id="cfgEmailjsServiceId" placeholder="Ex: service_gmail" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:4px;font-size:.8rem;"></div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                                    <div><label style="display:block;font-size:.75rem;font-weight:700;margin-bottom:5px;">Template Cupons:</label><input type="text" id="cfgEmailjsTemplateCupons" placeholder="template_..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:4px;font-size:.8rem;"></div>
+                                    <div><label style="display:block;font-size:.75rem;font-weight:700;margin-bottom:5px;">Template Recibo:</label><input type="text" id="cfgEmailjsTemplateRecibo" placeholder="template_..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:4px;font-size:.8rem;"></div>
+                                </div>
+                            </div>
+                            <div><label style="display:block;font-weight:800;margin-bottom:8px;font-size:.9rem;">WhatsApp Suporte</label><input type="text" id="cfgSupportPhone" placeholder="55119..." style="width:100%;padding:12px;border-radius:8px;border:1px solid #ddd;"></div>
+                            <button onclick="saveGlobalConfig()" class="btn-join" style="padding:15px;background:#007bff;font-weight:800;">SALVAR ALTERAÃ‡Ã•ES</button>
+                            <hr style="margin:20px 0;border:0;border-top:1px solid #eee;">
+                            <h4 style="font-weight:900;color:#dc3545;"><i class="fas fa-user-slash"></i> Blacklist</h4>
+                            <p style="font-size:.8rem;color:#888;">Banir um ID impede que o usuÃ¡rio envie novos grupos.</p>
+                            <div style="display:flex;gap:10px;">
+                                <input type="text" id="adminBanUid" placeholder="ID do Dispositivo..." style="flex:1;padding:12px;border-radius:8px;border:1px solid #ddd;">
+                                <button onclick="banUser()" class="btn-join" style="background:#dc3545;padding:0 25px;font-weight:800;">BANIR</button>
+                            </div>
+                            <div id="blacklistContainer" style="margin-top:10px;display:grid;gap:5px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EmailJS (defer) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <!-- SCRIPT PRINCIPAL (module com modulepreload) -->
+    <script type="module" src="script.js?v=2.0"></script>
+    
+    <script>
+        const removeTranslate=()=>{const el=document.getElementById('google_translate_element')||document.querySelector('.goog-te-banner-frame')||document.querySelector('.goog-te-menu-value');if(el)el.remove();document.body.style.top='0'};
+        setInterval(removeTranslate,500);
+    </script>
+</body>
+</html>

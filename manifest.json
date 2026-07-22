@@ -1,0 +1,16 @@
+{
+  "name": "GruposWhats - Global Group Links",
+  "short_name": "GruposWhats",
+  "description": "The world's largest WhatsApp group directory.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#00ff00",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/124/124034.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

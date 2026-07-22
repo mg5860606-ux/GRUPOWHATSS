@@ -1,0 +1,4 @@
+﻿User-agent: *
+Allow: /
+Disallow: /admin
+Sitemap: https://mg5860606-ux.github.io/GRUPOWHATSS/sitemap.xml

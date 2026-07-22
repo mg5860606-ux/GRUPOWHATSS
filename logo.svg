@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+    <!-- Chat bubble circle with tail -->
+    <path fill="#25D366" d="M256 32C114.6 32 0 134.4 0 256c0 51.5 19.9 98.7 52.9 136.6C38 435.3 7 471.4 6.5 471.9c-6.6 7-8.4 17.2-4.6 26S14.4 512 24 512c61.5 0 110-25.7 139.1-46.3C192 481.5 223.2 480 256 480c141.4 0 256-100.4 256-224S397.4 32 256 32z"/>
+    
+    <!-- Left Person -->
+    <circle fill="#FFFFFF" cx="150" cy="220" r="45" />
+    <path fill="#FFFFFF" d="M150 280c-35 0-65 20-75 50v20h150v-20c-10-30-40-50-75-50z"/>
+    
+    <!-- Right Person -->
+    <circle fill="#FFFFFF" cx="362" cy="220" r="45" />
+    <path fill="#FFFFFF" d="M362 280c-35 0-65 20-75 50v20h150v-20c-10-30-40-50-75-50z"/>
+    
+    <!-- Center Person (Slightly larger and overlapping in front) -->
+    <circle fill="#FFFFFF" cx="256" cy="190" r="55" />
+    <path fill="#FFFFFF" d="M256 260c-45 0-85 25-95 60v30h190v-30c-10-35-50-60-95-60z"/>
+</svg>

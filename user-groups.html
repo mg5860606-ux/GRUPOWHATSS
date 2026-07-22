@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <title>Meus Grupos de WhatsApp | Gerenciar, Editar e Impulsionar | GruposWhats</title>
+    <meta name="description" content="Painel do usuÃ¡rio para gerenciar seus grupos de WhatsApp. Edite, delete, impulse gratuitamente ou VIP seus grupos cadastrados no GruposWhats.">
+    <meta name="keywords" content="meus grupos whatsapp, gerenciar grupo whatsapp, impulsionar grupo whatsapp, editar grupo whatsapp, painel de grupos whatsapp">
+    <link rel="canonical" href="https://mg5860606-ux.github.io/GRUPOWHATSS/user-groups.html">
+    <link rel="preload" href="styles.css" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" as="style">
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+    <link rel="stylesheet" href="styles.css?v=1.3">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#28a745">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="geo.region" content="BR">
+    <meta name="language" content="pt-BR">
+    <meta name="revisit-after" content="3 days">
+
+    <!-- OPEN GRAPH / FACEBOOK / WHATSAPP / INSTAGRAM / LINKEDIN -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="GruposWhats">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:title" content="Meus Grupos de WhatsApp | Gerenciar e Impulsionar | GruposWhats">
+    <meta property="og:description" content="Gerencie seus grupos de WhatsApp. Edite, delete ou impulsione seus grupos para alcanÃ§ar mais membros.">
+    <meta property="og:image" content="https://mg5860606-ux.github.io/GRUPOWHATSS/preview-vip.jpg?v=2.1">
+    <meta property="og:image:secure_url" content="https://mg5860606-ux.github.io/GRUPOWHATSS/preview-vip.jpg?v=2.1">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Meus Grupos - GruposWhats">
+    <meta property="og:url" content="https://mg5860606-ux.github.io/GRUPOWHATSS/user-groups.html">
+
+    <!-- TWITTER / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@gruposwhats">
+    <meta name="twitter:title" content="Meus Grupos de WhatsApp | GruposWhats">
+    <meta name="twitter:description" content="Gerencie seus grupos de WhatsApp. Edite, delete ou impulsione seus grupos.">
+    <meta name="twitter:image" content="https://mg5860606-ux.github.io/GRUPOWHATSS/preview-vip.jpg?v=2.1">
+    <meta name="twitter:image:alt" content="Meus Grupos - GruposWhats">
+
+    <!-- WHATSAPP / MISC -->
+    <meta itemprop="name" content="Meus Grupos de WhatsApp | GruposWhats">
+    <meta itemprop="description" content="Gerencie seus grupos de WhatsApp no GruposWhats.">
+    <meta itemprop="image" content="https://mg5860606-ux.github.io/GRUPOWHATSS/preview-vip.jpg?v=2.1">
+
+    <!-- APPLE / BING -->
+    <meta name="apple-mobile-web-app-title" content="GruposWhats">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="msapplication-TileColor" content="#28a745">
+    <script>
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        }
+    </script>
+</head>
+<body class="bg-light">
+    <header class="header">
+        <div class="container-fluid">
+            <a href="index.html" class="logo-area">
+                <img src="logo.svg" alt="Logo" class="logo-img">
+                <span class="logo-text">GRUPOS<span class="whats">WHATS</span></span>
+            </a>
+
+            <div class="header-actions">
+                <a href="send-group.html" class="btn-header-white">Enviar grupo</a>
+                <a href="user-groups.html" class="btn-header-white">Meus grupos</a>
+                <button onclick="toggleSidebar()" class="menu-toggle-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- SIDEBAR MENU PREMIUM -->
+    <div id="sideMenu" class="side-menu">
+        <div class="side-header">
+            <img src="logo.svg" alt="Logo" style="width: 40px;">
+            <div style="font-weight: 800; font-size: 1.2rem;">Grupos<strong>Whats</strong></div>
+        </div>
+        <div class="side-links">
+            <a href="index.html" class="side-link"><i class="fas fa-home"></i> InÃ­cio</a>
+            <a href="send-group.html" class="side-link"><i class="fas fa-plus-circle"></i> Enviar Grupo</a>
+            <a href="user-groups.html" class="side-link"><i class="fas fa-tasks"></i> Meus Grupos</a>
+            <a href="vip.html" class="side-link"><i class="fas fa-star"></i> Planos VIP</a>
+            <a href="https://wa.me/5511947285405" target="_blank" class="side-link" style="color: #25d366;"><i class="fab fa-whatsapp"></i> Suporte</a>
+        </div>
+        <div class="side-footer">
+            <a href="admin.html" class="side-link" style="font-size: 0.8rem; opacity: 0.7;">
+                <i class="fas fa-lock"></i> Painel Admin ðŸ‘‘
+            </a>
+        </div>
+    </div>
+    <div id="sideOverlay" class="side-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container" style="padding-top: 30px; max-width: 900px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="font-size: clamp(1.5rem, 5vw, 2.2rem); font-weight: 800; color: #333;">Meus Grupos</h1>
+            <p style="color: #666;">Confira abaixo a lista dos grupos que vocÃª jÃ¡ enviou</p>
+        </div>
+
+        <!-- LOJA DE CUPONS (CAROUSEL) -->
+        <div class="store-section" style="margin-bottom: 40px;">
+            <h2 style="font-size: 1.5rem; font-weight: 800; text-align: center; margin-bottom: 20px;">Compre o seu pacote de impulsionamento ðŸš€</h2>
+            
+            <div class="info-banner-blue">
+                <i class="fas fa-exclamation-circle"></i>
+                <div class="info-content">
+                    <strong>DÃºvidas sobre os pacotes?</strong>
+                    <p>Criamos uma pÃ¡gina completa com todos os detalhes, benefÃ­cios, depoimentos de outros usuÃ¡rios e um FAQ para te ajudar a decidir. <a href="vip.html">Clique aqui para conhecer.</a></p>
+                </div>
+            </div>
+
+            <div class="store-carousel-container">
+                <div class="store-carousel" id="storeCarousel">
+                    <!-- Bronze -->
+                    <div class="store-card store-bronze">
+                        <div class="store-card-header">
+                            <h4>Bronze</h4>
+                        </div>
+                        <div class="store-card-body">
+                            <h3>10 impulsionamentos</h3>
+                            <p class="store-desc">ðŸŒŸ Destaque seus grupos e atraia milhares de novos membros! CÃ³digo enviado por e-mail, sem prazo de validade.</p>
+                            <p class="store-price-unit">Apenas R$ 9,90 por impulso</p>
+                        </div>
+                        <div class="store-card-footer">
+                            <span class="store-price-new">R$ 99,00</span>
+                            <button class="btn-store-buy" onclick="openStoreModal('bronze')">Comprar</button>
+                        </div>
+                    </div>
+
+                    <!-- Prata -->
+                    <div class="store-card store-prata">
+                        <div class="store-badge-offer">-15%</div>
+                        <div class="store-card-header">
+                            <h4>Prata</h4>
+                            <span class="offer-tag"><i class="fas fa-fire"></i> OFERTA</span>
+                        </div>
+                        <div class="store-card-body">
+                            <h3>25 impulsionamentos</h3>
+                            <p class="store-desc">ðŸŒŸ Destaque seus grupos e atraia milhares de novos membros! CÃ³digo enviado por e-mail, sem prazo de validade.</p>
+                            <div class="store-discount-tag">âš¡ VocÃª economiza R$ 37,13!</div>
+                            <p class="store-price-unit">Apenas R$ 8,42 por impulso</p>
+                        </div>
+                        <div class="store-card-footer">
+                            <div class="store-price-col">
+                                <span class="store-price-old">De: R$ 247,50</span>
+                                <span class="store-price-new">R$ 210,38</span>
+                            </div>
+                            <button class="btn-store-hot" onclick="openStoreModal('prata')">ðŸ”¥ Aproveitar</button>
+                        </div>
+                    </div>
+
+                    <!-- Ouro -->
+                    <div class="store-card store-ouro">
+                        <div class="store-badge-offer">-25%</div>
+                        <div class="store-card-header">
+                            <h4>Ouro</h4>
+                            <span class="offer-tag"><i class="fas fa-fire"></i> OFERTA</span>
+                        </div>
+                        <div class="store-card-body">
+                            <h3>50 impulsionamentos</h3>
+                            <p class="store-desc">ðŸŒŸ Destaque seus grupos e atraia milhares de novos membros! CÃ³digo enviado por e-mail, sem prazo de validade.</p>
+                            <div class="store-discount-tag">âš¡ VocÃª economiza R$ 123,75!</div>
+                            <p class="store-price-unit">Apenas R$ 7,43 por impulso</p>
+                        </div>
+                        <div class="store-card-footer">
+                            <div class="store-price-col">
+                                <span class="store-price-old">De: R$ 495,00</span>
+                                <span class="store-price-new">R$ 371,25</span>
+                            </div>
+                            <button class="btn-store-hot" onclick="openStoreModal('ouro')">ðŸ”¥ Aproveitar</button>
+                        </div>
+                    </div>
+
+                    <!-- Diamante -->
+                    <div class="store-card store-diamante">
+                        <div class="store-badge-offer">-35%</div>
+                        <div class="store-card-header">
+                            <h4>Diamante</h4>
+                            <span class="offer-tag" style="background: #28a745;"><i class="fas fa-fire"></i> OFERTA</span>
+                        </div>
+                        <div class="store-card-body">
+                            <h3>100 impulsionamentos</h3>
+                            <p class="store-desc">ðŸ’¥ Destaque seus grupos e atraia milhares de novos membros! CÃ³digo enviado por e-mail, sem prazo de validade.</p>
+                            <div class="store-discount-tag" style="background: rgba(255,255,255,0.2); color: white;">ðŸ’° VocÃª economiza R$ 346,50!</div>
+                            <p class="store-price-unit">Apenas R$ 6,44 por impulso</p>
+                        </div>
+                        <div class="store-card-footer">
+                            <div class="store-price-col">
+                                <span class="store-price-old">De: R$ 990,00</span>
+                                <span class="store-price-new">R$ 643,50</span>
+                            </div>
+                            <button class="btn-store-hot" onclick="openStoreModal('diamante')">ðŸ”¥ Aproveitar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-indicators">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+
+            <!-- BANNER VIP DOURADO -->
+            <div class="vip-gold-banner">
+            <div class="vip-star-icon"><i class="fas fa-star"></i></div>
+            <div class="vip-banner-content">
+                <strong>Por apenas R$ 9,90 vocÃª pode tornar o seu <span style="text-decoration: underline;">Grupo VIP!</span></strong>
+                <p>Grupos VIP's recebem mais visitas e permanecem impulsionados por 12 horas em posiÃ§Ã£o prioritÃ¡ria na listagem dos grupos.</p>
+            </div>
+        </div>
+        </div>
+
+        <div id="myGroupsList" class="groups-grid">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+        </div>
+
+        <div class="info-banner-light" style="margin-top: 40px; background: #e3f2fd; padding: 20px; border-radius: 12px; font-size: 0.9rem; color: #0d47a1; border-left: 6px solid #2196f3; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; gap: 15px; align-items: flex-start;">
+            <i class="fas fa-save" style="font-size: 1.5rem; margin-top: 3px;"></i>
+            <div class="info-content">
+                <p><strong>Seus grupos ficam salvos neste dispositivo</strong> para sua seguranÃ§a e privacidade. Acesse sempre do mesmo navegador para gerenciÃ¡-los facilmente.</p>
+                <p style="margin-top: 10px; font-style: italic; opacity: 0.8;">ðŸ’¡ Dica: Se limpar os dados do navegador, basta reenviar seus grupos novamente.</p>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Modais NecessÃ¡rios (Boost) -->
+    <div class="modal" id="boostModal" style="align-items: flex-end; padding: 0;">
+        <div class="modal-content" style="max-width: 500px; width: 100%; border-radius: 20px 20px 0 0; position: relative; margin: 0 auto; overflow: visible;">
+            <!-- Icon at the top center -->
+            <div style="position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 70px; height: 70px; background: linear-gradient(135deg, #1a252f 0%, #3a2b71 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 4px solid white;">
+                <i class="fas fa-rocket" style="color: #ff4757; font-size: 2rem;"></i>
+            </div>
+            
+            <button class="close-modal" onclick="closeBoostModal()" style="position: absolute; right: 15px; top: 15px; background: #f1f3f5; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: none; cursor: pointer; color: #666;">&times;</button>
+
+            <div class="modal-body" style="padding: 50px 20px 20px; text-align: center;">
+                <h2 style="font-weight: 900; margin-bottom: 5px; color: #1a1a1a;">Impulsionar Grupo</h2>
+                <p style="color: #6c757d; font-size: 0.95rem; margin-bottom: 20px;">Escolha a duraÃ§Ã£o e a forma de pagamento.</p>
+
+                <div style="background: #e8f4fd; border: 1px solid #b8daff; color: #004085; padding: 12px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 20px; text-align: left; font-weight: 600; line-height: 1.4;">
+                    <i class="fas fa-info-circle"></i> <strong>Aviso:</strong> Se o seu grupo estiver em anÃ¡lise, ao ativar um plano VIP ele serÃ¡ <span style="color: #28a745; font-weight: 800;">aprovado imediatamente!</span>
+                </div>
+
+                <h4 style="text-align: left; font-weight: 800; color: #343a40; margin-bottom: 15px;">Escolha a duraÃ§Ã£o do destaque:</h4>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); gap: 10px; margin-bottom: 20px;">
+                    <label class="boost-option-card active" onclick="selectBoostPackage(12, 9.90, this)">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                            <input type="radio" name="boostPkg" checked style="accent-color: #007bff; width: 16px; height: 16px;">
+                            <span style="font-weight: 800; font-size: 1.05rem; color: #1a1a1a;">12 Horas</span>
+                        </div>
+                        <span style="display: inline-block; background: #e9ecef; color: #6c757d; font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px;">PadrÃ£o</span>
+                        <div style="color: #007bff; font-weight: 900; font-size: 1.1rem;">R$ 9,90</div>
+                    </label>
+                    <label class="boost-option-card" onclick="selectBoostPackage(24, 19.80, this)">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                            <input type="radio" name="boostPkg" style="accent-color: #007bff; width: 16px; height: 16px;">
+                            <span style="font-weight: 800; font-size: 1.05rem; color: #1a1a1a;">24 Horas</span>
+                        </div>
+                        <span style="display: inline-block; background: #e9ecef; color: #6c757d; font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px;">Dobro</span>
+                        <div style="color: #007bff; font-weight: 900; font-size: 1.1rem;">R$ 19,80</div>
+                    </label>
+                    <label class="boost-option-card" onclick="selectBoostPackage(72, 59.40, this)">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                            <input type="radio" name="boostPkg" style="accent-color: #007bff; width: 16px; height: 16px;">
+                            <span style="font-weight: 800; font-size: 1.05rem; color: #1a1a1a;">3 Dias</span>
+                        </div>
+                        <span style="display: inline-block; background: #e9ecef; color: #6c757d; font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px;">Fim de Semana</span>
+                        <div style="color: #007bff; font-weight: 900; font-size: 1.1rem;">R$ 59,40</div>
+                    </label>
+                    <label class="boost-option-card" onclick="selectBoostPackage(168, 138.60, this)">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                            <input type="radio" name="boostPkg" style="accent-color: #007bff; width: 16px; height: 16px;">
+                            <span style="font-weight: 800; font-size: 1.05rem; color: #1a1a1a;">7 Dias</span>
+                        </div>
+                        <span style="display: inline-block; background: #e9ecef; color: #6c757d; font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px;">Semana Completa</span>
+                        <div style="color: #007bff; font-weight: 900; font-size: 1.1rem;">R$ 138,60</div>
+                    </label>
+                </div>
+
+                <div style="display: none; margin-bottom: 15px;" id="boostEmailContainer">
+                    <input type="email" id="boostEmail" placeholder="Seu Email para o PIX" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:6px;">
+                </div>
+
+                <h3 id="totalBoostPrice" style="color: #20c997; font-weight: 900; font-size: 1.3rem; margin-bottom: 20px;">Total: R$ 9,90</h3>
+
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button onclick="document.getElementById('boostEmailContainer').style.display = 'block'; payWithPix();" style="background: #20c997; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: 800; font-size: 1.1rem; cursor: pointer; width: 100%;">Pagar com PIX</button>
+                    <button onclick="toggleCouponInput()" style="background: #f1f3f5; color: #495057; border: none; padding: 15px; border-radius: 8px; font-weight: 800; font-size: 1.1rem; cursor: pointer; width: 100%;">Usar CÃ³digo</button>
+                </div>
+                
+                <div id="couponArea" style="display: none; margin-top: 15px;">
+                    <input type="text" id="couponCodeInput" placeholder="DIGITE SEU CÃ“DIGO VIP" style="width:100%; padding:12px; border:2px solid #5a45ff; border-radius:6px; text-align: center; font-weight: 900; color: #5a45ff; text-transform: uppercase; margin-bottom: 10px;">
+                    <button onclick="useCouponCode()" style="background: #343a40; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 800; cursor: pointer; width: 100%;">Ativar CÃ³digo VIP</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Checkout (PIX) -->
+    <div class="modal" id="checkoutModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Pagamento via PIX ðŸ’ </h2>
+                <button class="close-modal" onclick="closeCheckoutModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="checkoutBody">
+                <div style="text-align: center; padding: 40px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #28a745;"></i>
+                    <p style="margin-top: 15px; font-weight: 600; color: #555;">Gerando seu QR Code PIX...</p>
+                    <p style="font-size: 0.8rem; color: #888;">Aguarde alguns segundos.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container-fluid" style="padding: 10px 15px; text-align: center;">
+            <div class="footer-bottom-links" style="margin-bottom: 15px;">
+                <a href="blog.html">Blog</a>
+                <a href="termos.html">Termos de Uso</a>
+                <a href="privacidade.html">PolÃ­tica de Privacidade</a>
+                <a href="faq.html">FAQ</a>
+                <a href="https://wa.me/5599999999999" target="_blank">Fale Conosco</a>
+            </div>
+            <p style="margin: 0; font-size: 0.85rem; color: #999;">&copy; 2026 GruposWhats | Todos os direitos reservados ao Corvo</p>
+        </div>
+    </footer>
+
+    <!-- EmailJS Integration -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" defer></script>
+    <script type="text/javascript">
+       (function(){
+       })();
+    </script>
+    <script type="module" src="script.js?v=1.3"></script>
+
+</body>
+</html>

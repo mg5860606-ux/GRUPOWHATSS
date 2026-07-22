@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="600" viewBox="0 0 1600 600">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#25D366"/>
+      <stop offset="100%" stop-color="#facc15"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="600" fill="url(#bg)"/>
+  <circle cx="1320" cy="140" r="220" fill="#25D366" opacity="0.15"/>
+  <circle cx="250" cy="520" r="260" fill="#facc15" opacity="0.10"/>
+
+  <rect x="90" y="90" width="1420" height="420" rx="34" fill="#111827" stroke="#1f2937" stroke-width="2"/>
+  <rect x="120" y="120" width="220" height="220" rx="32" fill="#25D366"/>
+  <path d="M220 180c-30 0-55 18-65 43h130c-10-25-35-43-65-43Z" fill="#fff"/>
+  <circle cx="220" cy="160" r="35" fill="#fff"/>
+
+  <text x="380" y="230" fill="#fff" font-family="Segoe UI, Arial, sans-serif" font-size="64" font-weight="800">GRUPOS</text>
+  <text x="380" y="292" fill="#25D366" font-family="Segoe UI, Arial, sans-serif" font-size="64" font-weight="800">WHATS</text>
+  <text x="380" y="352" fill="#d1d5db" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="500">Diretório de grupos de WhatsApp com curadoria e organização</text>
+
+  <rect x="380" y="390" width="260" height="58" rx="29" fill="url(#accent)"/>
+  <text x="430" y="427" fill="#0f172a" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Confira os grupos</text>
+</svg>

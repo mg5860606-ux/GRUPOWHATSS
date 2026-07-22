@@ -1,0 +1,13 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /grupos/{allPaths=**} {
+      // Qualquer um pode VER as imagens dos grupos
+      allow read: if true;
+
+      // Upload permitido apenas com arquivo de imagem e máximo 2MB
+      allow write: if request.resource.size < 2 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+  }
+}

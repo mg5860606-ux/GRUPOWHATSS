@@ -1,0 +1,1398 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - GruposWhats</title>
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#0f1117;color:#e1e4e8;min-height:100vh}
+        
+        /* LOGIN */
+        .login-overlay{position:fixed;inset:0;background:#0f1117;display:flex;align-items:center;justify-content:center;z-index:9999}
+        .login-card{background:#1a1d27;border:1px solid #2d333b;border-radius:16px;padding:40px;width:100%;max-width:400px;text-align:center}
+        .login-card h1{font-size:1.5rem;font-weight:900;margin-bottom:8px;background:linear-gradient(135deg,#25D366,#128C7E);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .login-card p{color:#8b949e;font-size:.85rem;margin-bottom:30px}
+        .login-card input{width:100%;padding:14px 16px;background:#0d1117;border:1px solid #30363d;border-radius:10px;color:#e1e4e8;font-size:1rem;font-family:inherit;margin-bottom:15px;outline:none;transition:border .2s}
+        .login-card input:focus{border-color:#25D366}
+        .login-card button{width:100%;padding:14px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:800;cursor:pointer;font-family:inherit;transition:transform .15s,box-shadow .15s}
+        .login-card button:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(37,211,102,.3)}
+        .login-card button:active{transform:scale(.98)}
+        .login-error{color:#f85149;font-size:.8rem;margin-bottom:10px;display:none}
+
+        /* LAYOUT */
+        .admin-layout{display:flex;min-height:100vh}
+        
+        /* SIDEBAR */
+        .sidebar{width:260px;background:#161b22;border-right:1px solid #21262d;display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:100;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+        .sidebar-header{padding:20px;border-bottom:1px solid #21262d;display:flex;align-items:center;gap:12px}
+        .sidebar-header img{width:36px;height:36px;border-radius:8px}
+        .sidebar-header span{font-size:1.1rem;font-weight:900;color:#fff}
+        .sidebar-header span strong{color:#25D366}
+        .sidebar-nav{flex:1;padding:12px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+        .sidebar-nav a{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:8px;text-decoration:none;color:#8b949e;font-size:.88rem;font-weight:600;transition:all .15s}
+        .sidebar-nav a:hover{background:#21262d;color:#e1e4e8}
+        .sidebar-nav a.active{background:rgba(37,211,102,.12);color:#25D366}
+        .sidebar-nav a.active i{color:#25D366}
+        .sidebar-nav a i{width:20px;text-align:center;font-size:.95rem}
+        .sidebar-divider{height:1px;background:#21262d;margin:8px 14px}
+        .sidebar-footer{padding:16px;border-top:1px solid #21262d}
+        .sidebar-footer a{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;text-decoration:none;color:#8b949e;font-size:.85rem;font-weight:600;transition:all .15s}
+        .sidebar-footer a:hover{background:#21262d;color:#e1e4e8}
+        .sidebar-footer a.danger:hover{color:#f85149}
+
+        /* MAIN */
+        .main-content{flex:1;margin-left:260px;padding:0}
+        
+        /* TOP BAR */
+        .topbar{background:#161b22;border-bottom:1px solid #21262d;padding:16px 30px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+        .topbar h2{font-size:1.2rem;font-weight:800;color:#fff}
+        .topbar-actions{display:flex;gap:10px;align-items:center}
+        .topbar-badge{background:#21262d;padding:6px 14px;border-radius:20px;font-size:.8rem;font-weight:700;color:#8b949e;display:flex;align-items:center;gap:6px}
+        .topbar-badge .dot{width:8px;height:8px;border-radius:50%;background:#25D366}
+        .mobile-menu-btn{display:none;background:none;border:none;color:#e1e4e8;font-size:1.5rem;cursor:pointer;padding:5px}
+        
+        /* PAGE CONTENT */
+        .page{padding:30px;display:none}
+        .page.active{display:block}
+        .page-title{font-size:1.6rem;font-weight:900;margin-bottom:6px}
+        .page-subtitle{color:#8b949e;font-size:.9rem;margin-bottom:25px}
+
+        /* STAT CARDS */
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+        .stat-card{background:#161b22;border:1px solid #21262d;border-radius:12px;padding:20px;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s}
+        .stat-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+        .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+        .stat-card.blue::before{background:linear-gradient(90deg,#58a6ff,#388bfd)}
+        .stat-card.green::before{background:linear-gradient(90deg,#25D366,#128C7E)}
+        .stat-card.yellow::before{background:linear-gradient(90deg,#f0c000,#e3b341)}
+        .stat-card.red::before{background:linear-gradient(90deg,#f85149,#da3633)}
+        .stat-card.purple::before{background:linear-gradient(90deg,#a371f7,#8957e5)}
+        .stat-card .stat-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:14px}
+        .stat-card.blue .stat-icon{background:rgba(88,166,255,.12);color:#58a6ff}
+        .stat-card.green .stat-icon{background:rgba(37,211,102,.12);color:#25D366}
+        .stat-card.yellow .stat-icon{background:rgba(240,192,0,.12);color:#f0c000}
+        .stat-card.red .stat-icon{background:rgba(248,81,73,.12);color:#f85149}
+        .stat-card.purple .stat-icon{background:rgba(163,113,247,.12);color:#a371f7}
+        .stat-card .stat-value{font-size:2rem;font-weight:900;color:#fff;line-height:1}
+        .stat-card .stat-label{font-size:.78rem;color:#8b949e;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+
+        /* CARDS */
+        .card{background:#161b22;border:1px solid #21262d;border-radius:12px;overflow:hidden;margin-bottom:20px}
+        .card-header{padding:18px 22px;border-bottom:1px solid #21262d;display:flex;align-items:center;justify-content:space-between}
+        .card-header h3{font-size:1rem;font-weight:800;color:#e1e4e8;display:flex;align-items:center;gap:8px}
+        .card-body{padding:22px}
+
+        /* TABLE */
+        .data-table{width:100%;border-collapse:collapse}
+        .data-table th{text-align:left;padding:12px 16px;font-size:.75rem;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #21262d;background:#0d1117}
+        .data-table td{padding:12px 16px;border-bottom:1px solid #21262d;font-size:.88rem;color:#c9d1d9}
+        .data-table tr:hover td{background:#1c2128}
+        .data-table .group-thumb{width:40px;height:40px;border-radius:8px;object-fit:cover}
+        .data-table .group-name{font-weight:700;color:#e1e4e8}
+        .data-table .group-id{font-size:.72rem;color:#8b949e;font-family:monospace;cursor:pointer;padding:2px 6px;border-radius:4px;transition:background .15s;display:inline-block}
+        .data-table .group-id:hover{background:#21262d}
+
+        /* BADGES */
+        .badge{padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.3px;display:inline-flex;align-items:center;gap:4px}
+        .badge-success{background:rgba(37,211,102,.12);color:#25D366}
+        .badge-warning{background:rgba(240,192,0,.12);color:#f0c000}
+        .badge-danger{background:rgba(248,81,73,.12);color:#f85149}
+        .badge-info{background:rgba(88,166,255,.12);color:#58a6ff}
+
+        /* BUTTONS */
+        .btn{padding:8px 16px;border:none;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+        .btn-primary{background:#25D366;color:#fff}
+        .btn-primary:hover{background:#1fb855}
+        .btn-danger{background:#da3633;color:#fff}
+        .btn-danger:hover{background:#c62828}
+        .btn-secondary{background:#21262d;color:#c9d1d9;border:1px solid #30363d}
+        .btn-secondary:hover{background:#30363d}
+        .btn-warning{background:#9e6a03;color:#fff}
+        .btn-warning:hover{background:#b8860b}
+        .btn-sm{padding:5px 12px;font-size:.75rem}
+
+        /* SEARCH */
+        .search-box{position:relative;max-width:400px}
+        .search-box input{width:100%;padding:10px 14px 10px 38px;background:#0d1117;border:1px solid #30363d;border-radius:8px;color:#e1e4e8;font-size:.88rem;font-family:inherit;outline:none;transition:border .2s}
+        .search-box input:focus{border-color:#25D366}
+        .search-box i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#8b949e;font-size:.9rem}
+
+        /* FORM */
+        .form-group{margin-bottom:18px}
+        .form-group label{display:block;font-size:.8rem;font-weight:700;color:#8b949e;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px}
+        .form-input{width:100%;padding:11px 14px;background:#0d1117;border:1px solid #30363d;border-radius:8px;color:#e1e4e8;font-size:.9rem;font-family:inherit;outline:none;transition:border .2s}
+        .form-input:focus{border-color:#25D366}
+        textarea.form-input{resize:vertical;min-height:80px}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+        /* TOAST */
+        .toast{position:fixed;top:20px;right:20px;padding:14px 22px;border-radius:10px;font-size:.88rem;font-weight:700;z-index:99999;animation:slideIn .3s;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+        .toast-success{background:#25D366;color:#fff}
+        .toast-error{background:#f85149;color:#fff}
+        @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+        /* EMPTY STATE */
+        .empty-state{text-align:center;padding:50px 20px;color:#8b949e}
+        .empty-state i{font-size:3rem;margin-bottom:15px;opacity:.4}
+        .empty-state p{font-size:.9rem}
+
+        /* MODAL */
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+        .modal-overlay.active{display:flex}
+        .modal-box{background:#161b22;border:1px solid #21262d;border-radius:16px;width:100%;max-width:600px;max-height:85vh;overflow-y:auto}
+        .modal-box-header{padding:20px 24px;border-bottom:1px solid #21262d;display:flex;align-items:center;justify-content:space-between}
+        .modal-box-header h3{font-size:1.1rem;font-weight:800}
+        .modal-box-header button{background:none;border:none;color:#8b949e;font-size:1.3rem;cursor:pointer}
+        .modal-box-header button:hover{color:#e1e4e8}
+        .modal-box-body{padding:24px}
+
+        /* TABS */
+        .tab-row{display:flex;gap:4px;border-bottom:1px solid #21262d;margin-bottom:20px}
+        .tab-btn{padding:10px 18px;background:none;border:none;border-bottom:2px solid transparent;color:#8b949e;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+        .tab-btn:hover{color:#e1e4e8}
+        .tab-btn.active{color:#25D366;border-bottom-color:#25D366}
+
+        /* LOG */
+        .log-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #21262d}
+        .log-item:last-child{border:none}
+        .log-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+        .log-icon.green{background:rgba(37,211,102,.12);color:#25D366}
+        .log-icon.blue{background:rgba(88,166,255,.12);color:#58a6ff}
+        .log-icon.yellow{background:rgba(240,192,0,.12);color:#f0c000}
+        .log-icon.red{background:rgba(248,81,73,.12);color:#f85149}
+        .log-text{flex:1;font-size:.85rem;color:#c9d1d9}
+        .log-text strong{color:#e1e4e8}
+        .log-time{font-size:.75rem;color:#8b949e;white-space:nowrap}
+
+        /* RESPONSIVE */
+        @media(max-width:768px){
+            .sidebar{transform:translateX(-100%)}
+            .sidebar.open{transform:translateX(0)}
+            .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;backdrop-filter:blur(2px)}
+            .sidebar.open ~ .sidebar-overlay{display:block}
+            .main-content{margin-left:0}
+            .mobile-menu-btn{display:block}
+            .stats-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+            .form-row{grid-template-columns:1fr}
+            .data-table{font-size:.78rem}
+            .data-table th,.data-table td{padding:8px 8px}
+            .page{padding:16px}
+            .topbar{padding:12px 16px}
+            .topbar h2{font-size:1rem}
+            .card-header{padding:14px 16px}
+            .card-body{padding:16px}
+            .stat-card{padding:16px}
+            .stat-card .stat-value{font-size:1.5rem}
+            .stat-card .stat-label{font-size:.7rem}
+            .btn{padding:7px 12px;font-size:.75rem}
+            .log-item{gap:8px;padding:10px 0}
+            .log-text{font-size:.8rem}
+            .search-box{max-width:100%}
+        }
+        @media(max-width:480px){
+            .stats-grid{grid-template-columns:1fr 1fr}
+            .page{padding:12px}
+            .topbar{padding:10px 12px}
+            .stat-card{padding:12px}
+            .stat-card .stat-value{font-size:1.3rem}
+            .stat-card .stat-icon{width:36px;height:36px;font-size:.9rem}
+            .card{border-radius:10px;margin-bottom:14px}
+            .data-table th:nth-child(n+6),
+            .data-table td:nth-child(n+6){display:none}
+            .log-item{flex-wrap:wrap}
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN -->
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-card">
+            <img src="logo.svg" style="width:50px;margin-bottom:15px;">
+            <h1>Grupos<strong style="-webkit-text-fill-color:#25D366">Whats</strong></h1>
+            <p>Painel Administrativo - Acesso Restrito</p>
+            <div id="loginError" class="login-error"></div>
+            <form id="loginForm">
+                <input type="password" id="loginPassword" placeholder="Senha de acesso" autocomplete="current-password">
+                <button type="submit" id="loginBtn">ENTRAR NO PAINEL</button>
+            </form>
+            <a href="index.html" style="display:inline-block;margin-top:20px;color:#8b949e;font-size:.8rem;text-decoration:none">â† Voltar ao site</a>
+        </div>
+    </div>
+
+    <!-- ADMIN LAYOUT -->
+    <div class="admin-layout" id="adminLayout" style="display:none">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="logo.svg" alt="Logo">
+                <span>GRUPOS<strong>WHATS</strong></span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" data-page="dashboard" class="active"><i class="fas fa-chart-pie"></i> Dashboard</a>
+                <a href="#" data-page="groups"><i class="fas fa-layer-group"></i> Grupos</a>
+                <a href="#" data-page="moderation"><i class="fas fa-shield-alt"></i> ModeraÃ§Ã£o <span id="pendingCount" style="margin-left:auto;background:#f85149;color:#fff;padding:2px 8px;border-radius:10px;font-size:.7rem;display:none">0</span></a>
+                <a href="#" data-page="vips"><i class="fas fa-star"></i> VIPs</a>
+                <a href="#" data-page="sales"><i class="fas fa-receipt"></i> Vendas & Cupons</a>
+                <div class="sidebar-divider"></div>
+                <a href="#" data-page="analytics"><i class="fas fa-chart-bar"></i> Analytics</a>
+                <a href="#" data-page="settings"><i class="fas fa-cog"></i> ConfiguraÃ§Ãµes</a>
+                <a href="#" data-page="tools"><i class="fas fa-wrench"></i> Ferramentas</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="index.html"><i class="fas fa-arrow-left"></i> Voltar ao Site</a>
+                <a href="#" id="btnLogout" class="danger"><i class="fas fa-sign-out-alt"></i> Sair do Painel</a>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" onclick="document.getElementById('sidebar').classList.remove('open')"></div>
+
+        <!-- MAIN -->
+        <div class="main-content">
+            <div class="topbar">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <button class="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+                    <h2 id="pageTitle">Dashboard</h2>
+                </div>
+                <div class="topbar-actions">
+                    <div class="topbar-badge"><span class="dot"></span> Online</div>
+                </div>
+            </div>
+
+            <!-- PAGE: DASHBOARD -->
+            <div class="page active" id="page-dashboard">
+                <div class="stats-grid" id="dashStats"></div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(min(320px, 100%), 1fr));gap:20px">
+                    <div class="card">
+                        <div class="card-header"><h3><i class="fas fa-clock"></i> Atividade Recente</h3></div>
+                        <div class="card-body" id="recentActivity" style="max-height:350px;overflow-y:auto"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3><i class="fas fa-layer-group"></i> Ãšltimos Grupos</h3></div>
+                        <div class="card-body" id="recentGroups" style="max-height:350px;overflow-y:auto"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE: GROUPS -->
+            <div class="page" id="page-groups">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+                    <div class="search-box" style="flex:1;max-width:400px">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="groupsSearch" placeholder="Buscar grupo por nome ou ID..." oninput="adminSearchGroups()">
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <select id="groupsFilterStatus" class="form-input" style="width:auto;padding:8px 14px" onchange="adminSearchGroups()">
+                            <option value="all">Todos os Status</option>
+                            <option value="aprovado">Aprovados</option>
+                            <option value="pendente">Pendentes</option>
+                            <option value="reprovado">Reprovados</option>
+                        </select>
+                        <select id="groupsFilterCat" class="form-input" style="width:auto;padding:8px 14px" onchange="adminSearchGroups()">
+                            <option value="all">Todas Categorias</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body" style="padding:0;overflow-x:auto">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Grupo</th>
+                                    <th>Categoria</th>
+                                    <th>Status</th>
+                                    <th>VIP</th>
+                                    <th>Visitas</th>
+                                    <th>Curtidas</th>
+                                    <th>AÃ§Ãµes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="groupsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div style="text-align:center;padding:10px">
+                    <button id="btnLoadMoreGroups" class="btn btn-secondary" onclick="adminLoadMore()" style="display:none">Carregar mais</button>
+                </div>
+            </div>
+
+            <!-- PAGE: MODERATION -->
+            <div class="page" id="page-moderation">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+                    <div class="search-box" style="flex:1;max-width:400px">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="pendingSearch" placeholder="Buscar por nome ou ID..." oninput="filterPending()">
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <button class="btn btn-primary btn-sm" onclick="bulkApprovePending()"><i class="fas fa-check-double"></i> Aprovar Todos</button>
+                        <button class="btn btn-danger btn-sm" onclick="bulkRejectPending()"><i class="fas fa-times-circle"></i> Rejeitar Todos</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-clock" style="color:#f0c000"></i> Grupos Pendentes de AprovaÃ§Ã£o</h3>
+                        <span class="badge badge-warning" id="moderationBadge">0 pendentes</span>
+                    </div>
+                    <div class="card-body" id="pendingList"></div>
+                </div>
+            </div>
+
+            <!-- PAGE: VIPs -->
+            <div class="page" id="page-vips">
+                <div class="stats-grid" style="margin-bottom:20px">
+                    <div class="stat-card yellow">
+                        <div class="stat-icon"><i class="fas fa-star"></i></div>
+                        <div class="stat-value" id="vipCount">0</div>
+                        <div class="stat-label">VIPs Ativos</div>
+                    </div>
+                </div>
+                <div class="card" style="margin-bottom:20px">
+                    <div class="card-header"><h3><i class="fas fa-star" style="color:#f0c000"></i> VIPs Ativos</h3></div>
+                    <div class="card-body" id="vipsList"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3><i class="fas fa-magic"></i> Ativar VIP Manual</h3></div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>ID do Grupo</label>
+                                <input type="text" class="form-input" id="vipGroupId" placeholder="Cole o ID do grupo...">
+                            </div>
+                            <div class="form-group">
+                                <label>Dias</label>
+                                <input type="number" class="form-input" id="vipDays" value="7" min="1">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="giveVipById()"><i class="fas fa-check"></i> Ativar VIP</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE: SALES -->
+            <div class="page" id="page-sales">
+                <div class="tab-row">
+                    <button class="tab-btn active" onclick="switchSalesTab('history')">HistÃ³rico de Vendas</button>
+                    <button class="tab-btn" onclick="switchSalesTab('codes')">Gerador de Cupons</button>
+                </div>
+                <div id="salesTab-history">
+                    <div class="card">
+                        <div class="card-header"><h3><i class="fas fa-receipt"></i> Ãšltimas TransaÃ§Ãµes</h3></div>
+                        <div class="card-body" id="salesList"></div>
+                    </div>
+                </div>
+                <div id="salesTab-codes" style="display:none">
+                    <div class="card">
+                        <div class="card-header"><h3><i class="fas fa-ticket-alt"></i> Gerar Cupons VIP</h3></div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Quantidade</label>
+                                    <input type="number" class="form-input" id="genQty" value="1" min="1" max="100">
+                                </div>
+                                <div class="form-group">
+                                    <label>Tipo</label>
+                                    <select class="form-input" id="genType">
+                                        <option value="single">VIP Ãšnico (12h)</option>
+                                        <option value="pack_bronze">Pack Bronze (10)</option>
+                                        <option value="pack_prata">Pack Prata (25)</option>
+                                        <option value="pack_ouro">Pack Ouro (50)</option>
+                                        <option value="pack_diamante">Pack Diamante (100)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="generateManualCodes()" style="margin-bottom:15px"><i class="fas fa-cog"></i> Gerar e Copiar</button>
+                            <pre id="generatedCodesOutput" style="background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:15px;color:#25D366;font-size:.82rem;max-height:300px;overflow-y:auto;display:none;white-space:pre-wrap;word-break:break-all"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE: ANALYTICS -->
+            <div class="page" id="page-analytics">
+                <div class="card">
+                    <div class="card-header"><h3><i class="fas fa-chart-bar"></i> Visitas por Hora (Hoje)</h3></div>
+                    <div class="card-body" id="analyticsChart"></div>
+                </div>
+                <div class="card" style="margin-top:20px">
+                    <div class="card-header"><h3><i class="fas fa-flag"></i> Ãšltimos Reportes</h3></div>
+                    <div class="card-body" id="reportsList"></div>
+                </div>
+            </div>
+
+            <!-- PAGE: SETTINGS -->
+            <div class="page" id="page-settings">
+                <div class="card">
+                    <div class="card-header"><h3><i class="fas fa-cog"></i> ConfiguraÃ§Ãµes Gerais</h3></div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Aviso na Home</label>
+                            <textarea class="form-input" id="cfgHomeNotice" placeholder="Ex: PromoÃ§Ã£o VIP de Carnaval!" rows="3"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Token PROMISSE (PIX)</label>
+                                <input type="password" class="form-input" id="cfgPromisseToken" placeholder="Chave da API">
+                            </div>
+                            <div class="form-group">
+                                <label>Nova Senha Admin</label>
+                                <input type="password" class="form-input" id="cfgAdminPassword" placeholder="Deixe em branco para nÃ£o alterar">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>WhatsApp Suporte</label>
+                                <input type="text" class="form-input" id="cfgSupportPhone" placeholder="55119...">
+                            </div>
+                            <div class="form-group"></div>
+                        </div>
+                        <div style="background:#0d1117;border:1px solid #21262d;border-radius:10px;padding:18px;margin-bottom:20px">
+                            <h4 style="font-size:.85rem;font-weight:800;margin-bottom:14px;color:#8b949e"><i class="fas fa-envelope"></i> ConfiguraÃ§Ã£o EmailJS</h4>
+                            <div class="form-row" style="margin-bottom:12px">
+                                <div class="form-group" style="margin:0"><label>Public Key</label><input type="text" class="form-input" id="cfgEmailjsPublicKey" placeholder="Y4pBy..."></div>
+                                <div class="form-group" style="margin:0"><label>Service ID</label><input type="text" class="form-input" id="cfgEmailjsServiceId" placeholder="service_gmail"></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group" style="margin:0"><label>Template Cupons</label><input type="text" class="form-input" id="cfgEmailjsTemplateCupons" placeholder="template_cupons"></div>
+                                <div class="form-group" style="margin:0"><label>Template Recibo</label><input type="text" class="form-input" id="cfgEmailjsTemplateRecibo" placeholder="template_recibo"></div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="saveAdminConfig()" style="padding:12px 30px"><i class="fas fa-save"></i> Salvar AlteraÃ§Ãµes</button>
+                    </div>
+                </div>
+                <div class="card" style="margin-top:20px;border-color:#da3633">
+                    <div class="card-header" style="border-color:#da3633">
+                        <h3 style="color:#f85149"><i class="fas fa-user-slash"></i> Blacklist</h3>
+                        <span class="badge badge-danger" id="blacklistCount">0 bans</span>
+                    </div>
+                    <div class="card-body">
+                        <div style="display:flex;gap:10px;margin-bottom:15px">
+                            <input type="text" class="form-input" id="adminBanUid" placeholder="Email ou ID do dispositivo..." style="flex:1">
+                            <button class="btn btn-danger" onclick="banAdminUser()"><i class="fas fa-ban"></i> Banir</button>
+                        </div>
+                        <div id="blacklistContainer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE: TOOLS -->
+            <div class="page" id="page-tools">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:20px">
+                    <div class="card">
+                        <div class="card-body" style="text-align:center">
+                            <i class="fas fa-sitemap" style="font-size:2rem;color:#25D366;margin-bottom:12px"></i>
+                            <h3 style="font-size:1rem;margin-bottom:6px">Sitemap XML</h3>
+                            <p style="color:#8b949e;font-size:.82rem;margin-bottom:16px">Gere e baixe o sitemap para Google</p>
+                            <button class="btn btn-primary" onclick="downloadSitemap()"><i class="fas fa-download"></i> Baixar Sitemap</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body" style="text-align:center">
+                            <i class="fas fa-file-csv" style="font-size:2rem;color:#58a6ff;margin-bottom:12px"></i>
+                            <h3 style="font-size:1rem;margin-bottom:6px">Exportar CSV</h3>
+                            <p style="color:#8b949e;font-size:.82rem;margin-bottom:16px">Exporte todos os dados dos grupos</p>
+                            <button class="btn btn-secondary" onclick="exportAdminCSV()"><i class="fas fa-download"></i> Baixar CSV</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body" style="text-align:center">
+                            <i class="fas fa-broom" style="font-size:2rem;color:#f85149;margin-bottom:12px"></i>
+                            <h3 style="font-size:1rem;margin-bottom:6px">Limpar Reprovados</h3>
+                            <p style="color:#8b949e;font-size:.82rem;margin-bottom:16px">Delete todos os grupos reprovados</p>
+                            <button class="btn btn-danger" onclick="clearRejected()"><i class="fas fa-trash"></i> Limpar Lixeira</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body" style="text-align:center">
+                            <i class="fas fa-file-import" style="font-size:2rem;color:#f0c000;margin-bottom:12px"></i>
+                            <h3 style="font-size:1rem;margin-bottom:6px">Exportar Pendentes</h3>
+                            <p style="color:#8b949e;font-size:.82rem;margin-bottom:16px">Exporte grupos pendentes em CSV</p>
+                            <button class="btn btn-warning" onclick="exportPendingCSV()"><i class="fas fa-download"></i> Baixar CSV</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body" style="text-align:center">
+                            <i class="fas fa-trash-alt" style="font-size:2rem;color:#da3633;margin-bottom:12px"></i>
+                            <h3 style="font-size:1rem;margin-bottom:6px">Limpar Sem Link</h3>
+                            <p style="color:#8b949e;font-size:.82rem;margin-bottom:16px">Delete grupos com link vazio ou quebrado</p>
+                            <button class="btn btn-danger" onclick="clearBrokenLinks()"><i class="fas fa-broom"></i> Limpar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TOP GRUPOS RANKING -->
+                <div class="card">
+                    <div class="card-header"><h3><i class="fas fa-trophy" style="color:#f0c000"></i> Top 15 Grupos Mais Visitados</h3></div>
+                    <div class="card-body" id="topGroupsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-box">
+            <div class="modal-box-header">
+                <h3><i class="fas fa-edit"></i> Editar Grupo</h3>
+                <button onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-box-body">
+                <input type="hidden" id="editGroupId">
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" class="form-input" id="editGroupName">
+                </div>
+                <div class="form-group">
+                    <label>DescriÃ§Ã£o</label>
+                    <textarea class="form-input" id="editGroupDesc" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Link</label>
+                    <input type="text" class="form-input" id="editGroupLink">
+                </div>
+                <div class="form-group">
+                    <label>URL da Imagem</label>
+                    <input type="text" class="form-input" id="editGroupImage">
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select class="form-input" id="editGroupCategory"></select>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:20px">
+                    <button class="btn btn-primary" onclick="saveGroupEdit()" style="flex:1"><i class="fas fa-save"></i> Salvar</button>
+                    <button class="btn btn-secondary" onclick="closeEditModal()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, deleteDoc, setDoc, query, where, orderBy, limit as fbLimit, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+        const CONFIG = {
+            firebase: {
+                apiKey: "AIzaSyDgtqqGgjGgYmmNYg9cxhHIc-VIPASz3uE",
+                authDomain: "grupos-whats-app.firebaseapp.com",
+                projectId: "grupos-whats-app",
+                storageBucket: "grupos-whats-app.firebasestorage.app",
+                messagingSenderId: "1081682450204",
+                appId: "1:1081682450204:web:1df9460ba25087bd93ccd9"
+            }
+        };
+
+        const app = initializeApp(CONFIG.firebase);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let allGroups = [];
+        let allPending = [];
+        let adminVisibleCount = 30;
+
+        window.copyId = function(id) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(id).then(() => showToast('ID copiado!'));
+            } else {
+                const t = document.createElement('textarea');
+                t.value = id;
+                t.style.cssText = 'position:fixed;left:-9999px';
+                document.body.appendChild(t);
+                t.select();
+                document.execCommand('copy');
+                document.body.removeChild(t);
+                showToast('ID copiado!');
+            }
+        };
+
+        const CATEGORIES = [
+            'amizade','amor-romance','carros-motos','cidades','compra-venda','concursos',
+            'desenhos-animes','divulgacao','educacao','emagrecimento','esportes','eventos',
+            'fans','figurinhas','filmes-series','frases-mensagens','futebol','games',
+            'ganhar-dinheiro','imobiliaria','investimentos','links','memes','moda-beleza',
+            'musica','namoro','negocios','noticias','outros','politica','profissoes',
+            'receitas','redes-sociais','religiao','shitpost','tecnologia','tv',
+            'vagas-emprego','viagem-turismo','videos'
+        ];
+
+        function showToast(msg, type = 'success') {
+            const t = document.createElement('div');
+            t.className = `toast toast-${type}`;
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+        window.showToast = showToast;
+
+        function formatNumber(n) {
+            if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+            if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+            return n.toString();
+        }
+
+        function timeAgo(ts) {
+            if (!ts) return '';
+            const diff = Date.now() - ts;
+            const mins = Math.floor(diff / 60000);
+            if (mins < 1) return 'agora';
+            if (mins < 60) return mins + 'min';
+            const hrs = Math.floor(mins / 60);
+            if (hrs < 24) return hrs + 'h';
+            const days = Math.floor(hrs / 24);
+            return days + 'd';
+        }
+
+        // AUTH
+        const loginForm = document.getElementById('loginForm');
+        const loginOverlay = document.getElementById('loginOverlay');
+        const adminLayout = document.getElementById('adminLayout');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const pass = document.getElementById('loginPassword').value.trim();
+            const btn = document.getElementById('loginBtn');
+            const errEl = document.getElementById('loginError');
+            btn.textContent = 'Verificando...';
+            btn.disabled = true;
+            errEl.style.display = 'none';
+            try {
+                const configSnap = await getDoc(doc(db, "configuracoes", "global"));
+                let masterPass = null;
+                if (configSnap.exists()) masterPass = configSnap.data().adminPassword;
+                const isMaster = masterPass && pass === masterPass;
+                const isFallback = !masterPass && btoa(pass) === "Z2Fzb2xlOTY=";
+                if (isMaster || isFallback) {
+                    await signInAnonymously(auth);
+                    localStorage.setItem('gw_admin_auth', 'true');
+                    loginOverlay.style.display = 'none';
+                    adminLayout.style.display = 'flex';
+                    await loadAdminData();
+                } else {
+                    errEl.textContent = 'Senha incorreta!';
+                    errEl.style.display = 'block';
+                }
+            } catch (err) {
+                errEl.textContent = 'Erro de conexÃ£o.';
+                errEl.style.display = 'block';
+            }
+            btn.textContent = 'ENTRAR NO PAINEL';
+            btn.disabled = false;
+        });
+
+        if (localStorage.getItem('gw_admin_auth') === 'true') {
+            (async () => {
+                try {
+                    await signInAnonymously(auth);
+                    loginOverlay.style.display = 'none';
+                    adminLayout.style.display = 'flex';
+                    await loadAdminData();
+                } catch {
+                    localStorage.removeItem('gw_admin_auth');
+                }
+            })();
+        }
+
+        document.getElementById('btnLogout').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('gw_admin_auth');
+            location.reload();
+        });
+
+        // NAVIGATION
+        document.querySelectorAll('.sidebar-nav a[data-page]').forEach(a => {
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.sidebar-nav a').forEach(x => x.classList.remove('active'));
+                a.classList.add('active');
+                const page = a.dataset.page;
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById('page-' + page).classList.add('active');
+                document.getElementById('pageTitle').textContent = a.textContent.trim();
+                document.getElementById('sidebar').classList.remove('open');
+                if (page === 'groups') { adminVisibleCount = 30; adminSearchGroups(); }
+                if (page === 'moderation') loadPending();
+                if (page === 'vips') loadVips();
+                if (page === 'analytics') loadAnalytics();
+                if (page === 'settings') loadConfig();
+            });
+        });
+
+        // LOAD ALL DATA
+        async function loadAdminData() {
+            try {
+                const [groupsSnap, pendingSnap] = await Promise.all([
+                    getDocs(collection(db, "grupos")),
+                    getDocs(collection(db, "gruposPendentes"))
+                ]);
+                allGroups = groupsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                allPending = pendingSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderDashboard();
+                adminSearchGroups();
+                populateCategoryFilter();
+            } catch (e) {
+                console.error(e);
+                showToast('Erro ao carregar dados', 'error');
+            }
+        }
+
+        function populateCategoryFilter() {
+            const sel = document.getElementById('groupsFilterCat');
+            CATEGORIES.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.textContent = c.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                sel.appendChild(opt);
+            });
+            const editSel = document.getElementById('editGroupCategory');
+            CATEGORIES.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.textContent = c.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                editSel.appendChild(opt);
+            });
+        }
+
+        // DASHBOARD
+        function renderDashboard() {
+            const now = Date.now();
+            const total = allGroups.length;
+            const approved = allGroups.filter(g => g.status === 'aprovado').length;
+            const pending = allPending.length;
+            const vips = allGroups.filter(g => g.vip && g.vipExpires > now).length;
+            const totalVisits = allGroups.reduce((a, g) => a + (g.visitas || 0), 0);
+            const totalLikes = allGroups.reduce((a, g) => a + (g.likes || 0), 0);
+
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('pendingCount').style.display = pending > 0 ? 'inline' : 'none';
+
+            document.getElementById('dashStats').innerHTML = `
+                <div class="stat-card blue"><div class="stat-icon"><i class="fas fa-layer-group"></i></div><div class="stat-value">${total}</div><div class="stat-label">Total Grupos</div></div>
+                <div class="stat-card green"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-value">${approved}</div><div class="stat-label">Aprovados</div></div>
+                <div class="stat-card yellow"><div class="stat-icon"><i class="fas fa-clock"></i></div><div class="stat-value">${pending}</div><div class="stat-label">Pendentes</div></div>
+                <div class="stat-card purple"><div class="stat-icon"><i class="fas fa-star"></i></div><div class="stat-value">${vips}</div><div class="stat-label">VIPs Ativos</div></div>
+                <div class="stat-card blue"><div class="stat-icon"><i class="fas fa-eye"></i></div><div class="stat-value">${formatNumber(totalVisits)}</div><div class="stat-label">Total Visitas</div></div>
+                <div class="stat-card green"><div class="stat-icon"><i class="fas fa-heart"></i></div><div class="stat-value">${formatNumber(totalLikes)}</div><div class="stat-label">Total Likes</div></div>
+            `;
+
+            const sorted = [...allGroups].sort((a, b) => (b.dataCriacao || 0) - (a.dataCriacao || 0)).slice(0, 8);
+            document.getElementById('recentGroups').innerHTML = sorted.length ? sorted.map(g => `
+                <div class="log-item">
+                    <img src="${g.imagem}" class="log-icon" style="object-fit:cover;width:36px;height:36px;border-radius:8px">
+                    <div class="log-text"><strong>${g.nome}</strong><br><span style="font-size:.75rem;color:#8b949e">${g.categoria || 'geral'} Â· ${g.status || 'pendente'}</span></div>
+                    <span class="log-time">${timeAgo(g.dataCriacao)}</span>
+                </div>
+            `).join('') : '<div class="empty-state"><i class="fas fa-inbox"></i><p>Nenhum grupo ainda</p></div>';
+
+            const reports = [];
+            const logs = [];
+            allGroups.forEach(g => {
+                if (g.reportes > 0) reports.push(g);
+            });
+            logs.push(`<div class="log-item"><div class="log-icon green"><i class="fas fa-users"></i></div><div class="log-text"><strong>${total}</strong> grupos no banco</div></div>`);
+            logs.push(`<div class="log-item"><div class="log-icon yellow"><i class="fas fa-clock"></i></div><div class="log-text"><strong>${pending}</strong> aguardando aprovaÃ§Ã£o</div></div>`);
+            logs.push(`<div class="log-item"><div class="log-icon purple"><i class="fas fa-star"></i></div><div class="log-text"><strong>${vips}</strong> VIPs ativos</div></div>`);
+            if (reports.length > 0) {
+                reports.slice(0, 5).forEach(g => {
+                    logs.push(`<div class="log-item"><div class="log-icon red"><i class="fas fa-flag"></i></div><div class="log-text"><strong>${g.nome}</strong> reportado (${g.reportes}x)</div></div>`);
+                });
+            }
+            document.getElementById('recentActivity').innerHTML = logs.join('');
+        }
+
+        // GROUPS MANAGEMENT
+        window.adminSearchGroups = () => {
+            const q = (document.getElementById('groupsSearch')?.value || '').toLowerCase();
+            const statusFilter = document.getElementById('groupsFilterStatus').value;
+            const catFilter = document.getElementById('groupsFilterCat').value;
+            let filtered = allGroups;
+            if (q) filtered = filtered.filter(g => g.nome.toLowerCase().includes(q) || g.id.toLowerCase().includes(q) || (g.descricao || '').toLowerCase().includes(q));
+            if (statusFilter !== 'all') filtered = filtered.filter(g => g.status === statusFilter);
+            if (catFilter !== 'all') filtered = filtered.filter(g => g.categoria === catFilter);
+            const toShow = filtered.slice(0, adminVisibleCount);
+            const tbody = document.getElementById('groupsTableBody');
+            tbody.innerHTML = toShow.length ? toShow.map(g => {
+                const isVip = g.vip && g.vipExpires > Date.now();
+                const statusBadge = g.status === 'aprovado' ? '<span class="badge badge-success">Ativo</span>' :
+                    g.status === 'pendente' ? '<span class="badge badge-warning">Pendente</span>' :
+                    '<span class="badge badge-danger">Reprovado</span>';
+                return `<tr>
+                    <td><div style="display:flex;align-items:center;gap:10px"><img src="${g.imagem}" class="group-thumb" loading="lazy"><div><div class="group-name">${g.nome}</div><div class="group-id" onclick="window.copyId('${g.id}')" title="Clique para copiar ID"><i class="fas fa-fingerprint" style="margin-right:3px;opacity:.4"></i>${g.id}</div></div></div></td>
+                    <td style="text-transform:capitalize">${(g.categoria || 'geral').replace(/-/g,' ')}</td>
+                    <td>${statusBadge}</td>
+                    <td>${isVip ? '<span class="badge badge-warning"><i class="fas fa-star"></i> VIP</span>' : '<span class="badge badge-info">Free</span>'}</td>
+                    <td>${formatNumber(g.visitas || 0)}</td>
+                    <td>${g.likes || 0}</td>
+                    <td>
+                        <div style="display:flex;gap:4px">
+                            <button class="btn btn-sm btn-secondary" onclick="openEditModal('${g.id}')" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteAdminGroup('${g.id}')" title="Excluir"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-search"></i><p>Nenhum grupo encontrado</p></div></td></tr>';
+            document.getElementById('btnLoadMoreGroups').style.display = filtered.length > adminVisibleCount ? 'inline-flex' : 'none';
+        };
+        window.adminLoadMore = () => { adminVisibleCount += 30; adminSearchGroups(); };
+
+        window.openEditModal = (id) => {
+            const g = allGroups.find(x => x.id === id);
+            if (!g) return;
+            document.getElementById('editGroupId').value = id;
+            document.getElementById('editGroupName').value = g.nome || '';
+            document.getElementById('editGroupDesc').value = g.descricao || '';
+            document.getElementById('editGroupLink').value = g.link || '';
+            document.getElementById('editGroupImage').value = g.imagem || '';
+            document.getElementById('editGroupCategory').value = g.categoria || 'outros';
+            document.getElementById('editModal').classList.add('active');
+        };
+        window.closeEditModal = () => document.getElementById('editModal').classList.remove('active');
+
+        window.saveGroupEdit = async () => {
+            const id = document.getElementById('editGroupId').value;
+            try {
+                await updateDoc(doc(db, "grupos", id), {
+                    nome: document.getElementById('editGroupName').value,
+                    descricao: document.getElementById('editGroupDesc').value,
+                    link: document.getElementById('editGroupLink').value,
+                    imagem: document.getElementById('editGroupImage').value,
+                    categoria: document.getElementById('editGroupCategory').value
+                });
+                const g = allGroups.find(x => x.id === id);
+                if (g) {
+                    g.nome = document.getElementById('editGroupName').value;
+                    g.descricao = document.getElementById('editGroupDesc').value;
+                    g.link = document.getElementById('editGroupLink').value;
+                    g.imagem = document.getElementById('editGroupImage').value;
+                    g.categoria = document.getElementById('editGroupCategory').value;
+                }
+                closeEditModal();
+                showToast('Grupo atualizado!');
+                adminSearchGroups();
+            } catch (e) {
+                showToast('Erro ao salvar', 'error');
+            }
+        };
+
+        window.deleteAdminGroup = async (id) => {
+            if (!confirm('Tem certeza que deseja excluir este grupo?')) return;
+            try {
+                await deleteDoc(doc(db, "grupos", id));
+                allGroups = allGroups.filter(g => g.id !== id);
+                showToast('Grupo excluÃ­do!');
+                renderDashboard();
+                adminSearchGroups();
+            } catch (e) {
+                showToast('Erro ao excluir', 'error');
+            }
+        };
+
+        // MODERATION
+        async function loadPending() {
+            try {
+                const snap = await getDocs(collection(db, "gruposPendentes"));
+                allPending = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                document.getElementById('moderationBadge').textContent = allPending.length + ' pendentes';
+                const list = document.getElementById('pendingList');
+                if (allPending.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><i class="fas fa-check-circle" style="color:#25D366"></i><p>Tudo aprovado! Nenhum grupo pendente.</p></div>';
+                    return;
+                }
+                list.innerHTML = allPending.map(g => `
+                    <div style="display:flex;align-items:center;gap:16px;padding:16px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:10px">
+                        <img src="${g.imagem}" style="width:60px;height:60px;border-radius:10px;object-fit:cover" loading="lazy">
+                        <div style="flex:1;min-width:0">
+                            <div style="font-weight:800;color:#e1e4e8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome}</div>
+                            <div style="font-size:.8rem;color:#8b949e;margin-top:2px">${(g.categoria || '').replace(/-/g,' ')} Â· Enviado ${timeAgo(g.dataCriacao)}</div>
+                            <div style="font-size:.75rem;color:#8b949e;font-family:monospace;margin-top:2px">${g.id}</div>
+                        </div>
+                        <div style="display:flex;gap:8px;flex-shrink:0">
+                            <button class="btn btn-primary btn-sm" onclick="approveAdminGroup('${g.id}')"><i class="fas fa-check"></i> Aprovar</button>
+                            <button class="btn btn-danger btn-sm" onclick="rejectAdminGroup('${g.id}')"><i class="fas fa-times"></i> Rejeitar</button>
+                        </div>
+                    </div>
+                `).join('');
+                renderDashboard();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        window.approveAdminGroup = async (id) => {
+            try {
+                const ref = doc(db, "gruposPendentes", id);
+                const s = await getDoc(ref);
+                if (s.exists()) {
+                    const data = s.data();
+                    data.status = 'aprovado';
+                    data.dataAprovacao = Date.now();
+                    await setDoc(doc(db, "grupos", id), data);
+                    await deleteDoc(ref);
+                    allGroups.push({ id, ...data });
+                    allPending = allPending.filter(g => g.id !== id);
+                    showToast('Grupo aprovado!');
+                    loadPending();
+                    renderDashboard();
+                }
+            } catch (e) {
+                showToast('Erro ao aprovar', 'error');
+            }
+        };
+
+        window.rejectAdminGroup = async (id) => {
+            if (!confirm('Rejeitar este grupo?')) return;
+            try {
+                const ref = doc(db, "gruposPendentes", id);
+                const s = await getDoc(ref);
+                if (s.exists()) {
+                    const data = s.data();
+                    data.status = 'reprovado';
+                    data.motivoRecusa = 'Reprovado pelo administrador';
+                    await setDoc(doc(db, "grupos", id), data);
+                    await deleteDoc(ref);
+                    allPending = allPending.filter(g => g.id !== id);
+                    showToast('Grupo reprovado');
+                    loadPending();
+                    renderDashboard();
+                }
+            } catch (e) {
+                showToast('Erro ao rejeitar', 'error');
+            }
+        };
+
+        // VIPs
+        function loadVips() {
+            const now = Date.now();
+            const vips = allGroups.filter(g => g.vip && g.vipExpires > now);
+            document.getElementById('vipCount').textContent = vips.length;
+            document.getElementById('vipsList').innerHTML = vips.length ? vips.map(g => `
+                <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:8px">
+                    <img src="${g.imagem}" style="width:44px;height:44px;border-radius:8px;object-fit:cover" loading="lazy">
+                    <div style="flex:1">
+                        <div style="font-weight:700;color:#e1e4e8">${g.nome}</div>
+                        <div style="font-size:.78rem;color:#f0c000">Expira: ${new Date(g.vipExpires).toLocaleString('pt-BR')}</div>
+                    </div>
+                    <button class="btn btn-sm btn-danger" onclick="revokeVipAdmin('${g.id}')"><i class="fas fa-times"></i> Revogar</button>
+                </div>
+            `).join('') : '<div class="empty-state"><i class="fas fa-star"></i><p>Nenhum VIP ativo</p></div>';
+        }
+
+        window.revokeVipAdmin = async (id) => {
+            if (!confirm('Revogar VIP deste grupo?')) return;
+            try {
+                await updateDoc(doc(db, "grupos", id), { vip: false, vipExpires: 0 });
+                const g = allGroups.find(x => x.id === id);
+                if (g) { g.vip = false; g.vipExpires = 0; }
+                showToast('VIP Revogado!');
+                loadVips();
+                renderDashboard();
+            } catch (e) {
+                showToast('Erro ao revogar', 'error');
+            }
+        };
+
+        window.giveVipById = async () => {
+            const id = document.getElementById('vipGroupId').value.trim();
+            const days = parseInt(document.getElementById('vipDays').value) || 7;
+            if (!id) return showToast('Insira o ID do grupo', 'error');
+            try {
+                const snap = await getDoc(doc(db, "grupos", id));
+                if (!snap.exists()) return showToast('Grupo nÃ£o encontrado', 'error');
+                await updateDoc(doc(db, "grupos", id), { vip: true, vipExpires: Date.now() + (days * 24 * 3600000) });
+                const g = allGroups.find(x => x.id === id);
+                if (g) { g.vip = true; g.vipExpires = Date.now() + (days * 24 * 3600000); }
+                showToast(`VIP de ${days} dias ativado!`);
+                document.getElementById('vipGroupId').value = '';
+                loadVips();
+                renderDashboard();
+            } catch (e) {
+                showToast('Erro ao ativar VIP', 'error');
+            }
+        };
+
+        // SALES TABS
+        window.switchSalesTab = (tab) => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('salesTab-history').style.display = tab === 'history' ? 'block' : 'none';
+            document.getElementById('salesTab-codes').style.display = tab === 'codes' ? 'block' : 'none';
+        };
+
+        // COUPONS
+        window.generateManualCodes = async () => {
+            const qty = parseInt(document.getElementById('genQty').value) || 1;
+            const type = document.getElementById('genType').value;
+            const output = document.getElementById('generatedCodesOutput');
+            output.style.display = 'block';
+            output.textContent = 'Gerando...';
+            let hours = 12;
+            if (type === 'pack_bronze') hours = 12 * 10;
+            else if (type === 'pack_prata') hours = 12 * 25;
+            else if (type === 'pack_ouro') hours = 12 * 50;
+            else if (type === 'pack_diamante') hours = 12 * 100;
+            const dias = Math.ceil(hours / 24);
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let codes = [];
+            try {
+                for (let i = 0; i < qty; i++) {
+                    let code = '';
+                    for (let j = 0; j < 8; j++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+                    await setDoc(doc(db, "cupons", code), { codigo: code, usado: false, dias, criadoEm: Date.now() });
+                    codes.push(code);
+                }
+                output.textContent = `${qty} cupom(s) para ${dias} dia(s):\n\n${codes.join('\n')}\n\nGuarde estes cÃ³digos!`;
+                showToast('Cupons gerados!');
+            } catch (e) {
+                output.textContent = `Erro: ${e.message}`;
+            }
+        };
+
+        // ANALYTICS
+        async function loadAnalytics() {
+            try {
+                const todayStr = new Date().toISOString().split('T')[0];
+                const s = await getDoc(doc(db, "analytics_visits", todayStr));
+                if (s.exists() && s.data().horas) {
+                    const horas = s.data().horas;
+                    const entries = Object.entries(horas).sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
+                    const max = Math.max(...entries.map(e => e[1]), 1);
+                    document.getElementById('analyticsChart').innerHTML = entries.map(([h, v]) => `
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+                            <span style="font-size:.8rem;color:#8b949e;width:80px;text-align:right">${h}:00</span>
+                            <div style="flex:1;background:#0d1117;border-radius:6px;height:28px;overflow:hidden">
+                                <div style="height:100%;width:${(v / max * 100)}%;background:linear-gradient(90deg,#25D366,#128C7E);border-radius:6px;display:flex;align-items:center;padding-left:10px">
+                                    <span style="font-size:.75rem;font-weight:700;color:#fff">${v}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('') || '<div class="empty-state"><p>Sem dados de visitas hoje</p></div>';
+                } else {
+                    document.getElementById('analyticsChart').innerHTML = '<div class="empty-state"><i class="fas fa-chart-bar"></i><p>Sem dados de visitas para hoje</p></div>';
+                }
+                let reports = [];
+                allGroups.forEach(g => { if (g.reportes > 0) reports.push(g); });
+                document.getElementById('reportsList').innerHTML = reports.length ? reports.map(g => `
+                    <div class="log-item">
+                        <div class="log-icon red"><i class="fas fa-flag"></i></div>
+                        <div class="log-text"><strong>${g.nome}</strong> â€” ${g.reportes} reporte(s)</div>
+                    </div>
+                `).join('') : '<div class="empty-state"><i class="fas fa-flag"></i><p>Nenhum reporte</p></div>';
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // CONFIG
+        async function loadConfig() {
+            try {
+                const snap = await getDoc(doc(db, "configuracoes", "global"));
+                if (snap.exists()) {
+                    const d = snap.data();
+                    if (d.homeNotice) document.getElementById('cfgHomeNotice').value = d.homeNotice;
+                    if (d.promisseToken) document.getElementById('cfgPromisseToken').value = d.promisseToken;
+                    if (d.supportPhone) document.getElementById('cfgSupportPhone').value = d.supportPhone;
+                    if (d.emailjsPubKey) document.getElementById('cfgEmailjsPublicKey').value = d.emailjsPubKey;
+                    if (d.emailjsServiceId) document.getElementById('cfgEmailjsServiceId').value = d.emailjsServiceId;
+                    if (d.emailjsTemplateCupons) document.getElementById('cfgEmailjsTemplateCupons').value = d.emailjsTemplateCupons;
+                    if (d.emailjsTemplateRecibo) document.getElementById('cfgEmailjsTemplateRecibo').value = d.emailjsTemplateRecibo;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        window.saveAdminConfig = async () => {
+            try {
+                const data = {
+                    homeNotice: document.getElementById('cfgHomeNotice').value,
+                    promisseToken: document.getElementById('cfgPromisseToken').value,
+                    supportPhone: document.getElementById('cfgSupportPhone').value,
+                    emailjsPubKey: document.getElementById('cfgEmailjsPublicKey').value,
+                    emailjsServiceId: document.getElementById('cfgEmailjsServiceId').value,
+                    emailjsTemplateCupons: document.getElementById('cfgEmailjsTemplateCupons').value,
+                    emailjsTemplateRecibo: document.getElementById('cfgEmailjsTemplateRecibo').value
+                };
+                const newPass = document.getElementById('cfgAdminPassword').value.trim();
+                if (newPass) data.adminPassword = newPass;
+                await setDoc(doc(db, "configuracoes", "global"), data, { merge: true });
+                showToast('ConfiguraÃ§Ãµes salvas!');
+            } catch (e) {
+                showToast('Erro ao salvar', 'error');
+            }
+        };
+
+        window.banAdminUser = async () => {
+            const uid = document.getElementById('adminBanUid').value;
+            if (!uid) return showToast('Insira o Email ou ID', 'error');
+            try {
+                await setDoc(doc(db, "blacklist", uid.replace(/\./g, '_')), { banned: true, timestamp: Date.now() });
+                showToast('UsuÃ¡rio banido!');
+                document.getElementById('adminBanUid').value = '';
+            } catch (e) {
+                showToast('Erro ao banir', 'error');
+            }
+        };
+
+        // TOOLS
+        window.downloadSitemap = () => {
+            let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+            allGroups.forEach(g => {
+                if (g.status !== 'aprovado') return;
+                const url = g.slug ? `https://mg5860606-ux.github.io/GRUPOWHATSS/group-details.html?g=${g.slug}` : `https://mg5860606-ux.github.io/GRUPOWHATSS/group-details.html?id=${g.id}`;
+                xml += `  <url><loc>${url}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>\n`;
+            });
+            xml += '</urlset>';
+            const blob = new Blob([xml], { type: 'application/xml' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'sitemap.xml';
+            a.click();
+            showToast('Sitemap baixado!');
+        };
+
+        window.exportAdminCSV = () => {
+            let csv = 'ID,Nome,Categoria,Link,Status,Visitas,Likes,VIP\n';
+            allGroups.forEach(g => {
+                csv += `${g.id},"${(g.nome||'').replace(/"/g,'""')}","${g.categoria||''}","${g.link||''}","${g.status||''}",${g.visitas||0},${g.likes||0},${g.vip ? 'SIM' : 'NAO'}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `gruposwhats_export_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            showToast('CSV baixado!');
+        };
+
+        window.clearRejected = async () => {
+            if (!confirm('Excluir TODOS os grupos reprovados? Isso nÃ£o pode ser desfeito.')) return;
+            const rejected = allGroups.filter(g => g.status === 'reprovado');
+            let count = 0;
+            for (const g of rejected) {
+                try { await deleteDoc(doc(db, "grupos", g.id)); count++; } catch (e) {}
+            }
+            allGroups = allGroups.filter(g => g.status !== 'reprovado');
+            showToast(`${count} grupos excluÃ­dos!`);
+            renderDashboard();
+            adminSearchGroups();
+        };
+
+        // === NEW FEATURES ===
+
+        // FILTER PENDING
+        window.filterPending = () => {
+            const q = (document.getElementById('pendingSearch')?.value || '').toLowerCase();
+            let filtered = allPending;
+            if (q) filtered = filtered.filter(g => g.nome.toLowerCase().includes(q) || g.id.toLowerCase().includes(q) || (g.descricao || '').toLowerCase().includes(q));
+            document.getElementById('moderationBadge').textContent = filtered.length + ' pendentes';
+            const list = document.getElementById('pendingList');
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty-state"><i class="fas fa-check-circle" style="color:#25D366"></i><p>Nenhum grupo pendente encontrado.</p></div>';
+                return;
+            }
+            list.innerHTML = filtered.map(g => `
+                <div style="display:flex;align-items:center;gap:16px;padding:14px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:10px;transition:border-color .15s" onmouseover="this.style.borderColor='#30363d'" onmouseout="this.style.borderColor='#21262d'">
+                    <img src="${g.imagem}" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0" loading="lazy">
+                        <div style="flex:1;min-width:0">
+                            <div style="font-weight:800;color:#e1e4e8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome}</div>
+                            <div style="font-size:.78rem;color:#8b949e;margin-top:3px">${(g.categoria || '').replace(/-/g,' ')} Â· Enviado ${timeAgo(g.dataCriacao)}</div>
+                            <div style="font-size:.72rem;color:#484f58;font-family:monospace;margin-top:2px;cursor:pointer;padding:2px 6px;border-radius:4px;transition:background .15s" onclick="window.copyId('${g.id}')" title="Clique para copiar ID" onmouseover="this.style.background='#21262d'" onmouseout="this.style.background='transparent'"><i class="fas fa-fingerprint" style="margin-right:4px;opacity:.5"></i>${g.id}</div>
+                        ${g.descricao ? `<div style="font-size:.78rem;color:#6e7681;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.descricao.substring(0,100)}${g.descricao.length > 100 ? '...' : ''}</div>` : ''}
+                        ${g.regras ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(g.regras || []).map(r => `<span style="background:#21262d;color:#8b949e;padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:600">${r}</span>`).join('')}</div>` : ''}
+                    </div>
+                    <div style="display:flex;gap:6px;flex-shrink:0">
+                        <button class="btn btn-primary btn-sm" onclick="approveAdminGroup('${g.id}')" title="Aprovar"><i class="fas fa-check"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="openRejectModal('${g.id}')" title="Rejeitar"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        // REJECT WITH REASON MODAL
+        window.openRejectModal = (id) => {
+            const g = allPending.find(x => x.id === id);
+            if (!g) return;
+            const reason = prompt('Motivo da reprovaÃ§Ã£o:', 'ConteÃºdo que nÃ£o atende Ã s diretrizes');
+            if (reason === null) return;
+            rejectWithReason(id, reason || 'Reprovado pelo administrador');
+        };
+
+        async function rejectWithReason(id, reason) {
+            try {
+                const ref = doc(db, "gruposPendentes", id);
+                const s = await getDoc(ref);
+                if (s.exists()) {
+                    const data = s.data();
+                    data.status = 'reprovado';
+                    data.motivoRecusa = reason;
+                    await setDoc(doc(db, "grupos", id), data);
+                    await deleteDoc(ref);
+                    allPending = allPending.filter(g => g.id !== id);
+                    showToast('Grupo reprovado');
+                    loadPending();
+                    renderDashboard();
+                }
+            } catch (e) {
+                showToast('Erro ao rejeitar', 'error');
+            }
+        }
+
+        // BULK APPROVE
+        window.bulkApprovePending = async () => {
+            if (!allPending.length) return showToast('Nenhum grupo pendente', 'error');
+            if (!confirm(`Aprovar TODOS os ${allPending.length} grupos pendentes?`)) return;
+            let count = 0;
+            for (const g of [...allPending]) {
+                try {
+                    const ref = doc(db, "gruposPendentes", g.id);
+                    const s = await getDoc(ref);
+                    if (s.exists()) {
+                        const data = s.data();
+                        data.status = 'aprovado';
+                        data.dataAprovacao = Date.now();
+                        await setDoc(doc(db, "grupos", g.id), data);
+                        await deleteDoc(ref);
+                        allGroups.push({ id: g.id, ...data });
+                        allPending = allPending.filter(x => x.id !== g.id);
+                        count++;
+                    }
+                } catch (e) {}
+            }
+            showToast(`${count} grupos aprovados!`);
+            loadPending();
+            renderDashboard();
+        };
+
+        // BULK REJECT
+        window.bulkRejectPending = async () => {
+            if (!allPending.length) return showToast('Nenhum grupo pendente', 'error');
+            if (!confirm(`Rejeitar TODOS os ${allPending.length} grupos pendentes?`)) return;
+            let count = 0;
+            for (const g of [...allPending]) {
+                try {
+                    const ref = doc(db, "gruposPendentes", g.id);
+                    const s = await getDoc(ref);
+                    if (s.exists()) {
+                        const data = s.data();
+                        data.status = 'reprovado';
+                        data.motivoRecusa = 'Rejeitado em lote pelo administrador';
+                        await setDoc(doc(db, "grupos", g.id), data);
+                        await deleteDoc(ref);
+                        allPending = allPending.filter(x => x.id !== g.id);
+                        count++;
+                    }
+                } catch (e) {}
+            }
+            showToast(`${count} grupos rejeitados!`);
+            loadPending();
+            renderDashboard();
+        };
+
+        // EXPORT PENDING CSV
+        window.exportPendingCSV = () => {
+            if (!allPending.length) return showToast('Nenhum grupo pendente', 'error');
+            let csv = 'ID,Nome,Categoria,Link,Descricao,DataEnvio,Regras\n';
+            allPending.forEach(g => {
+                csv += `${g.id},"${(g.nome||'').replace(/"/g,'""')}","${g.categoria||''}","${g.link||''}","${(g.descricao||'').replace(/"/g,'""')}","${g.data||''}","${(g.regras||[]).join('; ')}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `pendentes_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            showToast('CSV de pendentes baixado!');
+        };
+
+        // CLEAR BROKEN LINKS
+        window.clearBrokenLinks = async () => {
+            const broken = allGroups.filter(g => !g.link || g.link === '' || g.link === 'undefined' || g.link === 'null');
+            if (!broken.length) return showToast('Nenhum grupo com link quebrado', 'success');
+            if (!confirm(`Excluir ${broken.length} grupos com link vazio/quebrado?`)) return;
+            let count = 0;
+            for (const g of broken) {
+                try { await deleteDoc(doc(db, "grupos", g.id)); count++; } catch (e) {}
+            }
+            allGroups = allGroups.filter(g => g.link && g.link !== '' && g.link !== 'undefined' && g.link !== 'null');
+            showToast(`${count} grupos quebrados excluÃ­dos!`);
+            renderDashboard();
+            adminSearchGroups();
+        };
+
+        // LOAD BLACKLIST
+        async function loadBlacklist() {
+            try {
+                const snap = await getDocs(collection(db, "blacklist"));
+                const list = document.getElementById('blacklistContainer');
+                const countEl = document.getElementById('blacklistCount');
+                if (!snap.docs.length) {
+                    list.innerHTML = '<div class="empty-state"><i class="fas fa-shield-alt" style="color:#25D366"></i><p>Nenhum usuÃ¡rio banido</p></div>';
+                    if (countEl) countEl.textContent = '0 bans';
+                    return;
+                }
+                if (countEl) countEl.textContent = snap.docs.length + ' bans';
+                list.innerHTML = snap.docs.map(d => {
+                    const id = d.id.replace(/_/g, '.');
+                    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#0d1117;border:1px solid #21262d;border-radius:8px;margin-bottom:6px">
+                        <div style="flex:1;min-width:0">
+                            <span style="font-size:.85rem;color:#e1e4e8;font-weight:600;word-break:break-all">${id}</span>
+                            <span style="font-size:.72rem;color:#8b949e;margin-left:8px">${timeAgo(d.data().timestamp)}</span>
+                        </div>
+                        <button class="btn btn-sm btn-secondary" onclick="unbanUser('${d.id}')" title="Remover ban"><i class="fas fa-undo"></i> Desbanir</button>
+                    </div>`;
+                }).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        window.unbanUser = async (firestoreId) => {
+            if (!confirm('Remover este ban?')) return;
+            try {
+                await deleteDoc(doc(db, "blacklist", firestoreId));
+                showToast('Ban removido!');
+                loadBlacklist();
+            } catch (e) {
+                showToast('Erro ao desbanir', 'error');
+            }
+        };
+
+        // TOP GROUPS RANKING
+        function loadTopGroups() {
+            const top = [...allGroups].filter(g => g.status === 'aprovado').sort((a, b) => (b.visitas || 0) - (a.visitas || 0)).slice(0, 15);
+            const el = document.getElementById('topGroupsList');
+            if (!el) return;
+            if (!top.length) {
+                el.innerHTML = '<div class="empty-state"><i class="fas fa-trophy"></i><p>Nenhum grupo aprovado</p></div>';
+                return;
+            }
+            const medals = ['ðŸ¥‡', 'ðŸ¥ˆ', 'ðŸ¥‰'];
+            el.innerHTML = top.map((g, i) => `
+                <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#0d1117;border:1px solid #21262d;border-radius:8px;margin-bottom:6px;transition:border-color .15s" onmouseover="this.style.borderColor='#30363d'" onmouseout="this.style.borderColor='#21262d'">
+                    <span style="font-size:1.3rem;width:36px;text-align:center;flex-shrink:0">${medals[i] || `<span style="font-size:.85rem;color:#8b949e;font-weight:700">#${i+1}</span>`}</span>
+                    <img src="${g.imagem}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0" loading="lazy">
+                    <div style="flex:1;min-width:0">
+                        <div style="font-weight:700;color:#e1e4e8;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome}</div>
+                        <div style="font-size:.72rem;color:#8b949e">${(g.categoria||'').replace(/-/g,' ')}</div>
+                    </div>
+                    <div style="text-align:right;flex-shrink:0">
+                        <div style="font-weight:900;color:#25D366;font-size:1rem">${formatNumber(g.visitas || 0)}</div>
+                        <div style="font-size:.68rem;color:#8b949e">visitas</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Override navigation to load new data on page switch
+        document.querySelectorAll('.sidebar-nav a[data-page]').forEach(a => {
+            a.addEventListener('click', () => {
+                const page = a.dataset.page;
+                if (page === 'settings') loadBlacklist();
+                if (page === 'tools') loadTopGroups();
+            });
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeEditModal();
+        });
+        document.getElementById('editModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('editModal')) closeEditModal();
+        });
+    </script>
+</body>
+</html>

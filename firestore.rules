@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // REGRAS DE SEGURANÇA GRUPOSWHATS.APP
+    
+    // 1. Grupos Aprovados (Público)
+    match /grupos/{groupId} {
+      allow read: if true;
+      
+      // Permite que o ADMIN (Autenticado) faça qualquer alteração
+      allow create, delete, update: if request.auth != null;
+
+      // Permite que PÚBLICO apenas incremente 1 por vez para evitar bots
+      allow update: if request.auth == null && request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['visitas', 'likes', 'deadReports'])
+        && (
+          (request.resource.data.visitas == (resource.data.get('visitas', 0) + 1)) ||
+          (request.resource.data.likes == (resource.data.get('likes', 0) + 1)) ||
+          (request.resource.data.deadReports == (resource.data.get('deadReports', 0) + 1))
+        );
+    }
+
+    // 2. Grupos Pendentes (Submissão)
+    match /gruposPendentes/{groupId} {
+      allow create, read: if true; 
+      allow update, delete: if request.auth != null; // Apenas Admin remove ou altera após aprovado
+    }
+
+    // 3. Denúncias e Logs
+    match /reportes/{reportId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // 4. Sistema de Vendas e Pagamentos
+    match /vendas/{vendaId} {
+      allow read, create: if true;
+      allow update, delete: if request.auth != null;
+    }
+
+    // 5. Configurações Globais do Site
+    match /configuracoes/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // 6. Sistema de Códigos VIP
+    match /codigos/{codigoId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // 7. Blacklist (Banimentos)
+    match /blacklist/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}
