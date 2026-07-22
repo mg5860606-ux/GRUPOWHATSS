@@ -1,5 +1,5 @@
 /**
- * GRUPOSWHATS - VERSÃƒO FINAL ESTABILIZADA
+ * GRUPOSWHATS - VERSÃO FINAL ESTABILIZADA
  * Todos os direitos reservados ao Corvo.
  */
 
@@ -7,7 +7,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
 import { getFirestore, collection, getDocs, addDoc, updateDoc, doc, deleteDoc, query, where, getDoc, orderBy, limit, increment, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-// 1. CONFIGURAÃ‡ÃƒO FIREBASE E GLOBAIS
+// 1. CONFIGURAÇÃO FIREBASE E GLOBAIS
 const CONFIG = {
     firebase: {
         apiKey: "AIzaSyDgtqqGgjGgYmmNYg9cxhHIc-VIPASz3uE",
@@ -40,7 +40,7 @@ if (typeof emailjs === "undefined") {
 }
 const auth = getAuth(app);
 
-// 2. VARIÃVEIS DE ESTADO
+// 2. VARIÁVEIS DE ESTADO
 let grupos = [];
 let meusGrupos = JSON.parse(localStorage.getItem('meusGrupos') || '[]');
 let currentFilter = 'todos';
@@ -53,7 +53,7 @@ window.visibleCount = 20;
 
 let PROMISSE_TOKEN = CONFIG.promisseToken;
 
-// 3. CARREGAMENTO E RENDERIZAÃ‡ÃƒO
+// 3. CARREGAMENTO E RENDERIZAÇÃO
 async function loadGlobalConfigs() {
     // Cache de configs (30 min)
     try {
@@ -78,7 +78,7 @@ async function loadGlobalConfigs() {
             } catch (e) { /* ignore */ }
         }
     } catch (err) {
-        console.error("Erro ao carregar configuraÃ§Ãµes globais:", err);
+        console.error("Erro ao carregar configuraçães globais:", err);
     }
 }
 
@@ -120,7 +120,7 @@ async function loadGroups() {
         const [snap] = await Promise.all([getDocs(q), configsPromise]);
         const fresh = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-        // Comparação rápida por tamanho e IDs (evita JSON.stringify do array inteiro)
+        // Comparação rípida por tamanho e IDs (evita JSON.stringify do array inteiro)
         const mudou = fresh.length !== grupos.length ||
             fresh.some((g, i) => g.id !== (grupos[i]?.id));
 
@@ -157,7 +157,7 @@ async function loadGroups() {
 // ===== CACHE LOCAL (stale-while-revalidate) =====
 const CACHE_KEY = 'gruposCache';
 const CACHE_TIME_KEY = 'gruposCacheTime';
-const CACHE_MAX_AGE = 10 * 60 * 1000; // 10 minutos â€” evita buscas repetidas
+const CACHE_MAX_AGE = 10 * 60 * 1000; // 10 minutos — evita buscas repetidas
 const CONFIGS_CACHE_KEY = 'gruposConfigsCache';
 const CONFIGS_CACHE_TIME_KEY = 'gruposConfigsCacheTime';
 const CONFIGS_MAX_AGE = 30 * 60 * 1000; // 30 min para configs globais
@@ -302,7 +302,7 @@ function renderGroups() {
         bar.style.alignItems = 'center';
         bar.style.flexWrap = 'wrap';
         bar.style.gap = '6px';
-        info.textContent = `PÃ¡gina ${page} de ${totalPages}`;
+        info.textContent = `Página ${page} de ${totalPages}`;
 
         if (page > 1) {
             prev.style.display = 'inline-block';
@@ -318,7 +318,7 @@ function renderGroups() {
             next.style.display = 'none';
         }
 
-        // Auto-scroll removido para manter o topo do site ao carregar/atualizar a página
+        // Auto-scroll removido para manter o topo do site ao carregar/atualizar a pígina
     } else if (bar) {
         bar.style.display = 'none';
     }
@@ -331,10 +331,10 @@ function createGroupCard(g, rank = null) {
     const hasLiked = localStorage.getItem(`liked_${g.id}`) === 'true';
 
     let rankBadge = '';
-    if (rank === 1) rankBadge = '<div class="rank-badge gold"><i class="fas fa-medal"></i> 1Âº</div>';
-    else if (rank === 2) rankBadge = '<div class="rank-badge silver"><i class="fas fa-medal"></i> 2Âº</div>';
-    else if (rank === 3) rankBadge = '<div class="rank-badge bronze"><i class="fas fa-medal"></i> 3Âº</div>';
-    else if (rank) rankBadge = `<div class="rank-badge ordinary">${rank}Âº</div>`;
+    if (rank === 1) rankBadge = '<div class="rank-badge gold"><i class="fas fa-medal"></i> 1º</div>';
+    else if (rank === 2) rankBadge = '<div class="rank-badge silver"><i class="fas fa-medal"></i> 2º</div>';
+    else if (rank === 3) rankBadge = '<div class="rank-badge bronze"><i class="fas fa-medal"></i> 3º</div>';
+    else if (rank) rankBadge = `<div class="rank-badge ordinary">${rank}º</div>`;
 
     return `
         <article class="group-card ${isVip ? 'vip' : ''} ${rank ? 'elite-card' : ''}">
@@ -357,7 +357,7 @@ function createGroupCard(g, rank = null) {
         </article>`;
 }
 
-// 4. SUBMISSÃƒO E VALIDAÃ‡ÃƒO
+// 4. SUBMISSÃO E VALIDAÇÃO
 async function fetchWhatsAppMetadata(url) {
     try {
         const controller = new AbortController();
@@ -377,7 +377,7 @@ async function fetchWhatsAppMetadata(url) {
 async function validateLink() {
     const rawLink = document.getElementById('groupLinkInput')?.value?.trim();
     const btn = document.getElementById('btnValidateLink');
-    if (!rawLink) return showAlert('âŒ Digite o link do grupo ou canal!', 'error');
+    if (!rawLink) return showAlert('❅ Digite o link do grupo ou canal!', 'error');
 
     const link = rawLink.toLowerCase();
     const isValidWhatsapp = link.includes('chat.whatsapp.com/') || 
@@ -386,10 +386,10 @@ async function validateLink() {
                             link.includes('whatsapp.com/');
 
     if (!isValidWhatsapp) {
-        return showAlert('âŒ Link invÃ¡lido! Insira um link vÃ¡lido do WhatsApp ou Canal.', 'error');
+        return showAlert('❅ Link inválido! Insira um link válido do WhatsApp ou Canal.', 'error');
     }
 
-    btn.innerText = "â³ Validando...";
+    btn.innerText = "⏳ Validando...";
     btn.disabled = true;
 
     try {
@@ -400,13 +400,13 @@ async function validateLink() {
                 document.getElementById('topPreviewImg').src = meta.image;
                 window.scrapedImageUrl = meta.image;
             }
-            showAlert('âœ… Dados carregados com sucesso!', 'success');
+            showAlert('✅ Dados carregados com sucesso!', 'success');
         } else {
-            showAlert('âš ï¸ Preencha os dados do grupo manualmente.', 'info');
+            showAlert('⚠ ï¸ Preencha os dados do grupo manualmente.', 'info');
         }
     } catch (e) {
         console.warn("Erro ao validar metadados:", e);
-        showAlert('âš ï¸ Preencha os dados do grupo manualmente.', 'info');
+        showAlert('⚠ ï¸ Preencha os dados do grupo manualmente.', 'info');
     } finally {
         btn.innerText = "VALIDAR LINK";
         btn.disabled = false;
@@ -425,7 +425,7 @@ async function validateLink() {
 async function addGroup(e) {
     e.preventDefault();
     if (meusGrupos.length >= 8) {
-        return showAlert('âŒ VocÃª atingiu o limite de 8 grupos por pessoa!', 'error');
+        return showAlert('❅ Você atingiu o limite de 8 grupos por pessoa!', 'error');
     }
 
     const name = document.getElementById('groupName')?.value?.trim();
@@ -433,17 +433,17 @@ async function addGroup(e) {
     const desc = document.getElementById('groupDesc')?.value?.trim();
     const link = (document.getElementById('groupLinkInputSecondary')?.value || document.getElementById('groupLinkInput')?.value || '').trim();
 
-    if (!name) return showAlert('âŒ Preencha o nome do grupo ou canal!', 'error');
-    if (!cat) return showAlert('âŒ Escolha a categoria do seu grupo ou canal!', 'error');
-    if (!desc) return showAlert('âŒ Preencha a descriÃ§Ã£o do grupo!', 'error');
-    if (!link) return showAlert('âŒ O link Ã© obrigatÃ³rio!', 'error');
+    if (!name) return showAlert('❅ Preencha o nome do grupo ou canal!', 'error');
+    if (!cat) return showAlert('❅ Escolha a categoria do seu grupo ou canal!', 'error');
+    if (!desc) return showAlert('❅ Preencha a descrição do grupo!', 'error');
+    if (!link) return showAlert('❅ O link é obrigatório!', 'error');
 
     // FILTRO ANTI-SPAM / PALAVRAS PROIBIDAS
-    const blacklistWords = ['porn', 'cp', 'tigrinho', 'aposta', 'casino', 'bet', 'putaria', 'nude', 'onlyfans', '18+', 'ðŸ”ž'];
+    const blacklistWords = ['porn', 'cp', 'tigrinho', 'aposta', 'casino', 'bet', 'putaria', 'nude', 'onlyfans', '18+', '🔞'];
     const textToCheck = (name + " " + desc).toLowerCase();
     for (let word of blacklistWords) {
         if (textToCheck.includes(word)) {
-            return showAlert('âŒ Envio bloqueado: O conteÃºdo fere nossas diretrizes de seguranÃ§a.', 'error');
+            return showAlert('❅ Envio bloqueado: O conteúdo fere nossas diretrizes de segurança.', 'error');
         }
     }
 
@@ -452,14 +452,14 @@ async function addGroup(e) {
     if (!allChecked) {
         const warningEl = document.getElementById('rulesWarning');
         if (warningEl) warningEl.style.display = 'block';
-        return showAlert('âŒ Marque todas as 6 caixas de regras obrigatÃ³rias para continuar!', 'error');
+        return showAlert('❅ Marque todas as 6 caixas de regras obrigatórias para continuar!', 'error');
     }
     const warningEl = document.getElementById('rulesWarning');
     if (warningEl) warningEl.style.display = 'none';
     const selectedRules = Array.from(ruleBoxes).map(b => b.parentElement.querySelector('span')?.textContent?.trim()).filter(Boolean);
 
     const btn = document.getElementById('btnSubmitGroup');
-    btn.innerText = "â³ Publicando...";
+    btn.innerText = "⏳ Publicando...";
     btn.disabled = true;
 
     try {
@@ -471,21 +471,21 @@ async function addGroup(e) {
         ]);
 
         if ((s1 && !s1.empty) || (s2 && !s2.empty)) {
-            showAlert('âŒ Link jÃ¡ cadastrado na plataforma!', 'error');
-            btn.disabled = false; btn.innerText = "ðŸš€ Enviar Grupo/Canal";
+            showAlert('❅ Link já cadastrado na plataforma!', 'error');
+            btn.disabled = false; btn.innerText = "🚀 Enviar Grupo/Canal";
             return;
         }
 
         let img = window.scrapedImageUrl || "https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg";
         const file = document.getElementById('groupImage')?.files?.[0];
         if (file) {
-            btn.innerText = "â³ Enviando imagem...";
+            btn.innerText = "⏳ Enviando imagem...";
             const downloadUrl = await uploadImageToStorage(file);
             if (downloadUrl) img = downloadUrl;
         }
 
         const notify = document.getElementById('notifyEmail')?.checked;
-        const donoEmail = document.getElementById('userEmail')?.value?.trim() || "AnÃ´nimo";
+        const donoEmail = document.getElementById('userEmail')?.value?.trim() || "An´nimo";
 
         const data = {
             nome: name, link, categoria: cat, descricao: desc, imagem: img,
@@ -501,13 +501,13 @@ async function addGroup(e) {
         const ref = await addDoc(collection(db, "gruposPendentes"), data);
         meusGrupos.push(ref.id);
         localStorage.setItem('meusGrupos', JSON.stringify(meusGrupos));
-        showAlert('âœ… Grupo enviado com sucesso para a moderaÃ§Ã£o!', 'success');
+        showAlert('✅ Grupo enviado com sucesso para a moderação!', 'success');
         setTimeout(() => window.location.href = 'user-groups.html', 1500);
     } catch (err) {
         console.error("Erro no addGroup:", err);
-        const detail = err?.message || 'Erro no banco de dados ou conexÃ£o.';
-        showAlert(`âŒ Erro ao enviar: ${detail}`, 'error');
-        btn.disabled = false; btn.innerText = "ðŸš€ Enviar Grupo/Canal";
+        const detail = err?.message || 'Erro no banco de dados ou conex£o.';
+        showAlert(`❅ Erro ao enviar: ${detail}`, 'error');
+        btn.disabled = false; btn.innerText = "🚀 Enviar Grupo/Canal";
     }
 }
 
@@ -522,7 +522,7 @@ async function renderMyGroups() {
             list.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px 20px;background:white;border-radius:12px;border:2px dashed #ccc;">
                 <i class="fas fa-folder-open" style="font-size:3rem;color:#ccc;margin-bottom:15px;display:block;"></i>
                 <h3 style="color:#333;font-weight:800;margin-bottom:10px;">Nenhum grupo enviado</h3>
-                <p style="color:#666;font-size:0.95rem;margin-bottom:20px;">VocÃª ainda nÃ£o enviou nenhum grupo.</p>
+                <p style="color:#666;font-size:0.95rem;margin-bottom:20px;">Você ainda não enviou nenhum grupo.</p>
                 <a href="send-group.html" class="btn-join" style="display:inline-block;width:auto;padding:12px 25px;text-decoration:none;">Enviar Grupo Agora</a>
             </div>`;
             return;
@@ -553,10 +553,10 @@ async function renderMyGroups() {
                     <i class="fas fa-folder-open" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
                     <h3 style="color: #333; font-weight: 800; margin-bottom: 10px;">Nenhum grupo encontrado neste navegador</h3>
                     <p style="color: #666; font-size: 0.95rem; max-width: 500px; margin: 0 auto 20px auto;">
-                        Se vocÃª acabou de enviar um grupo, certifique-se de preencher todo o formulÃ¡rio. Grupos em anÃ¡lise aparecem aqui automaticamente com o status <strong>â³ EM ANÃLISE</strong>.
+                        Se vocú acabou de enviar um grupo, certifique-se de preencher todo o formulário. Grupos em análise aparecem aqui automaticamente com o status <strong>⏳ EM ANáLISE</strong>.
                     </p>
                     <a href="send-group.html" class="btn-join" style="display: inline-block; width: auto; padding: 12px 25px; text-decoration: none;">
-                        ðŸš€ Enviar Grupo Agora
+                        🚀 Enviar Grupo Agora
                     </a>
                 </div>`;
             return;
@@ -571,7 +571,7 @@ async function renderMyGroups() {
                     <label style="font-size:0.8rem; font-weight:800;">Nome</label>
                     <input type="text" id="editName_${g.id}" value="${g.nome}" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px;">
                     
-                    <label style="font-size:0.8rem; font-weight:800;">DescriÃ§Ã£o</label>
+                    <label style="font-size:0.8rem; font-weight:800;">Descriç£o</label>
                     <textarea id="editDesc_${g.id}" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px; resize:vertical;">${g.descricao}</textarea>
                     
                     <label style="font-size:0.8rem; font-weight:800;">Link do Grupo</label>
@@ -589,10 +589,10 @@ async function renderMyGroups() {
             const detailsUrl = `group-details.html?${g.slug ? 'g=' + g.slug : 'id=' + g.id}`;
             const isVip = g.vip && (g.vipExpires > Date.now());
             const statusBadge = g.status === 'pendente' || !g.status
-                ? '<span style="color:#856404; background:#fff3cd; border:1px solid #ffeeba; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:800;">â³ EM ANÃLISE</span>'
+                ? '<span style="color:#856404; background:#fff3cd; border:1px solid #ffeeba; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:800;">⏳ EM ANáLISE</span>'
                 : g.status === 'reprovado' 
-                ? '<span style="color:#721c24; background:#f8d7da; border:1px solid #f5c6cb; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:800;">âŒ REPROVADO</span>'
-                : '<span style="color:#155724; background:#d4edda; border:1px solid #c3e6cb; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:800;">âœ… ATIVO</span>';
+                ? '<span style="color:#721c24; background:#f8d7da; border:1px solid #f5c6cb; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:800;">❅ REPROVADO</span>'
+                : '<span style="color:#155724; background:#d4edda; border:1px solid #c3e6cb; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:800;">✅ ATIVO</span>';
 
             return `<article class="group-card ${isVip ? 'vip' : ''}" style="margin-bottom:15px;">
                 <div class="group-image-wrapper" style="cursor:default;">
@@ -611,7 +611,7 @@ async function renderMyGroups() {
                         <div style="background:#fff5f5;border:1px solid #ffcccc;border-radius:6px;padding:10px;margin-bottom:10px;font-size:0.85rem;">
                             <span style="color:#dc3545;font-weight:700;">Motivo:</span>
                             <span style="color:#666;">${g.motivoRecusa || "Nenhum motivo especificado"}</span>
-                            ${!g.recursoEnviado ? `<br><button onclick="window.enviarRecurso('${g.id}')" style="margin-top:8px;padding:6px 14px;background:#007bff;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;font-weight:700;">Recorrer</button>` : `<br><span style="margin-top:6px;display:inline-block;font-size:0.8rem;color:#28a745;font-weight:700;">âœ“ Recurso enviado</span>`}
+                            ${!g.recursoEnviado ? `<br><button onclick="window.enviarRecurso('${g.id}')" style="margin-top:8px;padding:6px 14px;background:#007bff;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;font-weight:700;">Recorrer</button>` : `<br><span style="margin-top:6px;display:inline-block;font-size:0.8rem;color:#28a745;font-weight:700;">✓ Recurso enviado</span>`}
                         </div>
                     ` : ''}
                     <button class="btn-join" onclick="window.location.href='${detailsUrl}'" style="text-transform:none;font-size:1rem;padding:12px;">Entrar / Ver Detalhes</button>
@@ -621,9 +621,9 @@ async function renderMyGroups() {
                     </div>
                     ${(g.status === 'aprovado' || !g.status) && !isVip ? `
                         <div style="display:flex; gap:8px; margin-top:8px;">
-                            <button onclick="window.freeBoost('${g.id}')" style="flex:1; padding:10px; background:#ffc107; color:black; border:none; cursor:pointer; font-weight:800; font-size:0.75rem; text-transform:uppercase;"><i class="fas fa-bolt"></i> Impulso GrÃ¡tis (2h)</button>
+                            <button onclick="window.freeBoost('${g.id}')" style="flex:1; padding:10px; background:#ffc107; color:black; border:none; cursor:pointer; font-weight:800; font-size:0.75rem; text-transform:uppercase;"><i class="fas fa-bolt"></i> Impulso Grátis (2h)</button>
                         </div>
-                        <button onclick="window.openBoostModalForGroup('${g.id}')" style="width:100%; padding:12px; margin-top:8px; background:#000; color:white; border:none; cursor:pointer; font-weight:800; font-size:0.85rem; text-transform:uppercase;">ðŸš€ Impulsionar VIP</button>
+                        <button onclick="window.openBoostModalForGroup('${g.id}')" style="width:100%; padding:12px; margin-top:8px; background:#000; color:white; border:none; cursor:pointer; font-weight:800; font-size:0.85rem; text-transform:uppercase;">🚀 Impulsionar VIP</button>
                     ` : ''}
                 </div>
             </article>`;
@@ -638,7 +638,7 @@ window.loginAdmin = async (e) => {
     e.preventDefault();
     const btn = e.target.querySelector('button');
     const originalText = btn.innerText;
-    btn.innerText = "â³ Verificando...";
+    btn.innerText = "⏳ Verificando...";
     btn.disabled = true;
 
     const enteredPass = document.getElementById('adminPassword').value.trim();
@@ -669,7 +669,7 @@ window.loginAdmin = async (e) => {
                 showAlert('Bem-vindo, Admin!', 'success');
             } catch (authErr) {
                 console.error("Erro Auth Firebase:", authErr);
-                showAlert('Erro de autenticaÃ§Ã£o no Firebase.', 'error');
+                showAlert('Erro de autenticação no Firebase.', 'error');
             }
         } else {
             console.warn("Senha administrativa incorreta.");
@@ -677,7 +677,7 @@ window.loginAdmin = async (e) => {
         }
     } catch (err) {
         console.error("Erro ao verificar senha no Firestore:", err);
-        showAlert('Erro de conexÃ£o com o banco de dados.', 'error');
+        showAlert('Erro de conex£o com o banco de dados.', 'error');
     } finally {
         btn.innerText = originalText;
         btn.disabled = false;
@@ -695,7 +695,7 @@ window.loadPending = async () => {
             return `<div style="border:1px solid #ddd; padding:10px; margin-bottom:10px; display:flex; gap:10px; align-items:center;">
                 <img src="${g.imagem}" style="width:50px;" onerror="this.src='logo.svg'; this.onerror=null;">
                 <div style="flex:1;"><b>${g.nome}</b><br>${g.categoria}</div>
-                <button onclick="window.approveGroup('${d.id}')">âœ…</button>
+                <button onclick="window.approveGroup('${d.id}')">✅</button>
                 <button onclick="window.showRejectModal('${d.id}')" style="padding:6px 10px;background:#dc3545;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;font-weight:600;">Reprovar</button>
             </div>`;
         }).join('');
@@ -712,10 +712,10 @@ window.approveGroup = async (id) => {
             data.dataAprovacao = Date.now();
             await setDoc(doc(db, "grupos", id), data);
             await deleteDoc(ref);
-            showAlert('âœ… Aprovado!', 'success');
+            showAlert('✅ Aprovado!', 'success');
             loadPending(); loadGroups(); clearGroupsCache();
 
-            if (data.notifyEmail && data.notifyEmail !== "AnÃ´nimo" && typeof emailjs !== 'undefined') {
+            if (data.notifyEmail && data.notifyEmail !== "An´nimo" && typeof emailjs !== 'undefined') {
                 try {
                     emailjs.send(CONFIG.emailjs.serviceId, CONFIG.emailjs.templateRecibo, {
                         to_email: data.notifyEmail,
@@ -800,17 +800,17 @@ async function payWithPix() {
     const email = emailInput?.value.trim() || 'cliente@gruposwhats.app';
 
     if (emailInput && !emailInput.value.includes('@')) {
-        return showAlert('Insira um e-mail vÃ¡lido!', 'error');
+        return showAlert('Insira um e-mail válido!', 'error');
     }
 
     const btn = document.querySelector('#boostModal .btn-join');
     const originalBtnText = btn.innerText;
-    btn.innerText = "â³ Gerando PIX...";
+    btn.innerText = "⏳ Gerando PIX...";
     btn.disabled = true;
 
     try {
         await loadGlobalConfigs();
-        console.log("--- INICIANDO GERAÃ‡ÃƒO DE PIX (BOOST) ---");
+        console.log("--- INICIANDO GERAÇÃO DE PIX (BOOST) ---");
 
         const amountInCents = Math.round(selectedPackagePrice * 100);
 
@@ -845,7 +845,7 @@ async function payWithPix() {
         }
 
         if (!response) {
-            throw new Error(lastError?.message || "Erro de conexÃ£o com o sistema de pagamento.");
+            throw new Error(lastError?.message || "Erro de conex£o com o sistema de pagamento.");
         }
 
         const responseText = await response.text();
@@ -853,7 +853,7 @@ async function payWithPix() {
         try {
             d = JSON.parse(responseText);
         } catch (parseErr) {
-            throw new Error(`Resposta invÃ¡lida da API.`);
+            throw new Error(`Resposta inválida da API.`);
         }
 
         if (d && d.pix_code) {
@@ -862,8 +862,8 @@ async function payWithPix() {
                 <div style="text-align:center; padding: 10px;">
                     <div style="margin-bottom: 20px;">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_Pix.png" style="width: 80px; margin-bottom: 10px;">
-                        <h3 style="margin-bottom: 5px; font-weight: 800; color: #1a252f;">Pagamento Seguro ðŸ’ </h3>
-                        <p style="font-size: 0.8rem; color: #666;">Seu grupo serÃ¡ impulsionado automaticamente apÃ³s o pagamento.</p>
+                        <h3 style="margin-bottom: 5px; font-weight: 800; color: #1a252f;">Pagamento Seguro 💠</h3>
+                        <p style="font-size: 0.8rem; color: #666;">Seu grupo será impulsionado automaticamente após o pagamento.</p>
                     </div>
 
                     <div style="background: #f8f9fa; border-radius: 15px; padding: 20px; border: 1px solid #eee; margin-bottom: 20px; position: relative;">
@@ -874,14 +874,14 @@ async function payWithPix() {
                     </div>
 
                     <div style="text-align: left; margin-bottom: 20px;">
-                        <label style="font-size: 0.75rem; font-weight: 700; color: #888; text-transform: uppercase;">CÃ³digo Copia e Cola:</label>
-                        <div style="display: flex; gap: 5px; margin-top: 5px; cursor: pointer;" onclick="navigator.clipboard.writeText('${d.pix_code}'); window.showAlert('CÃ³digo PIX copiado!', 'success');">
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #888; text-transform: uppercase;">Código Copia e Cola:</label>
+                        <div style="display: flex; gap: 5px; margin-top: 5px; cursor: pointer;" onclick="navigator.clipboard.writeText('${d.pix_code}'); window.showAlert('Código PIX copiado!', 'success');">
                             <textarea readonly onclick="this.select();" style="flex:1; height:50px; border-radius: 8px; padding: 10px; border: 1px solid #ddd; resize: none; font-family: monospace; font-size: 0.8rem; background: #fff; cursor: pointer;">${d.pix_code}</textarea>
                             <button style="background: #343a40; color: white; border: none; padding: 0 15px; border-radius: 8px; cursor: pointer;"><i class="fas fa-copy"></i></button>
                         </div>
                     </div>
 
-                    <button class="btn-join" onclick="navigator.clipboard.writeText('${d.pix_code}'); window.showAlert('CÃ³digo PIX copiado!', 'success');" style="width: 100%; background: #28a745; border-radius: 8px; padding: 16px; font-weight: 800; font-size: 1rem; border: none; color: white; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);">COPIAR CÃ“DIGO PIX</button>
+                    <button class="btn-join" onclick="navigator.clipboard.writeText('${d.pix_code}'); window.showAlert('Código PIX copiado!', 'success');" style="width: 100%; background: #28a745; border-radius: 8px; padding: 16px; font-weight: 800; font-size: 1rem; border: none; color: white; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);">COPIAR C"DIGO PIX</button>
                     
                     <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px; opacity: 0.6;">
                         <div style="font-size: 0.7rem;"><i class="fas fa-shield-alt"></i> Site Seguro</div>
@@ -890,11 +890,11 @@ async function payWithPix() {
                 </div>`;
             startPolling(d.id, currentBoostGroupId, selectedPackageHours);
         } else {
-            throw new Error(d.message || "Token invÃ¡lido.");
+            throw new Error(d.message || "Token inválido.");
         }
     } catch (e) {
         console.error("ERRO FATAL NO PIX:", e);
-        showAlert(`Erro tÃ©cnico: ${e.message}`, 'error');
+        showAlert(`Erro técnico: ${e.message}`, 'error');
         btn.disabled = false;
         btn.innerText = originalBtnText;
     }
@@ -983,7 +983,7 @@ async function compressImageToBlob(f) {
     });
 }
 
-// Faz upload da imagem no ImgBB e retorna a URL pÃºblica permanente
+// Faz upload da imagem no ImgBB e retorna a URL pública permanente
 async function uploadImageToStorage(file) {
     try {
         // Comprime para WebP antes do upload
@@ -1002,7 +1002,7 @@ async function uploadImageToStorage(file) {
         const formData = new FormData();
         formData.append('key', IMGBB_API_KEY);
         formData.append('image', base64);
-        formData.append('expiration', ''); // Sem expiraÃ§Ã£o = imagem permanente
+        formData.append('expiration', ''); // Sem expiração = imagem permanente
 
         const response = await fetch('https://api.imgbb.com/1/upload', {
             method: 'POST',
@@ -1012,7 +1012,7 @@ async function uploadImageToStorage(file) {
         const result = await response.json();
 
         if (result.success) {
-            return result.data.url; // URL pÃºblica permanente da imagem
+            return result.data.url; // URL pública permanente da imagem
         } else {
             console.error("ImgBB erro:", result);
             return null;
@@ -1074,14 +1074,14 @@ window.toggleCouponInput = () => {
 
 window.useCouponCode = async () => {
     const code = document.getElementById('couponCodeInput')?.value.trim();
-    if (!code) return showAlert('Digite o cÃ³digo VIP!', 'error');
+    if (!code) return showAlert('Digite o código VIP!', 'error');
     if (!currentBoostGroupId) return showAlert('Nenhum grupo selecionado!', 'error');
 
     try {
         const q = query(collection(db, "cupons"), where("codigo", "==", code), where("usado", "==", false));
         const snap = await getDocs(q);
         if (snap.empty) {
-            return showAlert('CÃ³digo invÃ¡lido ou jÃ¡ utilizado.', 'error');
+            return showAlert('Código inválido ou já utilizado.', 'error');
         }
 
         const cupom = snap.docs[0];
@@ -1094,13 +1094,13 @@ window.useCouponCode = async () => {
 
         await updateDoc(cupom.ref, { usado: true, usadoEm: Date.now(), grupoId: currentBoostGroupId });
 
-        showAlert('VIP ATIVADO COM SUCESSO! ðŸš€', 'success');
+        showAlert('VIP ATIVADO COM SUCESSO! 🚀', 'success');
         window.closeBoostModal();
         loadGroups(); // Refresh UI
         if (typeof renderMyGroups === 'function') renderMyGroups();
     } catch (e) {
         console.error(e);
-        showAlert('Erro ao ativar cÃ³digo.', 'error');
+        showAlert('Erro ao ativar código.', 'error');
     }
 };
 window.toggleSidebar = () => {
@@ -1170,10 +1170,10 @@ window.loadReprovados = async () => {
             const dataRep = g.dataReprovacao ? new Date(g.dataReprovacao).toLocaleString("pt-BR") : "Data desconhecida";
             const img = g.imagem
                 ? '<img src="' + g.imagem + '" style="width:45px;height:45px;border-radius:6px;object-fit:cover;">'
-                : '<div style="width:45px;height:45px;border-radius:6px;background:#ffe0e0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">ðŸ“¨</div>';
+                : '<div style="width:45px;height:45px;border-radius:6px;background:#ffe0e0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">📨</div>';
             return '<div style="border:1px solid #ffcccc;background:#fff5f5;border-radius:8px;padding:12px;display:flex;align-items:center;gap:12px;">'
                 + img
-                + '<div style="flex:1;min-width:0;"><b style="font-size:0.9rem;">' + g.nome + '</b><div style="font-size:0.75rem;color:#666;margin-top:2px;">' + (g.categoria || "Sem categoria") + ' Â· Motivo: ' + motivo + '</div><div style="font-size:0.7rem;color:#999;">Reprovado em: ' + dataRep + '</div></div>'
+                + '<div style="flex:1;min-width:0;"><b style="font-size:0.9rem;">' + g.nome + '</b><div style="font-size:0.75rem;color:#666;margin-top:2px;">' + (g.categoria || "Sem categoria") + ' · Motivo: ' + motivo + '</div><div style="font-size:0.7rem;color:#999;">Reprovado em: ' + dataRep + '</div></div>'
                 + '<button onclick=\'window.reaprovarGrupo("' + d.id + '")\' style="padding:8px 14px;background:#28a745;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;font-weight:700;white-space:nowrap;">Re-aprovar</button>'
                 + '</div>';
         }).join('');
@@ -1201,7 +1201,7 @@ window.loadRecursos = async () => {
             const dataRecurso = g.dataRecurso ? new Date(g.dataRecurso).toLocaleString('pt-BR') : 'Data desconhecida';
             return `<div style="background:#fff;border:1px solid #ffc107;border-radius:8px;padding:15px;">
                 <div style="display:flex;gap:12px;align-items:flex-start;">
-                    ${g.imagem ? `<img src="${g.imagem}" style="width:50px;height:50px;border-radius:6px;object-fit:cover;">` : `<div style="width:50px;height:50px;border-radius:6px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">ðŸ“¸</div>`}
+                    ${g.imagem ? `<img src="${g.imagem}" style="width:50px;height:50px;border-radius:6px;object-fit:cover;">` : `<div style="width:50px;height:50px;border-radius:6px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">📸</div>`}
                     <div style="flex:1;">
                         <b style="font-size:0.95rem;">${g.nome || 'Sem nome'}</b>
                         <div style="font-size:0.8rem;color:#666;margin-top:4px;">
@@ -1288,7 +1288,7 @@ window.likeGroup = async (id, e) => {
     try {
         await updateDoc(doc(db, "grupos", id), { likes: increment(1) });
         const c = document.getElementById(`countLike_${id}`); if (c) c.innerText = parseInt(c.innerText) + 1;
-        showAlert('â¤ï¸ Valeu!', 'success');
+        showAlert('❤️ Valeu!', 'success');
     } catch (err) { }
 };
 window.deleteMyGroup = async (id) => {
@@ -1328,7 +1328,7 @@ window.payStorePix = (id) => {
     else if (id === 'ouro') price = "R$ 371,25";
     else if (id === 'diamante') price = "R$ 643,50";
 
-    const msg = encodeURIComponent(`OlÃ¡, quero comprar um plano no valor de ${price}`);
+    const msg = encodeURIComponent(`Olá, quero comprar um plano no valor de ${price}`);
     const phone = "5511947285405";
     window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
 };
@@ -1341,7 +1341,7 @@ window.giveVipById = async () => {
     try {
         const docRef = doc(db, "grupos", id);
         const snap = await getDoc(docRef);
-        if (!snap.exists()) return showAlert('Grupo nÃ£o encontrado!', 'error');
+        if (!snap.exists()) return showAlert('Grupo não encontrado!', 'error');
 
         await updateDoc(docRef, {
             vip: true,
@@ -1349,7 +1349,7 @@ window.giveVipById = async () => {
         });
         clearGroupsCache();
         loadGroups();
-        showAlert(`âœ… VIP de ${days} dias ativado para ${snap.data().nome}!`, 'success');
+        showAlert(`✅ VIP de ${days} dias ativado para ${snap.data().nome}!`, 'success');
         document.getElementById('adminVipGroupId').value = '';
     } catch (e) {
         console.error(e);
@@ -1369,16 +1369,16 @@ window.saveMyGroupEdit = async (id) => {
     try {
         await updateDoc(doc(db, "grupos", id), { nome: n, descricao: d, link: l, imagem: img });
         window.toggleEditMode(id, false);
-        showAlert('âœ… Grupo atualizado!', 'success');
+        showAlert('✅ Grupo atualizado!', 'success');
         renderMyGroups();
     } catch (e) {
         try {
             await updateDoc(doc(db, "gruposPendentes", id), { nome: n, descricao: d, link: l, imagem: img });
             window.toggleEditMode(id, false);
-            showAlert('âœ… Grupo atualizado!', 'success');
+            showAlert('✅ Grupo atualizado!', 'success');
             renderMyGroups();
         } catch (e2) {
-            showAlert('âŒ Erro ao salvar.', 'error');
+            showAlert('❅ Erro ao salvar.', 'error');
         }
     }
 };
@@ -1406,10 +1406,10 @@ window.freeBoost = async (id) => {
             const data = s.data();
             const now = Date.now();
             if (data.freeBoostUntil && data.freeBoostUntil > now) {
-                return showAlert('Impulso jÃ¡ estÃ¡ ativo! Aguarde.', 'error');
+                return showAlert('Impulso já está ativo! Aguarde.', 'error');
             }
             await updateDoc(docRef, { freeBoostUntil: now + (2 * 3600000), lastBoostAt: now });
-            showAlert('Grupo Impulsionado GrÃ¡tis! ðŸš€', 'success');
+            showAlert('Grupo Impulsionado Grátis! 🚀', 'success');
             loadGroups();
         }
     } catch (e) {
@@ -1474,7 +1474,7 @@ window.loadAdminStats = async () => {
             const pct = Math.round(c / reprovData.total * 100);
             return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:0.85rem;"><span>' + m + '</span><span style="font-weight:800;color:#dc3545;">' + c + ' (' + pct + '%)</span></div>';
         }).join('');
-        reprovMotivosHTML = '<div style="background:#fff5f5;border:1px solid #ffcccc;border-radius:8px;padding:15px;grid-column:1/-1;"><h4 style="margin:0 0 10px 0;font-size:0.9rem;color:#dc3545;">Motivos de ReprovaÃ§Ã£o</h4>' + items + '</div>';
+        reprovMotivosHTML = '<div style="background:#fff5f5;border:1px solid #ffcccc;border-radius:8px;padding:15px;grid-column:1/-1;"><h4 style="margin:0 0 10px 0;font-size:0.9rem;color:#dc3545;">Motivos de Reprovação</h4>' + items + '</div>';
     }
 
     document.getElementById('adminStatsContent').innerHTML = `
@@ -1496,7 +1496,7 @@ window.loadAdminStats = async () => {
         <div style="background:#fff; border:1px solid #ddd; padding:20px; border-radius:8px; text-align:center;">
             <i class="fas fa-chart-line" style="font-size:2rem; color:#17a2b8; margin-bottom:10px;"></i>
             <h3 style="margin:0; font-size:1.8rem;">${visitasTotal}</h3>
-            <p style="margin:0; font-size:0.85rem; color:#666; font-weight:800;">VISITAS HISTÃ“RICO</p>
+            <p style="margin:0; font-size:0.85rem; color:#666; font-weight:800;">VISITAS HIST"RICO</p>
         </div>
         <div style="background:#fff; border:1px solid #ddd; padding:20px; border-radius:8px; text-align:center;">
             <i class="fas fa-exclamation-triangle" style="font-size:2rem; color:#dc3545; margin-bottom:10px;"></i>
@@ -1508,7 +1508,7 @@ window.loadAdminStats = async () => {
             ${horaHTML}
         </div>
         <div style="grid-column: 1 / -1; background:#fff; border:1px solid #ddd; padding:20px; border-radius:8px; text-align:left;">
-            <h4 style="margin-top:0; font-weight:900; color:#333;"><i class="fas fa-list"></i> Ãšltimos Reportes</h4>
+            <h4 style="margin-top:0; font-weight:900; color:#333;"><i class="fas fa-list"></i> últimos Reportes</h4>
             ${logHTML}
         </div>
         ${reprovMotivosHTML}
@@ -1550,7 +1550,7 @@ window.adminSaveGroupEdit = async (id) => {
     try {
         await updateDoc(doc(db, "grupos", id), { nome: n, link: l });
         window.adminToggleEdit(id, false);
-        showAlert('âœ… Atualizado!', 'success');
+        showAlert('✅ Atualizado!', 'success');
         loadGroups(); clearGroupsCache();
         setTimeout(window.adminSearchGroups, 500);
     } catch (e) { showAlert('Erro ao atualizar', 'error'); }
@@ -1559,7 +1559,7 @@ window.adminSaveGroupEdit = async (id) => {
 window.deleteAnyGroup = async (id) => {
     if (confirm('Tem certeza que deseja excluir permanentemente este grupo?')) {
         await deleteDoc(doc(db, "grupos", id));
-        showAlert('ExcluÃ­do!', 'success');
+        showAlert('Excluído!', 'success');
         loadGroups(); clearGroupsCache();
         setTimeout(window.adminSearchGroups, 500);
     }
@@ -1606,13 +1606,13 @@ window.saveGlobalConfig = async () => {
             supportPhone: supportPhone
         };
 
-        // SÃ³ atualiza a senha se o campo nÃ£o estiver vazio
+        // Só atualiza a senha se o campo não estiver vazio
         if (newAdminPass.trim() !== "") {
             data.adminPassword = newAdminPass.trim();
         }
 
         await setDoc(doc(db, "configuracoes", "global"), data, { merge: true });
-        showAlert('ConfiguraÃ§Ãµes Salvas com Sucesso!', 'success');
+        showAlert('Configuraçães Salvas com Sucesso!', 'success');
         if (token) PROMISSE_TOKEN = token;
         if (newAdminPass.trim() !== "") {
             document.getElementById('cfgAdminPassword').value = '';
@@ -1628,7 +1628,7 @@ window.banUser = async () => {
     if (!uid) return showAlert('Insira o Email ou ID', 'error');
     try {
         await setDoc(doc(db, "blacklist", uid.replace(/\./g, '_')), { banned: true, timestamp: Date.now() });
-        showAlert('UsuÃ¡rio Banido!', 'success');
+        showAlert('Usuário Banido!', 'success');
         document.getElementById('adminBanUid').value = '';
     } catch (e) {
         showAlert('Erro ao banir.', 'error');
@@ -1650,11 +1650,11 @@ window.exportToCSV = () => {
 };
 
 window.clearRejectedGroups = async () => {
-    if (!confirm("AtenÃ§Ã£o: Isso vai excluir PERMANENTEMENTE todos os grupos que estÃ£o com status 'reprovado'. Continuar?")) return;
+    if (!confirm("Atenção: Isso vai excluir PERMANENTEMENTE todos os grupos que estão com status 'reprovado'. Continuar?")) return;
     try {
         const q = query(collection(db, "gruposPendentes"), where("status", "==", "reprovado"));
         const snap = await getDocs(q);
-        if (snap.empty) return showAlert('A lixeira jÃ¡ estÃ¡ vazia!', 'success');
+        if (snap.empty) return showAlert('A lixeira já está vazia!', 'success');
 
         showAlert(`Excluindo ${snap.size} grupos... Aguarde.`, 'success');
         const { deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
@@ -1699,24 +1699,24 @@ window.generateManualCodes = async () => {
 
     if (!output) return;
 
-    // Verificar se estÃ¡ autenticado
+    // Verificar se está autenticado
     if (!auth.currentUser) {
-        console.error("Tentativa de gerar cÃ³digos sem autenticaÃ§Ã£o.");
-        showAlert('âŒ Erro: VocÃª precisa estar logado no painel!', 'error');
+        console.error("Tentativa de gerar códigos sem autenticação.");
+        showAlert('❅ Erro: Você precisa estar logado no painel!', 'error');
         output.style.display = 'block';
-        output.innerText = 'âŒ Erro: AutenticaÃ§Ã£o nÃ£o encontrada. Tente sair e entrar no painel novamente.\n\nSe o erro persistir, ative o "Anonymous Auth" no Firebase.';
+        output.innerText = '❅ Erro: Autenticação não encontrada. Tente sair e entrar no painel novamente.\n\nSe o erro persistir, ative o "Anonymous Auth" no Firebase.';
         return;
     }
 
-    console.log(`Iniciando geraÃ§Ã£o de ${qty} cÃ³digos para pacote: ${pack}`);
+    console.log(`Iniciando geraç£o de ${qty} códigos para pacote: ${pack}`);
     output.style.display = 'block';
-    output.innerText = 'â³ Gerando cÃ³digos no banco de dados...';
+    output.innerText = '⏳ Gerando códigos no banco de dados...';
 
     const codes = [];
     try {
         for (let i = 0; i < qty; i++) {
             const code = 'VIP-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-            console.log(`Gerando cÃ³digo ${i + 1}/${qty}: ${code}`);
+            console.log(`Gerando código ${i + 1}/${qty}: ${code}`);
             await setDoc(doc(db, "codigos", code), {
                 pacote: pack,
                 criadoEm: Date.now(),
@@ -1727,24 +1727,24 @@ window.generateManualCodes = async () => {
             codes.push(code);
         }
 
-        const finalOutput = `âœ… CÃ³digos Gerados (${qty}x ${pack}):\n\n` + codes.join('\n');
+        const finalOutput = `✅ Códigos Gerados (${qty}x ${pack}):\n\n` + codes.join('\n');
         output.innerText = finalOutput;
-        console.log("GeraÃ§Ã£o concluÃ­da com sucesso!");
+        console.log("Geraç£o concluída com sucesso!");
 
         try {
             await navigator.clipboard.writeText(codes.join('\n'));
-            showAlert('âœ… CÃ³digos gerados e copiados!', 'success');
+            showAlert('✅ Códigos gerados e copiados!', 'success');
         } catch (err) {
             console.warn("Falha ao copiar para o clipboard:", err);
-            showAlert('âœ… Gerados! Copie da caixa preta.', 'success');
+            showAlert('✅ Gerados! Copie da caixa preta.', 'success');
         }
     } catch (e) {
-        console.error("Erro fatal na geraÃ§Ã£o de cÃ³digos:", e);
+        console.error("Erro fatal na geraç£o de códigos:", e);
         const errorMsg = e.message || 'Erro desconhecido';
-        output.innerText = `âŒ Erro do Firebase: ${errorMsg}\n\nVerifique se o "Anonymous Auth" estÃ¡ ativado no console do Firebase e se as regras do Firestore permitem escrita em /codigos.`;
-        showAlert('Erro na gravaÃ§Ã£o do banco.', 'error');
+        output.innerText = `❅ Erro do Firebase: ${errorMsg}\n\nVerifique se o "Anonymous Auth" está ativado no console do Firebase e se as regras do Firestore permitem escrita em /codigos.`;
+        showAlert('Erro na gravação do banco.', 'error');
     }
 };
 
-// 10. EXPORTS PARA OUTRAS PÃGINAS (EX: group-details.html)
+// 10. EXPORTS PARA OUTRAS PáGINAS (EX: group-details.html)
 export { db, doc, getDoc, updateDoc, increment, collection, query, where, getDocs, setDoc, limit };

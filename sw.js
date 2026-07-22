@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'gruposwhats-v3';
+const CACHE_NAME = 'gruposwhats-v3';
 const BASE = '/GRUPOWHATSS/';
 const urlsToCache = [
   BASE,
@@ -31,15 +31,15 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Ignora requisiÃ§Ãµes para Firebase e APIs externas para nÃ£o quebrar o cache
+  // Ignora requisições para Firebase e APIs externas para não quebrar o cache
   if (event.request.url.includes('googleapis.com') || event.request.url.includes('ipapi.co') || event.request.url.includes('promisse.com.br')) {
     return;
   }
   
-  // EstratÃ©gia Network First (Tenta pegar da rede, se falhar pega do cache)
+  // Estratégia Network First (Tenta pegar da rede, se falhar pega do cache)
   event.respondWith(
     fetch(event.request).then(response => {
-      // Se a resposta for vÃ¡lida, atualiza o cache e retorna
+      // Se a resposta for válida, atualiza o cache e retorna
       if (response && response.status === 200 && response.type === 'basic') {
         const responseToCache = response.clone();
         caches.open(CACHE_NAME).then(cache => {

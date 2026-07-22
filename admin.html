@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -220,7 +220,7 @@
                 <input type="password" id="loginPassword" placeholder="Senha de acesso" autocomplete="current-password">
                 <button type="submit" id="loginBtn">ENTRAR NO PAINEL</button>
             </form>
-            <a href="index.html" style="display:inline-block;margin-top:20px;color:#8b949e;font-size:.8rem;text-decoration:none">â† Voltar ao site</a>
+            <a href="index.html" style="display:inline-block;margin-top:20px;color:#8b949e;font-size:.8rem;text-decoration:none">← Voltar ao site</a>
         </div>
     </div>
 
@@ -235,12 +235,12 @@
             <nav class="sidebar-nav">
                 <a href="#" data-page="dashboard" class="active"><i class="fas fa-chart-pie"></i> Dashboard</a>
                 <a href="#" data-page="groups"><i class="fas fa-layer-group"></i> Grupos</a>
-                <a href="#" data-page="moderation"><i class="fas fa-shield-alt"></i> ModeraÃ§Ã£o <span id="pendingCount" style="margin-left:auto;background:#f85149;color:#fff;padding:2px 8px;border-radius:10px;font-size:.7rem;display:none">0</span></a>
+                <a href="#" data-page="moderation"><i class="fas fa-shield-alt"></i> Moderação <span id="pendingCount" style="margin-left:auto;background:#f85149;color:#fff;padding:2px 8px;border-radius:10px;font-size:.7rem;display:none">0</span></a>
                 <a href="#" data-page="vips"><i class="fas fa-star"></i> VIPs</a>
                 <a href="#" data-page="sales"><i class="fas fa-receipt"></i> Vendas & Cupons</a>
                 <div class="sidebar-divider"></div>
                 <a href="#" data-page="analytics"><i class="fas fa-chart-bar"></i> Analytics</a>
-                <a href="#" data-page="settings"><i class="fas fa-cog"></i> ConfiguraÃ§Ãµes</a>
+                <a href="#" data-page="settings"><i class="fas fa-cog"></i> Configurações</a>
                 <a href="#" data-page="tools"><i class="fas fa-wrench"></i> Ferramentas</a>
             </nav>
             <div class="sidebar-footer">
@@ -271,7 +271,7 @@
                         <div class="card-body" id="recentActivity" style="max-height:350px;overflow-y:auto"></div>
                     </div>
                     <div class="card">
-                        <div class="card-header"><h3><i class="fas fa-layer-group"></i> Ãšltimos Grupos</h3></div>
+                        <div class="card-header"><h3><i class="fas fa-layer-group"></i> Últimos Grupos</h3></div>
                         <div class="card-body" id="recentGroups" style="max-height:350px;overflow-y:auto"></div>
                     </div>
                 </div>
@@ -307,7 +307,7 @@
                                     <th>VIP</th>
                                     <th>Visitas</th>
                                     <th>Curtidas</th>
-                                    <th>AÃ§Ãµes</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="groupsTableBody"></tbody>
@@ -333,7 +333,7 @@
                 </div>
                 <div class="card">
                     <div class="card-header">
-                        <h3><i class="fas fa-clock" style="color:#f0c000"></i> Grupos Pendentes de AprovaÃ§Ã£o</h3>
+                        <h3><i class="fas fa-clock" style="color:#f0c000"></i> Grupos Pendentes de Aprovação</h3>
                         <span class="badge badge-warning" id="moderationBadge">0 pendentes</span>
                     </div>
                     <div class="card-body" id="pendingList"></div>
@@ -374,12 +374,12 @@
             <!-- PAGE: SALES -->
             <div class="page" id="page-sales">
                 <div class="tab-row">
-                    <button class="tab-btn active" onclick="switchSalesTab('history')">HistÃ³rico de Vendas</button>
+                    <button class="tab-btn active" onclick="switchSalesTab('history')">Histórico de Vendas</button>
                     <button class="tab-btn" onclick="switchSalesTab('codes')">Gerador de Cupons</button>
                 </div>
                 <div id="salesTab-history">
                     <div class="card">
-                        <div class="card-header"><h3><i class="fas fa-receipt"></i> Ãšltimas TransaÃ§Ãµes</h3></div>
+                        <div class="card-header"><h3><i class="fas fa-receipt"></i> Últimas Transações</h3></div>
                         <div class="card-body" id="salesList"></div>
                     </div>
                 </div>
@@ -395,7 +395,7 @@
                                 <div class="form-group">
                                     <label>Tipo</label>
                                     <select class="form-input" id="genType">
-                                        <option value="single">VIP Ãšnico (12h)</option>
+                                        <option value="single">VIP Único (12h)</option>
                                         <option value="pack_bronze">Pack Bronze (10)</option>
                                         <option value="pack_prata">Pack Prata (25)</option>
                                         <option value="pack_ouro">Pack Ouro (50)</option>
@@ -417,7 +417,7 @@
                     <div class="card-body" id="analyticsChart"></div>
                 </div>
                 <div class="card" style="margin-top:20px">
-                    <div class="card-header"><h3><i class="fas fa-flag"></i> Ãšltimos Reportes</h3></div>
+                    <div class="card-header"><h3><i class="fas fa-flag"></i> Últimos Reportes</h3></div>
                     <div class="card-body" id="reportsList"></div>
                 </div>
             </div>
@@ -425,11 +425,11 @@
             <!-- PAGE: SETTINGS -->
             <div class="page" id="page-settings">
                 <div class="card">
-                    <div class="card-header"><h3><i class="fas fa-cog"></i> ConfiguraÃ§Ãµes Gerais</h3></div>
+                    <div class="card-header"><h3><i class="fas fa-cog"></i> Configurações Gerais</h3></div>
                     <div class="card-body">
                         <div class="form-group">
                             <label>Aviso na Home</label>
-                            <textarea class="form-input" id="cfgHomeNotice" placeholder="Ex: PromoÃ§Ã£o VIP de Carnaval!" rows="3"></textarea>
+                            <textarea class="form-input" id="cfgHomeNotice" placeholder="Ex: Promoção VIP de Carnaval!" rows="3"></textarea>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
@@ -438,7 +438,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Nova Senha Admin</label>
-                                <input type="password" class="form-input" id="cfgAdminPassword" placeholder="Deixe em branco para nÃ£o alterar">
+                                <input type="password" class="form-input" id="cfgAdminPassword" placeholder="Deixe em branco para não alterar">
                             </div>
                         </div>
                         <div class="form-row">
@@ -449,7 +449,7 @@
                             <div class="form-group"></div>
                         </div>
                         <div style="background:#0d1117;border:1px solid #21262d;border-radius:10px;padding:18px;margin-bottom:20px">
-                            <h4 style="font-size:.85rem;font-weight:800;margin-bottom:14px;color:#8b949e"><i class="fas fa-envelope"></i> ConfiguraÃ§Ã£o EmailJS</h4>
+                            <h4 style="font-size:.85rem;font-weight:800;margin-bottom:14px;color:#8b949e"><i class="fas fa-envelope"></i> Configuração EmailJS</h4>
                             <div class="form-row" style="margin-bottom:12px">
                                 <div class="form-group" style="margin:0"><label>Public Key</label><input type="text" class="form-input" id="cfgEmailjsPublicKey" placeholder="Y4pBy..."></div>
                                 <div class="form-group" style="margin:0"><label>Service ID</label><input type="text" class="form-input" id="cfgEmailjsServiceId" placeholder="service_gmail"></div>
@@ -459,7 +459,7 @@
                                 <div class="form-group" style="margin:0"><label>Template Recibo</label><input type="text" class="form-input" id="cfgEmailjsTemplateRecibo" placeholder="template_recibo"></div>
                             </div>
                         </div>
-                        <button class="btn btn-primary" onclick="saveAdminConfig()" style="padding:12px 30px"><i class="fas fa-save"></i> Salvar AlteraÃ§Ãµes</button>
+                        <button class="btn btn-primary" onclick="saveAdminConfig()" style="padding:12px 30px"><i class="fas fa-save"></i> Salvar Alterações</button>
                     </div>
                 </div>
                 <div class="card" style="margin-top:20px;border-color:#da3633">
@@ -545,7 +545,7 @@
                     <input type="text" class="form-input" id="editGroupName">
                 </div>
                 <div class="form-group">
-                    <label>DescriÃ§Ã£o</label>
+                    <label>Descrição</label>
                     <textarea class="form-input" id="editGroupDesc" rows="3"></textarea>
                 </div>
                 <div class="form-group">
@@ -674,7 +674,7 @@
                     errEl.style.display = 'block';
                 }
             } catch (err) {
-                errEl.textContent = 'Erro de conexÃ£o.';
+                errEl.textContent = 'Erro de conexão.';
                 errEl.style.display = 'block';
             }
             btn.textContent = 'ENTRAR NO PAINEL';
@@ -780,7 +780,7 @@
             document.getElementById('recentGroups').innerHTML = sorted.length ? sorted.map(g => `
                 <div class="log-item">
                     <img src="${g.imagem}" class="log-icon" style="object-fit:cover;width:36px;height:36px;border-radius:8px">
-                    <div class="log-text"><strong>${g.nome}</strong><br><span style="font-size:.75rem;color:#8b949e">${g.categoria || 'geral'} Â· ${g.status || 'pendente'}</span></div>
+                    <div class="log-text"><strong>${g.nome}</strong><br><span style="font-size:.75rem;color:#8b949e">${g.categoria || 'geral'} · ${g.status || 'pendente'}</span></div>
                     <span class="log-time">${timeAgo(g.dataCriacao)}</span>
                 </div>
             `).join('') : '<div class="empty-state"><i class="fas fa-inbox"></i><p>Nenhum grupo ainda</p></div>';
@@ -791,7 +791,7 @@
                 if (g.reportes > 0) reports.push(g);
             });
             logs.push(`<div class="log-item"><div class="log-icon green"><i class="fas fa-users"></i></div><div class="log-text"><strong>${total}</strong> grupos no banco</div></div>`);
-            logs.push(`<div class="log-item"><div class="log-icon yellow"><i class="fas fa-clock"></i></div><div class="log-text"><strong>${pending}</strong> aguardando aprovaÃ§Ã£o</div></div>`);
+            logs.push(`<div class="log-item"><div class="log-icon yellow"><i class="fas fa-clock"></i></div><div class="log-text"><strong>${pending}</strong> aguardando aprovação</div></div>`);
             logs.push(`<div class="log-item"><div class="log-icon purple"><i class="fas fa-star"></i></div><div class="log-text"><strong>${vips}</strong> VIPs ativos</div></div>`);
             if (reports.length > 0) {
                 reports.slice(0, 5).forEach(g => {
@@ -880,7 +880,7 @@
             try {
                 await deleteDoc(doc(db, "grupos", id));
                 allGroups = allGroups.filter(g => g.id !== id);
-                showToast('Grupo excluÃ­do!');
+                showToast('Grupo excluído!');
                 renderDashboard();
                 adminSearchGroups();
             } catch (e) {
@@ -904,7 +904,7 @@
                         <img src="${g.imagem}" style="width:60px;height:60px;border-radius:10px;object-fit:cover" loading="lazy">
                         <div style="flex:1;min-width:0">
                             <div style="font-weight:800;color:#e1e4e8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome}</div>
-                            <div style="font-size:.8rem;color:#8b949e;margin-top:2px">${(g.categoria || '').replace(/-/g,' ')} Â· Enviado ${timeAgo(g.dataCriacao)}</div>
+                            <div style="font-size:.8rem;color:#8b949e;margin-top:2px">${(g.categoria || '').replace(/-/g,' ')} · Enviado ${timeAgo(g.dataCriacao)}</div>
                             <div style="font-size:.75rem;color:#8b949e;font-family:monospace;margin-top:2px">${g.id}</div>
                         </div>
                         <div style="display:flex;gap:8px;flex-shrink:0">
@@ -998,7 +998,7 @@
             if (!id) return showToast('Insira o ID do grupo', 'error');
             try {
                 const snap = await getDoc(doc(db, "grupos", id));
-                if (!snap.exists()) return showToast('Grupo nÃ£o encontrado', 'error');
+                if (!snap.exists()) return showToast('Grupo não encontrado', 'error');
                 await updateDoc(doc(db, "grupos", id), { vip: true, vipExpires: Date.now() + (days * 24 * 3600000) });
                 const g = allGroups.find(x => x.id === id);
                 if (g) { g.vip = true; g.vipExpires = Date.now() + (days * 24 * 3600000); }
@@ -1041,7 +1041,7 @@
                     await setDoc(doc(db, "cupons", code), { codigo: code, usado: false, dias, criadoEm: Date.now() });
                     codes.push(code);
                 }
-                output.textContent = `${qty} cupom(s) para ${dias} dia(s):\n\n${codes.join('\n')}\n\nGuarde estes cÃ³digos!`;
+                output.textContent = `${qty} cupom(s) para ${dias} dia(s):\n\n${codes.join('\n')}\n\nGuarde estes códigos!`;
                 showToast('Cupons gerados!');
             } catch (e) {
                 output.textContent = `Erro: ${e.message}`;
@@ -1075,7 +1075,7 @@
                 document.getElementById('reportsList').innerHTML = reports.length ? reports.map(g => `
                     <div class="log-item">
                         <div class="log-icon red"><i class="fas fa-flag"></i></div>
-                        <div class="log-text"><strong>${g.nome}</strong> â€” ${g.reportes} reporte(s)</div>
+                        <div class="log-text"><strong>${g.nome}</strong> — ${g.reportes} reporte(s)</div>
                     </div>
                 `).join('') : '<div class="empty-state"><i class="fas fa-flag"></i><p>Nenhum reporte</p></div>';
             } catch (e) {
@@ -1114,7 +1114,7 @@
                 const newPass = document.getElementById('cfgAdminPassword').value.trim();
                 if (newPass) data.adminPassword = newPass;
                 await setDoc(doc(db, "configuracoes", "global"), data, { merge: true });
-                showToast('ConfiguraÃ§Ãµes salvas!');
+                showToast('Configurações salvas!');
             } catch (e) {
                 showToast('Erro ao salvar', 'error');
             }
@@ -1125,7 +1125,7 @@
             if (!uid) return showToast('Insira o Email ou ID', 'error');
             try {
                 await setDoc(doc(db, "blacklist", uid.replace(/\./g, '_')), { banned: true, timestamp: Date.now() });
-                showToast('UsuÃ¡rio banido!');
+                showToast('Usuário banido!');
                 document.getElementById('adminBanUid').value = '';
             } catch (e) {
                 showToast('Erro ao banir', 'error');
@@ -1163,14 +1163,14 @@
         };
 
         window.clearRejected = async () => {
-            if (!confirm('Excluir TODOS os grupos reprovados? Isso nÃ£o pode ser desfeito.')) return;
+            if (!confirm('Excluir TODOS os grupos reprovados? Isso não pode ser desfeito.')) return;
             const rejected = allGroups.filter(g => g.status === 'reprovado');
             let count = 0;
             for (const g of rejected) {
                 try { await deleteDoc(doc(db, "grupos", g.id)); count++; } catch (e) {}
             }
             allGroups = allGroups.filter(g => g.status !== 'reprovado');
-            showToast(`${count} grupos excluÃ­dos!`);
+            showToast(`${count} grupos excluídos!`);
             renderDashboard();
             adminSearchGroups();
         };
@@ -1193,7 +1193,7 @@
                     <img src="${g.imagem}" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0" loading="lazy">
                         <div style="flex:1;min-width:0">
                             <div style="font-weight:800;color:#e1e4e8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome}</div>
-                            <div style="font-size:.78rem;color:#8b949e;margin-top:3px">${(g.categoria || '').replace(/-/g,' ')} Â· Enviado ${timeAgo(g.dataCriacao)}</div>
+                            <div style="font-size:.78rem;color:#8b949e;margin-top:3px">${(g.categoria || '').replace(/-/g,' ')} · Enviado ${timeAgo(g.dataCriacao)}</div>
                             <div style="font-size:.72rem;color:#484f58;font-family:monospace;margin-top:2px;cursor:pointer;padding:2px 6px;border-radius:4px;transition:background .15s" onclick="window.copyId('${g.id}')" title="Clique para copiar ID" onmouseover="this.style.background='#21262d'" onmouseout="this.style.background='transparent'"><i class="fas fa-fingerprint" style="margin-right:4px;opacity:.5"></i>${g.id}</div>
                         ${g.descricao ? `<div style="font-size:.78rem;color:#6e7681;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.descricao.substring(0,100)}${g.descricao.length > 100 ? '...' : ''}</div>` : ''}
                         ${g.regras ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(g.regras || []).map(r => `<span style="background:#21262d;color:#8b949e;padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:600">${r}</span>`).join('')}</div>` : ''}
@@ -1210,7 +1210,7 @@
         window.openRejectModal = (id) => {
             const g = allPending.find(x => x.id === id);
             if (!g) return;
-            const reason = prompt('Motivo da reprovaÃ§Ã£o:', 'ConteÃºdo que nÃ£o atende Ã s diretrizes');
+            const reason = prompt('Motivo da reprovação:', 'Conteúdo que não atende às diretrizes');
             if (reason === null) return;
             rejectWithReason(id, reason || 'Reprovado pelo administrador');
         };
@@ -1311,7 +1311,7 @@
                 try { await deleteDoc(doc(db, "grupos", g.id)); count++; } catch (e) {}
             }
             allGroups = allGroups.filter(g => g.link && g.link !== '' && g.link !== 'undefined' && g.link !== 'null');
-            showToast(`${count} grupos quebrados excluÃ­dos!`);
+            showToast(`${count} grupos quebrados excluídos!`);
             renderDashboard();
             adminSearchGroups();
         };
@@ -1323,7 +1323,7 @@
                 const list = document.getElementById('blacklistContainer');
                 const countEl = document.getElementById('blacklistCount');
                 if (!snap.docs.length) {
-                    list.innerHTML = '<div class="empty-state"><i class="fas fa-shield-alt" style="color:#25D366"></i><p>Nenhum usuÃ¡rio banido</p></div>';
+                    list.innerHTML = '<div class="empty-state"><i class="fas fa-shield-alt" style="color:#25D366"></i><p>Nenhum usuário banido</p></div>';
                     if (countEl) countEl.textContent = '0 bans';
                     return;
                 }
@@ -1361,7 +1361,7 @@
                 el.innerHTML = '<div class="empty-state"><i class="fas fa-trophy"></i><p>Nenhum grupo aprovado</p></div>';
                 return;
             }
-            const medals = ['ðŸ¥‡', 'ðŸ¥ˆ', 'ðŸ¥‰'];
+            const medals = ['🥇', '🥈', '🥉'];
             el.innerHTML = top.map((g, i) => `
                 <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#0d1117;border:1px solid #21262d;border-radius:8px;margin-bottom:6px;transition:border-color .15s" onmouseover="this.style.borderColor='#30363d'" onmouseout="this.style.borderColor='#21262d'">
                     <span style="font-size:1.3rem;width:36px;text-align:center;flex-shrink:0">${medals[i] || `<span style="font-size:.85rem;color:#8b949e;font-weight:700">#${i+1}</span>`}</span>
