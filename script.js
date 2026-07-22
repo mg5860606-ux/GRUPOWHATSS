@@ -263,22 +263,25 @@ function renderGroups() {
     const grid = document.getElementById('groupsGrid');
     if (!grid) return;
 
-    // Filtra por categoria e busca (mantém VIPs no topo)
+    // Ainda carregando: não mostra "nenhum resultado" prematuramente
+    if (grupos.length === 0) return;
+
+    // VIPs já vêm primeiro em `grupos` (ordenados em loadGroups)
     let filtered = grupos.filter(x => {
         return currentFilter === 'todos' || x.categoria === currentFilter;
     });
 
     const search = document.getElementById('searchInput')?.value?.toLowerCase()?.trim();
     if (search) {
-        filtered = filtered.filter(x => 
-            (x.nome || '').toLowerCase().includes(search) || 
+        filtered = filtered.filter(x =>
+            (x.nome || '').toLowerCase().includes(search) ||
             (x.descricao || '').toLowerCase().includes(search) ||
             (x.categoria || '').toLowerCase().includes(search)
         );
     }
 
     const noResults = document.getElementById('noResults');
-    const PER_PAGE = 12; // 12 grupos por página
+    const PER_PAGE = 12;
 
     if (window._initialPageLoad === undefined) {
         window._initialPageLoad = true;
@@ -294,6 +297,7 @@ function renderGroups() {
     const paged = filtered.slice(start, start + PER_PAGE);
 
     if (filtered.length === 0) {
+        // Só exibe "sem resultado" se os dados já estão carregados e nenhum bate com o filtro/busca
         grid.innerHTML = '';
         if (noResults) noResults.style.display = 'block';
     } else {
