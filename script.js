@@ -105,7 +105,6 @@ async function loadGroups() {
     const cached = loadGroupsFromCache();
     if (cached) {
         grupos = cached.groups;
-        shuffleGroups();
         renderAll();
         loadFooterDiscovery();
         if (cached.fresh) {
@@ -131,9 +130,9 @@ async function loadGroups() {
             const now = Date.now();
 
             // Separa por prioridade
-            const vips    = grupos.filter(g => g.vip && g.vipExpires > now);
-            const boosts   = grupos.filter(g => !g.vip || g.vipExpires <= now).filter(g => g.freeBoostUntil && g.freeBoostUntil > now);
-            const normais  = grupos.filter(g => (!g.vip || g.vipExpires <= now) && (!g.freeBoostUntil || g.freeBoostUntil <= now));
+            const vips = grupos.filter(g => g.vip && g.vipExpires > now);
+            const boosts = grupos.filter(g => !g.vip || g.vipExpires <= now).filter(g => g.freeBoostUntil && g.freeBoostUntil > now);
+            const normais = grupos.filter(g => (!g.vip || g.vipExpires <= now) && (!g.freeBoostUntil || g.freeBoostUntil <= now));
 
             // Embaralha apenas os grupos normais (Fisher-Yates)
             for (let i = normais.length - 1; i > 0; i--) {
@@ -149,7 +148,7 @@ async function loadGroups() {
             loadFooterDiscovery();
         }
     } catch (e) {
-        await configsPromise.catch(() => {});
+        await configsPromise.catch(() => { });
         console.error("Erro Firebase:", e);
         if (!cached) showAlert('Erro ao carregar grupos.', 'error');
     }
@@ -343,7 +342,7 @@ function renderGroups() {
     }
 }
 
-window.goToPage = function(targetPage) {
+window.goToPage = function (targetPage) {
     currentPageNum = targetPage;
     const u = new URL(window.location);
     if (targetPage > 1) {
@@ -416,10 +415,10 @@ async function validateLink() {
     if (!rawLink) return showAlert('❅ Digite o link do grupo ou canal!', 'error');
 
     const link = rawLink.toLowerCase();
-    const isValidWhatsapp = link.includes('chat.whatsapp.com/') || 
-                            link.includes('whatsapp.com/channel/') || 
-                            link.includes('wa.me/') || 
-                            link.includes('whatsapp.com/');
+    const isValidWhatsapp = link.includes('chat.whatsapp.com/') ||
+        link.includes('whatsapp.com/channel/') ||
+        link.includes('wa.me/') ||
+        link.includes('whatsapp.com/');
 
     if (!isValidWhatsapp) {
         return showAlert('❅ Link inválido! Insira um link válido do WhatsApp ou Canal.', 'error');
@@ -662,9 +661,9 @@ async function renderMyGroups() {
             const isVip = g.vip && (g.vipExpires > Date.now());
             const statusBadge = g.status === 'pendente' || !g.status
                 ? '<span style="color:#856404; background:#fff3cd; border:1px solid #ffeeba; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:800;">⏳ EM ANáLISE</span>'
-                : g.status === 'reprovado' 
-                ? '<span style="color:#721c24; background:#f8d7da; border:1px solid #f5c6cb; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:800;">❅ REPROVADO</span>'
-                : '<span style="color:#155724; background:#d4edda; border:1px solid #c3e6cb; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:800;">✅ ATIVO</span>';
+                : g.status === 'reprovado'
+                    ? '<span style="color:#721c24; background:#f8d7da; border:1px solid #f5c6cb; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:800;">❅ REPROVADO</span>'
+                    : '<span style="color:#155724; background:#d4edda; border:1px solid #c3e6cb; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:800;">✅ ATIVO</span>';
 
             return `<article class="group-card ${isVip ? 'vip' : ''}" style="margin-bottom:15px;">
                 <div class="group-image-wrapper" style="cursor:default;">
@@ -1009,7 +1008,7 @@ function showAlert(msg, type) {
     setTimeout(() => el.remove(), 3000);
 }
 
-window.copyId = function(id) {
+window.copyId = function (id) {
     if (navigator.clipboard) {
         navigator.clipboard.writeText(id).then(() => showAlert('ID copiado!', 'success'));
     } else {
@@ -1059,7 +1058,7 @@ async function compressImageToBlob(f) {
 async function uploadImageToStorage(file) {
     try {
         if (typeof configsPromise !== "undefined") {
-            await configsPromise.catch(() => {});
+            await configsPromise.catch(() => { });
         }
         // Comprime para WebP antes do upload
         const webpBlob = await compressImageToBlob(file);
@@ -1356,23 +1355,23 @@ window.selectBoostPackage = (h, p, el) => {
     document.querySelectorAll('.boost-option-card').forEach(x => x.classList.remove('active'));
     el?.classList.add('active');
 };
-window.filterByCategory = (c) => { 
-    currentFilter = c; 
-    currentPageNum = 1; 
-    const u = new URL(window.location); 
-    u.searchParams.delete('page'); 
-    history.replaceState(null, '', u); 
-    renderGroups(); 
+window.filterByCategory = (c) => {
+    currentFilter = c;
+    currentPageNum = 1;
+    const u = new URL(window.location);
+    u.searchParams.delete('page');
+    history.replaceState(null, '', u);
+    renderGroups();
 };
-window.clearFilters = () => { 
-    currentFilter = 'todos'; 
-    currentPageNum = 1; 
+window.clearFilters = () => {
+    currentFilter = 'todos';
+    currentPageNum = 1;
     const searchInput = document.getElementById('searchInput');
     if (searchInput) searchInput.value = '';
-    const u = new URL(window.location); 
-    u.searchParams.delete('page'); 
-    history.replaceState(null, '', u); 
-    renderGroups(); 
+    const u = new URL(window.location);
+    u.searchParams.delete('page');
+    history.replaceState(null, '', u);
+    renderGroups();
 };
 window.likeGroup = async (id, e) => {
     if (e) e.stopPropagation();

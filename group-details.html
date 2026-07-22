@@ -454,9 +454,10 @@
             let related = [];
 
             try {
-                const snap = await getDocs(collection(db, "grupos"));
-                snap.forEach(doc => {
-                    if(doc.id !== currentId) related.push({id: doc.id, ...doc.data()});
+                const q = query(collection(db, "grupos"), limit(50));
+                const snap = await getDocs(q);
+                snap.forEach(d => {
+                    if(d.id !== currentId) related.push({id: d.id, ...d.data()});
                 });
             } catch(e) {
                 console.warn("Erro ao buscar grupos:", e);

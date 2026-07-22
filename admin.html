@@ -88,8 +88,8 @@
         .card-body{padding:22px}
 
         /* TABLE */
-        .data-table{width:100%;border-collapse:collapse}
-        .data-table th{text-align:left;padding:12px 16px;font-size:.75rem;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #21262d;background:#0d1117}
+        .data-table{width:100%;border-collapse:collapse;min-width:600px}
+        .data-table th{text-align:left;padding:12px 16px;font-size:.75rem;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #21262d;background:#0d1117;position:sticky;top:0;z-index:1}
         .data-table td{padding:12px 16px;border-bottom:1px solid #21262d;font-size:.88rem;color:#c9d1d9}
         .data-table tr:hover td{background:#1c2128}
         .data-table .group-thumb{width:40px;height:40px;border-radius:8px;object-fit:cover}
@@ -185,6 +185,7 @@
             .topbar{padding:12px 16px}
             .topbar h2{font-size:1rem}
             .card-header{padding:14px 16px}
+            .card-header h3{font-size:.85rem}
             .card-body{padding:16px}
             .stat-card{padding:16px}
             .stat-card .stat-value{font-size:1.5rem}
@@ -193,18 +194,28 @@
             .log-item{gap:8px;padding:10px 0}
             .log-text{font-size:.8rem}
             .search-box{max-width:100%}
+            .tab-row{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;white-space:nowrap;padding-bottom:4px}
+            .tab-row::-webkit-scrollbar{display:none}
+            .tab-btn{padding:8px 12px;font-size:.78rem;white-space:nowrap}
+            .modal-box{max-width:calc(100vw - 16px);margin:8px}
+            .modal-box-body{padding:16px}
+            .modal-box-body .form-row{grid-template-columns:1fr}
+            .topbar-badge{padding:4px 10px;font-size:.72rem}
         }
         @media(max-width:480px){
             .stats-grid{grid-template-columns:1fr 1fr}
             .page{padding:12px}
-            .topbar{padding:10px 12px}
+            .topbar{padding:10px 12px;flex-wrap:wrap;gap:8px}
+            .topbar h2{font-size:.9rem}
             .stat-card{padding:12px}
             .stat-card .stat-value{font-size:1.3rem}
             .stat-card .stat-icon{width:36px;height:36px;font-size:.9rem}
             .card{border-radius:10px;margin-bottom:14px}
-            .data-table th:nth-child(n+6),
-            .data-table td:nth-child(n+6){display:none}
+            .data-table th:nth-child(n+5),
+            .data-table td:nth-child(n+5){display:none}
             .log-item{flex-wrap:wrap}
+            .card-header h3{font-size:.8rem}
+            .btn-sm{padding:5px 8px;font-size:.7rem}
         }
     </style>
 </head>
@@ -281,11 +292,11 @@
             <!-- PAGE: GROUPS -->
             <div class="page" id="page-groups">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
-                    <div class="search-box" style="flex:1;max-width:400px">
+                    <div class="search-box" style="flex:1;min-width:200px;max-width:400px">
                         <i class="fas fa-search"></i>
                         <input type="text" id="groupsSearch" placeholder="Buscar grupo por nome ou ID..." oninput="adminSearchGroups()">
                     </div>
-                    <div style="display:flex;gap:8px">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
                         <select id="groupsFilterStatus" class="form-input" style="width:auto;padding:8px 14px" onchange="adminSearchGroups()">
                             <option value="all">Todos os Status</option>
                             <option value="aprovado">Aprovados</option>
@@ -323,11 +334,11 @@
             <!-- PAGE: MODERATION -->
             <div class="page" id="page-moderation">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
-                    <div class="search-box" style="flex:1;max-width:400px">
+                    <div class="search-box" style="flex:1;min-width:200px;max-width:400px">
                         <i class="fas fa-search"></i>
                         <input type="text" id="pendingSearch" placeholder="Buscar por nome ou ID..." oninput="filterPending()">
                     </div>
-                    <div style="display:flex;gap:8px">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
                         <button class="btn btn-primary btn-sm" onclick="bulkApprovePending()"><i class="fas fa-check-double"></i> Aprovar Todos</button>
                         <button class="btn btn-danger btn-sm" onclick="bulkRejectPending()"><i class="fas fa-times-circle"></i> Rejeitar Todos</button>
                     </div>
@@ -473,8 +484,8 @@
                         <span class="badge badge-danger" id="blacklistCount">0 bans</span>
                     </div>
                     <div class="card-body">
-                        <div style="display:flex;gap:10px;margin-bottom:15px">
-                            <input type="text" class="form-input" id="adminBanUid" placeholder="Email ou ID do dispositivo..." style="flex:1">
+                        <div style="display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap">
+                            <input type="text" class="form-input" id="adminBanUid" placeholder="Email ou ID do dispositivo..." style="flex:1;min-width:180px">
                             <button class="btn btn-danger" onclick="banAdminUser()"><i class="fas fa-ban"></i> Banir</button>
                         </div>
                         <div id="blacklistContainer"></div>
@@ -891,14 +902,14 @@
                     return;
                 }
                 list.innerHTML = allPending.map(g => `
-                    <div style="display:flex;align-items:center;gap:16px;padding:16px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:10px">
-                        <img src="${g.imagem}" style="width:60px;height:60px;border-radius:10px;object-fit:cover" loading="lazy">
-                        <div style="flex:1;min-width:0">
+                    <div style="display:flex;align-items:center;gap:12px;padding:14px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:10px;flex-wrap:wrap">
+                        <img src="${g.imagem}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;flex-shrink:0" loading="lazy">
+                        <div style="flex:1;min-width:150px">
                             <div style="font-weight:800;color:#e1e4e8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome}</div>
-                            <div style="font-size:.8rem;color:#8b949e;margin-top:2px">${(g.categoria || '').replace(/-/g,' ')} · Enviado ${timeAgo(g.dataCriacao)}</div>
-                            <div style="font-size:.75rem;color:#8b949e;font-family:monospace;margin-top:2px">${g.id}</div>
+                            <div style="font-size:.75rem;color:#8b949e;margin-top:2px">${(g.categoria || '').replace(/-/g,' ')} · Enviado ${timeAgo(g.dataCriacao)}</div>
+                            <div style="font-size:.72rem;color:#484f58;font-family:monospace;margin-top:2px;cursor:pointer;padding:2px 6px;border-radius:4px;transition:background .15s" onclick="window.copyId('${g.id}')" title="Clique para copiar ID" onmouseover="this.style.background='#21262d'" onmouseout="this.style.background='transparent'"><i class="fas fa-fingerprint" style="margin-right:4px;opacity:.5"></i>${g.id}</div>
                         </div>
-                        <div style="display:flex;gap:8px;flex-shrink:0">
+                        <div style="display:flex;gap:6px;flex-shrink:0;width:100%;justify-content:flex-end">
                             <button class="btn btn-primary btn-sm" onclick="approveAdminGroup('${g.id}')"><i class="fas fa-check"></i> Aprovar</button>
                             <button class="btn btn-danger btn-sm" onclick="rejectAdminGroup('${g.id}')"><i class="fas fa-times"></i> Rejeitar</button>
                         </div>
@@ -958,13 +969,13 @@
             const vips = allGroups.filter(g => g.vip && g.vipExpires > now);
             document.getElementById('vipCount').textContent = vips.length;
             document.getElementById('vipsList').innerHTML = vips.length ? vips.map(g => `
-                <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:8px">
-                    <img src="${g.imagem}" style="width:44px;height:44px;border-radius:8px;object-fit:cover" loading="lazy">
-                    <div style="flex:1">
-                        <div style="font-weight:700;color:#e1e4e8">${g.nome}</div>
-                        <div style="font-size:.78rem;color:#f0c000">Expira: ${new Date(g.vipExpires).toLocaleString('pt-BR')}</div>
+                <div style="display:flex;align-items:center;gap:12px;padding:14px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:8px;flex-wrap:wrap">
+                    <img src="${g.imagem}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0" loading="lazy">
+                    <div style="flex:1;min-width:120px">
+                        <div style="font-weight:700;color:#e1e4e8;font-size:.88rem">${g.nome}</div>
+                        <div style="font-size:.72rem;color:#f0c000;margin-top:2px">Expira: ${new Date(g.vipExpires).toLocaleString('pt-BR')}</div>
                     </div>
-                    <button class="btn btn-sm btn-danger" onclick="revokeVipAdmin('${g.id}')"><i class="fas fa-times"></i> Revogar</button>
+                    <button class="btn btn-sm btn-danger" onclick="revokeVipAdmin('${g.id}')" style="width:100%;justify-content:center"><i class="fas fa-times"></i> Revogar</button>
                 </div>
             `).join('') : '<div class="empty-state"><i class="fas fa-star"></i><p>Nenhum VIP ativo</p></div>';
         }
@@ -1071,15 +1082,15 @@
                             const dataStr = dataObj ? dataObj.toLocaleDateString('pt-BR') : '--';
                             const horaStr = dataObj ? dataObj.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}) : '--';
                             return `
-                            <div class="log-item" style="flex-direction:column;align-items:flex-start;gap:4px;padding:12px;border-bottom:1px solid #f0f0f0;">
-                                <div style="display:flex;justify-content:space-between;width:100%;align-items:center;">
+                            <div class="log-item" style="flex-direction:column;align-items:flex-start;gap:4px;padding:12px;border-bottom:1px solid #21262d;">
+                                <div style="display:flex;justify-content:space-between;width:100%;align-items:center;flex-wrap:wrap;gap:4px">
                                     <div class="log-text"><strong>${r.groupName || 'Grupo'}</strong></div>
-                                    <span style="font-size:.75rem;color:#999;">${dataStr} às ${horaStr}</span>
+                                    <span style="font-size:.72rem;color:#8b949e;white-space:nowrap">${dataStr} às ${horaStr}</span>
                                 </div>
-                                <div style="font-size:.8rem;color:#666;">Motivo: <span style="color:#dc3545;font-weight:600;">${r.motivo || 'N/A'}</span></div>
-                                <div style="font-size:.7rem;color:#999;font-family:monospace;">ID: ${r.groupId || 'N/A'}</div>
-                                <div style="display:flex;gap:6px;margin-top:8px;">
-                                    <button onclick="punirGrupo('${d.id}')" style="padding:6px 14px;background:#dc3545;color:white;border:none;border-radius:4px;cursor:pointer;font-size:.8rem;font-weight:700;"><i class="fas fa-gavel"></i> Punir Grupo</button>
+                                <div style="font-size:.8rem;color:#8b949e;">Motivo: <span style="color:#f85149;font-weight:600;">${r.motivo || 'N/A'}</span></div>
+                                <div style="font-size:.72rem;color:#484f58;font-family:monospace;">ID: ${r.groupId || 'N/A'}</div>
+                                <div style="display:flex;gap:6px;margin-top:8px;width:100%">
+                                    <button onclick="punirGrupo('${d.id}')" style="padding:6px 14px;background:#da3633;color:white;border:none;border-radius:6px;cursor:pointer;font-size:.78rem;font-weight:700;white-space:nowrap"><i class="fas fa-gavel"></i> Punir</button>
                                 </div>
                             </div>`;
                         }).join('');
@@ -1203,16 +1214,16 @@
                 return;
             }
             list.innerHTML = filtered.map(g => `
-                <div style="display:flex;align-items:center;gap:16px;padding:14px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:10px;transition:border-color .15s" onmouseover="this.style.borderColor='#30363d'" onmouseout="this.style.borderColor='#21262d'">
-                    <img src="${g.imagem}" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0" loading="lazy">
-                        <div style="flex:1;min-width:0">
+                <div style="display:flex;align-items:center;gap:12px;padding:14px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:10px;transition:border-color .15s;flex-wrap:wrap" onmouseover="this.style.borderColor='#30363d'" onmouseout="this.style.borderColor='#21262d'">
+                    <img src="${g.imagem}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;flex-shrink:0" loading="lazy">
+                        <div style="flex:1;min-width:150px">
                             <div style="font-weight:800;color:#e1e4e8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome}</div>
-                            <div style="font-size:.78rem;color:#8b949e;margin-top:3px">${(g.categoria || '').replace(/-/g,' ')} · Enviado ${timeAgo(g.dataCriacao)}</div>
+                            <div style="font-size:.75rem;color:#8b949e;margin-top:3px">${(g.categoria || '').replace(/-/g,' ')} · Enviado ${timeAgo(g.dataCriacao)}</div>
                             <div style="font-size:.72rem;color:#484f58;font-family:monospace;margin-top:2px;cursor:pointer;padding:2px 6px;border-radius:4px;transition:background .15s" onclick="window.copyId('${g.id}')" title="Clique para copiar ID" onmouseover="this.style.background='#21262d'" onmouseout="this.style.background='transparent'"><i class="fas fa-fingerprint" style="margin-right:4px;opacity:.5"></i>${g.id}</div>
-                        ${g.descricao ? `<div style="font-size:.78rem;color:#6e7681;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.descricao.substring(0,100)}${g.descricao.length > 100 ? '...' : ''}</div>` : ''}
-                        ${g.regras ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(g.regras || []).map(r => `<span style="background:#21262d;color:#8b949e;padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:600">${r}</span>`).join('')}</div>` : ''}
+                        ${g.descricao ? `<div style="font-size:.75rem;color:#6e7681;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.descricao.substring(0,80)}${g.descricao.length > 80 ? '...' : ''}</div>` : ''}
+                        ${g.regras ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(g.regras || []).slice(0,4).map(r => `<span style="background:#21262d;color:#8b949e;padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:600">${r}</span>`).join('')}</div>` : ''}
                     </div>
-                    <div style="display:flex;gap:6px;flex-shrink:0">
+                    <div style="display:flex;gap:6px;flex-shrink:0;width:100%;justify-content:flex-end">
                         <button class="btn btn-primary btn-sm" onclick="approveAdminGroup('${g.id}')" title="Aprovar"><i class="fas fa-check"></i></button>
                         <button class="btn btn-danger btn-sm" onclick="openRejectModal('${g.id}')" title="Rejeitar"><i class="fas fa-times"></i></button>
                     </div>
@@ -1344,9 +1355,9 @@
                 if (countEl) countEl.textContent = snap.docs.length + ' bans';
                 list.innerHTML = snap.docs.map(d => {
                     const id = d.id.replace(/_/g, '.');
-                    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#0d1117;border:1px solid #21262d;border-radius:8px;margin-bottom:6px">
-                        <div style="flex:1;min-width:0">
-                            <span style="font-size:.85rem;color:#e1e4e8;font-weight:600;word-break:break-all">${id}</span>
+                    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#0d1117;border:1px solid #21262d;border-radius:8px;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+                        <div style="flex:1;min-width:120px">
+                            <span style="font-size:.82rem;color:#e1e4e8;font-weight:600;word-break:break-all">${id}</span>
                             <span style="font-size:.72rem;color:#8b949e;margin-left:8px">${timeAgo(d.data().timestamp)}</span>
                         </div>
                         <button class="btn btn-sm btn-secondary" onclick="unbanUser('${d.id}')" title="Remover ban"><i class="fas fa-undo"></i> Desbanir</button>
@@ -1377,16 +1388,16 @@
             }
             const medals = ['🥇', '🥈', '🥉'];
             el.innerHTML = top.map((g, i) => `
-                <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#0d1117;border:1px solid #21262d;border-radius:8px;margin-bottom:6px;transition:border-color .15s" onmouseover="this.style.borderColor='#30363d'" onmouseout="this.style.borderColor='#21262d'">
-                    <span style="font-size:1.3rem;width:36px;text-align:center;flex-shrink:0">${medals[i] || `<span style="font-size:.85rem;color:#8b949e;font-weight:700">#${i+1}</span>`}</span>
-                    <img src="${g.imagem}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0" loading="lazy">
-                    <div style="flex:1;min-width:0">
-                        <div style="font-weight:700;color:#e1e4e8;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome}</div>
-                        <div style="font-size:.72rem;color:#8b949e">${(g.categoria||'').replace(/-/g,' ')}</div>
+                <div style="display:flex;align-items:center;gap:10px;padding:12px;background:#0d1117;border:1px solid #21262d;border-radius:8px;margin-bottom:6px;transition:border-color .15s;flex-wrap:wrap" onmouseover="this.style.borderColor='#30363d'" onmouseout="this.style.borderColor='#21262d'">
+                    <span style="font-size:1.2rem;width:32px;text-align:center;flex-shrink:0">${medals[i] || `<span style="font-size:.8rem;color:#8b949e;font-weight:700">#${i+1}</span>`}</span>
+                    <img src="${g.imagem}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0" loading="lazy">
+                    <div style="flex:1;min-width:100px">
+                        <div style="font-weight:700;color:#e1e4e8;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome}</div>
+                        <div style="font-size:.7rem;color:#8b949e">${(g.categoria||'').replace(/-/g,' ')}</div>
                     </div>
                     <div style="text-align:right;flex-shrink:0">
-                        <div style="font-weight:900;color:#25D366;font-size:1rem">${formatNumber(g.visitas || 0)}</div>
-                        <div style="font-size:.68rem;color:#8b949e">visitas</div>
+                        <div style="font-weight:900;color:#25D366;font-size:.95rem">${formatNumber(g.visitas || 0)}</div>
+                        <div style="font-size:.65rem;color:#8b949e">visitas</div>
                     </div>
                 </div>
             `).join('');
@@ -1437,7 +1448,7 @@
                 for (const rd of reportsSnap.docs) { await deleteDoc(rd.ref); }
 
                 alert('Grupo punido com sucesso!\nO dono verá a mensagem na página "Meus Grupos".');
-                loadStats();
+                loadAnalytics();
             } catch (err) {
                 console.error(err);
                 alert('Erro ao punir grupo: ' + (err.message || err));
