@@ -254,20 +254,15 @@ function renderAll() {
 
 function renderTrendingGroups() {
     const grid = document.getElementById('trendingGrid');
-    if (!grid) return;
-    const now = Date.now();
-    const vips = grupos.filter(x => x.vip && x.vipExpires > now);
-    grid.innerHTML = vips.length === 0 ? '' : vips.map(g => createGroupCard(g)).join('');
+    if (grid) grid.style.display = 'none';
 }
 
 function renderGroups() {
     const grid = document.getElementById('groupsGrid');
     if (!grid) return;
 
-    const now = Date.now();
+    // Filtra por categoria e busca (mantém VIPs no topo, depois Impulsionados e Normais)
     let filtered = grupos.filter(x => {
-        const isVip = x.vip && x.vipExpires > now;
-        if (isVip) return false;
         return currentFilter === 'todos' || x.categoria === currentFilter;
     });
 
@@ -277,9 +272,16 @@ function renderGroups() {
     }
 
     const noResults = document.getElementById('noResults');
-    const PER_PAGE = 12; // 12 grupos por página para paginar adequadamente
+    const PER_PAGE = 12; // 12 grupos por página no fluxo unificado
     const params = new URLSearchParams(window.location.search);
     const currentPage = Math.max(1, parseInt(params.get('page')) || 1);
+
+    if (currentPage > 1 && !window._scrolledToGrid) {
+        window._scrolledToGrid = true;
+        setTimeout(() => {
+            grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 150);
+    }
     const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
     const page = Math.min(currentPage, totalPages);
     const start = (page - 1) * PER_PAGE;
