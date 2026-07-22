@@ -257,33 +257,39 @@ function renderTrendingGroups() {
     if (grid) grid.style.display = 'none';
 }
 
+let currentPageNum = 1;
+
 function renderGroups() {
     const grid = document.getElementById('groupsGrid');
     if (!grid) return;
 
-    // Filtra por categoria e busca (mantém VIPs no topo, depois Impulsionados e Normais)
+    // Filtra por categoria e busca (mantém VIPs no topo)
     let filtered = grupos.filter(x => {
         return currentFilter === 'todos' || x.categoria === currentFilter;
     });
 
-    const search = document.getElementById('searchInput')?.value?.toLowerCase();
+    const search = document.getElementById('searchInput')?.value?.toLowerCase()?.trim();
     if (search) {
-        filtered = filtered.filter(x => x.nome.toLowerCase().includes(search) || (x.descricao || '').toLowerCase().includes(search));
+        filtered = filtered.filter(x => 
+            (x.nome || '').toLowerCase().includes(search) || 
+            (x.descricao || '').toLowerCase().includes(search) ||
+            (x.categoria || '').toLowerCase().includes(search)
+        );
     }
 
     const noResults = document.getElementById('noResults');
-    const PER_PAGE = 12; // 12 grupos por página no fluxo unificado
-    const params = new URLSearchParams(window.location.search);
-    const currentPage = Math.max(1, parseInt(params.get('page')) || 1);
+    const PER_PAGE = 12; // 12 grupos por página
 
-    if (currentPage > 1 && !window._scrolledToGrid) {
-        window._scrolledToGrid = true;
-        setTimeout(() => {
-            grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 150);
+    if (window._initialPageLoad === undefined) {
+        window._initialPageLoad = true;
+        const params = new URLSearchParams(window.location.search);
+        currentPageNum = Math.max(1, parseInt(params.get('page')) || 1);
     }
+
     const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
-    const page = Math.min(currentPage, totalPages);
+    const page = Math.min(Math.max(1, currentPageNum), totalPages);
+    currentPageNum = page;
+
     const start = (page - 1) * PER_PAGE;
     const paged = filtered.slice(start, start + PER_PAGE);
 
@@ -308,24 +314,22 @@ function renderGroups() {
         bar.style.gap = '8px';
         info.textContent = `Página ${page} de ${totalPages}`;
 
-        const urlPrev = new URL(window.location.href);
-        urlPrev.searchParams.set('page', page - 1);
-
-        const urlNext = new URL(window.location.href);
-        urlNext.searchParams.set('page', page + 1);
-
         if (page > 1) {
             prev.style.display = 'inline-block';
-            prev.href = urlPrev.pathname + urlPrev.search;
-            prev.onclick = null;
+            prev.onclick = (e) => {
+                e.preventDefault();
+                goToPage(page - 1);
+            };
         } else {
             prev.style.display = 'none';
         }
 
         if (page < totalPages) {
             next.style.display = 'inline-block';
-            next.href = urlNext.pathname + urlNext.search;
-            next.onclick = null;
+            next.onclick = (e) => {
+                e.preventDefault();
+                goToPage(page + 1);
+            };
         } else {
             next.style.display = 'none';
         }
@@ -333,6 +337,23 @@ function renderGroups() {
         bar.style.display = 'none';
     }
 }
+
+window.goToPage = function(targetPage) {
+    currentPageNum = targetPage;
+    const u = new URL(window.location);
+    if (targetPage > 1) {
+        u.searchParams.set('page', targetPage);
+    } else {
+        u.searchParams.delete('page');
+    }
+    history.pushState(null, '', u);
+    renderGroups();
+
+    const grid = document.getElementById('groupsGrid');
+    if (grid) {
+        grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+};
 
 function createGroupCard(g, rank = null) {
     const catName = (g.categoria || "Geral").toUpperCase();
@@ -1294,8 +1315,24 @@ window.selectBoostPackage = (h, p, el) => {
     document.querySelectorAll('.boost-option-card').forEach(x => x.classList.remove('active'));
     el?.classList.add('active');
 };
-window.filterByCategory = (c) => { currentFilter = c; renderGroups(); };
-window.clearFilters = () => { currentFilter = 'todos'; window.currentPage = 1; const u = new URL(window.location); u.searchParams.delete('page'); history.replaceState(null, '', u); renderGroups(); };
+window.filterByCategory = (c) => { 
+    currentFilter = c; 
+    currentPageNum = 1; 
+    const u = new URL(window.location); 
+    u.searchParams.delete('page'); 
+    history.replaceState(null, '', u); 
+    renderGroups(); 
+};
+window.clearFilters = () => { 
+    currentFilter = 'todos'; 
+    currentPageNum = 1; 
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
+    const u = new URL(window.location); 
+    u.searchParams.delete('page'); 
+    history.replaceState(null, '', u); 
+    renderGroups(); 
+};
 window.likeGroup = async (id, e) => {
     if (e) e.stopPropagation();
     try {
