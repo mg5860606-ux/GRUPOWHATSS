@@ -260,7 +260,7 @@
     </script>
     <script type="module" src="script.js"></script>
     <script type="module">
-        import { db, doc, getDoc, updateDoc, increment, collection, query, where, getDocs, setDoc, limit } from "./script.js";
+        import { db, doc, getDoc, updateDoc, increment, collection, addDoc, query, where, getDocs, setDoc, limit } from "./script.js";
         
         async function loadGroupDetails() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -472,17 +472,18 @@
 
             grid.innerHTML = related.map(g => {
                 const isVip = g.vip && (g.vipExpires > Date.now());
+                const detailsUrl = `group-details.html?${g.slug ? 'g=' + g.slug : 'id=' + g.id}`;
                 return `
-                <article class="group-card ${isVip ? 'vip' : ''}" onclick="window.location.href='group-details.html?id=${g.id}'" style="cursor: pointer;">
-                    <div class="group-image-wrapper">
-                        <img src="${g.imagem}" class="group-image" alt="${g.nome}" loading="lazy">
+                <article class="group-card ${isVip ? 'vip' : ''}" style="cursor: pointer;">
+                    <div class="group-image-wrapper" onclick="window.location.href='${detailsUrl}'" style="cursor:pointer;">
+                        <img src="${g.imagem}" class="group-image" alt="${g.nome}" loading="lazy" onerror="this.src='logo.svg'; this.onerror=null;">
                         <div class="card-category-badge">${(g.categoria || "Geral").toUpperCase()}</div>
                         ${isVip ? '<div class="vip-star-badge"><i class="fas fa-star"></i></div>' : ''}
                     </div>
                     <div class="group-content">
-                        <h3 class="group-title" style="font-size:1.1rem;">${g.nome}</h3>
-                        <p class="group-desc" style="height:auto !important;max-height:none !important;overflow:visible !important;">${g.descricao || ''}</p>
-                        <button class="btn-join" style="width:100%;">Ver Grupo</button>
+                        <h3 class="group-title" onclick="window.location.href='${detailsUrl}'" style="cursor:pointer;">${g.nome}</h3>
+                        <p class="group-desc">${g.descricao || ''}</p>
+                        <button class="btn-join" onclick="window.location.href='${detailsUrl}'" style="text-transform:none;font-size:1.1rem;padding:14px;">Entrar no Grupo</button>
                     </div>
                 </article>`;
             }).join('');
@@ -520,6 +521,34 @@
             `;
         }
 
+        window.shareWhatsApp = (name, id) => {
+            const url = `https://mg5860606-ux.github.io/GRUPOWHATSS/group-details.html?id=${id}`;
+            const text = `Confira o grupo ${name} no GruposWhats:\n${url}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        };
+
+        window.shareFacebook = (id) => {
+            const url = `https://mg5860606-ux.github.io/GRUPOWHATSS/group-details.html?id=${id}`;
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank', 'width=600,height=400');
+        };
+
+        window.copyLink = (id) => {
+            const url = `https://mg5860606-ux.github.io/GRUPOWHATSS/group-details.html?id=${id}`;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => alert('Link copiado!'));
+            } else {
+                const t = document.createElement('textarea');
+                t.value = url;
+                t.style.position = 'fixed';
+                t.style.left = '-9999px';
+                document.body.appendChild(t);
+                t.select();
+                document.execCommand('copy');
+                document.body.removeChild(t);
+                alert('Link copiado!');
+            }
+        };
+
         window.addEventListener('DOMContentLoaded', loadGroupDetails);
 
         // Funções do Modal de Reporte
@@ -540,18 +569,33 @@
 
         document.getElementById('reportForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const reason = document.querySelector('input[name="reportReason"]:checked').value;
+            const selected = document.querySelector('input[name="reportReason"]:checked');
+            if (!selected) { alert('Selecione um motivo!'); return; }
+            const reason = selected.value;
             const urlParams = new URLSearchParams(window.location.search);
             const groupId = urlParams.get('id');
-            
+            const groupSlug = urlParams.get('g');
+
             try {
-                const { addDoc, collection } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
                 await addDoc(collection(db, "reportes"), {
                     groupId: groupId,
                     groupName: currentGroupName,
                     motivo: reason,
                     data: Date.now()
                 });
+
+                if (groupId) {
+                    try {
+                        const groupRef = doc(db, "grupos", groupId);
+                        await updateDoc(groupRef, { reportes: increment(1) });
+                    } catch (e) {
+                        try {
+                            const groupRef = doc(db, "gruposPendentes", groupId);
+                            await updateDoc(groupRef, { reportes: increment(1) });
+                        } catch (e2) { /* ignore */ }
+                    }
+                }
+
                 alert('Erro comunicado com sucesso. Agradecemos a colaboração!');
                 window.closeReportModal();
             } catch (err) {

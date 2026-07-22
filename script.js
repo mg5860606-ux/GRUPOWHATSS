@@ -105,6 +105,7 @@ async function loadGroups() {
     const cached = loadGroupsFromCache();
     if (cached) {
         grupos = cached.groups;
+        shuffleGroups();
         renderAll();
         loadFooterDiscovery();
         if (cached.fresh) {
@@ -582,7 +583,29 @@ async function renderMyGroups() {
 
         const all = [...apprv, ...pendFiltered].sort((a, b) => (b.dataCriacao || 0) - (a.dataCriacao || 0));
 
-        if (all.length === 0) {
+        let punishedGroups = [];
+        try {
+            if (meusGrupos.length > 0) {
+                const punicaoSnap = await getDocs(collection(db, "punicoes"));
+                const punicaoMap = {};
+                punicaoSnap.docs.forEach(d => {
+                    const p = d.data();
+                    if (p.groupId) punicaoMap[p.groupId] = p;
+                });
+                const dismissed = JSON.parse(localStorage.getItem('dismissedPunicoes') || '[]');
+                meusGrupos.forEach(id => {
+                    if (punicaoMap[id] && !all.find(g => g.id === id) && !dismissed.includes(id)) {
+                        punishedGroups.push({ id, ...punicaoMap[id], _punido: true });
+                    }
+                });
+            }
+        } catch (punErr) {
+            console.warn("Erro ao buscar punições:", punErr);
+        }
+
+        const allWithPunished = [...punishedGroups, ...all];
+
+        if (allWithPunished.length === 0) {
             list.innerHTML = `
                 <div style="grid-column: 1/-1; text-align: center; padding: 40px 20px; background: white; border-radius: 12px; border: 2px dashed #ccc;">
                     <i class="fas fa-folder-open" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
@@ -597,7 +620,21 @@ async function renderMyGroups() {
             return;
         }
 
-        list.innerHTML = all.map(g => {
+        list.innerHTML = allWithPunished.map(g => {
+            if (g._punido) {
+                return `<article class="group-card" style="margin-bottom:15px; border: 2px solid #dc3545; position: relative;">
+                    <div class="group-content" style="padding:20px; text-align:center;">
+                        <i class="fas fa-exclamation-triangle" style="font-size:2.5rem; color:#dc3545; margin-bottom:15px; display:block;"></i>
+                        <h3 style="color:#dc3545; font-weight:800; margin-bottom:10px; font-size:1.2rem;">Grupo Removido pelo Moderador</h3>
+                        <p style="color:#666; font-size:0.95rem; margin-bottom:8px;"><strong>${g.groupName || 'Seu grupo'}</strong></p>
+                        <p style="color:#888; font-size:0.85rem; margin-bottom:20px;">Motivo: <span style="color:#dc3545; font-weight:600;">${g.motivo || 'Não especificado'}</span></p>
+                        <p style="color:#999; font-size:0.8rem; margin-bottom:20px;">Seu grupo foi removido por violar nossas regras. Você pode enviá-lo novamente corrigindo o problema.</p>
+                        <a href="send-group.html" style="display:inline-block; padding:12px 25px; background:#28a745; color:white; border-radius:6px; font-weight:800; text-decoration:none; margin-bottom:10px;">Enviar Novamente</a>
+                        <br>
+                        <button onclick="window.dismissPunishment('${g.id}')" style="margin-top:10px; padding:8px 20px; background:white; color:#999; border:1px solid #ddd; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600;">Apagar notificação</button>
+                    </div>
+                </article>`;
+            }
             const isEditing = window.editingGroups?.[g.id];
             if (isEditing) {
                 return `<article class="my-group-card edit-mode" style="padding:20px; text-align:left;">
@@ -1345,6 +1382,15 @@ window.likeGroup = async (id, e) => {
         showAlert('❤️ Valeu!', 'success');
     } catch (err) { }
 };
+window.dismissPunishment = (id) => {
+    const dismissed = JSON.parse(localStorage.getItem('dismissedPunicoes') || '[]');
+    if (!dismissed.includes(id)) {
+        dismissed.push(id);
+        localStorage.setItem('dismissedPunicoes', JSON.stringify(dismissed));
+    }
+    renderMyGroups();
+};
+
 window.deleteMyGroup = async (id) => {
     if (!confirm('Deseja realmente remover este grupo da sua lista de Meus Grupos?')) return;
     try {
@@ -1804,4 +1850,4 @@ window.generateManualCodes = async () => {
 };
 
 // 10. EXPORTS PARA OUTRAS PáGINAS (EX: group-details.html)
-export { db, doc, getDoc, updateDoc, increment, collection, query, where, getDocs, setDoc, limit };
+export { db, doc, getDoc, updateDoc, increment, collection, addDoc, query, where, getDocs, setDoc, limit, deleteDoc };

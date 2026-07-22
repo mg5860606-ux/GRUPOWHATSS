@@ -575,7 +575,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, deleteDoc, setDoc, query, where, orderBy, limit as fbLimit, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, deleteDoc, addDoc, setDoc, query, where, orderBy, limit as fbLimit, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         const CONFIG = {
@@ -1061,14 +1061,35 @@
                 } else {
                     document.getElementById('analyticsChart').innerHTML = '<div class="empty-state"><i class="fas fa-chart-bar"></i><p>Sem dados de visitas para hoje</p></div>';
                 }
-                let reports = [];
-                allGroups.forEach(g => { if (g.reportes > 0) reports.push(g); });
-                document.getElementById('reportsList').innerHTML = reports.length ? reports.map(g => `
-                    <div class="log-item">
-                        <div class="log-icon red"><i class="fas fa-flag"></i></div>
-                        <div class="log-text"><strong>${g.nome}</strong> — ${g.reportes} reporte(s)</div>
-                    </div>
-                `).join('') : '<div class="empty-state"><i class="fas fa-flag"></i><p>Nenhum reporte</p></div>';
+                let reportsHTML = '';
+                try {
+                    const repSnap = await getDocs(collection(db, "reportes"));
+                    if (!repSnap.empty) {
+                        reportsHTML = repSnap.docs.map(d => {
+                            const r = d.data();
+                            const dataObj = r.data ? new Date(r.data) : null;
+                            const dataStr = dataObj ? dataObj.toLocaleDateString('pt-BR') : '--';
+                            const horaStr = dataObj ? dataObj.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}) : '--';
+                            return `
+                            <div class="log-item" style="flex-direction:column;align-items:flex-start;gap:4px;padding:12px;border-bottom:1px solid #f0f0f0;">
+                                <div style="display:flex;justify-content:space-between;width:100%;align-items:center;">
+                                    <div class="log-text"><strong>${r.groupName || 'Grupo'}</strong></div>
+                                    <span style="font-size:.75rem;color:#999;">${dataStr} às ${horaStr}</span>
+                                </div>
+                                <div style="font-size:.8rem;color:#666;">Motivo: <span style="color:#dc3545;font-weight:600;">${r.motivo || 'N/A'}</span></div>
+                                <div style="font-size:.7rem;color:#999;font-family:monospace;">ID: ${r.groupId || 'N/A'}</div>
+                                <div style="display:flex;gap:6px;margin-top:8px;">
+                                    <button onclick="punirGrupo('${d.id}')" style="padding:6px 14px;background:#dc3545;color:white;border:none;border-radius:4px;cursor:pointer;font-size:.8rem;font-weight:700;"><i class="fas fa-gavel"></i> Punir Grupo</button>
+                                </div>
+                            </div>`;
+                        }).join('');
+                    } else {
+                        reportsHTML = '<div class="empty-state"><i class="fas fa-flag"></i><p>Nenhum reporte</p></div>';
+                    }
+                } catch (repErr) {
+                    reportsHTML = '<div class="empty-state"><i class="fas fa-flag"></i><p>Nenhum reporte</p></div>';
+                }
+                document.getElementById('reportsList').innerHTML = reportsHTML;
             } catch (e) {
                 console.error(e);
             }
@@ -1386,6 +1407,42 @@
         document.getElementById('editModal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('editModal')) closeEditModal();
         });
+
+        window.punirGrupo = async (reportDocId) => {
+            try {
+                const reportDoc = await getDoc(doc(db, "reportes", reportDocId));
+                if (!reportDoc.exists()) { alert('Reporte não encontrado.'); return; }
+
+                const r = reportDoc.data();
+                const groupId = r.groupId;
+                const groupName = r.groupName || 'Grupo';
+                const motivo = r.motivo || 'Não especificado';
+
+                if (!confirm(`Punir o grupo "${groupName}"?\n\nMotivo: ${motivo}\n\nO grupo será removido e o dono verá uma mensagem.`)) return;
+
+                let deletedFrom = '';
+                try { await deleteDoc(doc(db, "grupos", groupId)); deletedFrom = 'grupos'; } catch (e1) {
+                    try { await deleteDoc(doc(db, "gruposPendentes", groupId)); deletedFrom = 'gruposPendentes'; } catch (e2) { /* */ }
+                }
+
+                await addDoc(collection(db, "punicoes"), {
+                    groupId: groupId,
+                    groupName: groupName,
+                    motivo: motivo,
+                    data: Date.now()
+                });
+
+                const reportsQuery = query(collection(db, "reportes"), where("groupId", "==", groupId));
+                const reportsSnap = await getDocs(reportsQuery);
+                for (const rd of reportsSnap.docs) { await deleteDoc(rd.ref); }
+
+                alert('Grupo punido com sucesso!\nO dono verá a mensagem na página "Meus Grupos".');
+                loadStats();
+            } catch (err) {
+                console.error(err);
+                alert('Erro ao punir grupo: ' + (err.message || err));
+            }
+        };
     </script>
 </body>
 </html>
