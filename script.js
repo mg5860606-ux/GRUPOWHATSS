@@ -29,7 +29,7 @@ const CONFIG = {
 
 const app = initializeApp(CONFIG.firebase);
 const db = getFirestore(app);
-const IMGBB_API_KEY = "6787fec9ff6e418023cbcf965cb7ca60";
+let IMGBB_API_KEY = "6787fec9ff6e418023cbcf965cb7ca60"; // Fallback inicial (carregado dinamicamente do Firestore)
 // Inicializa EmailJS
 if (typeof emailjs !== "undefined") { emailjs.init(CONFIG.emailjs.publicKey); }
 // Aguarda o script carregar se ainda nao estiver disponivel
@@ -84,6 +84,7 @@ async function loadGlobalConfigs() {
 
 function applyConfigs(data) {
     if (data.promisseToken) PROMISSE_TOKEN = data.promisseToken.trim();
+    if (data.imgbbApiKey) IMGBB_API_KEY = data.imgbbApiKey.trim();
     if (data.emailjsPubKey) CONFIG.emailjs.publicKey = data.emailjsPubKey;
     if (data.emailjsServiceId) CONFIG.emailjs.serviceId = data.emailjsServiceId;
     if (data.emailjsTemplateCupons) CONFIG.emailjs.templateCupons = data.emailjsTemplateCupons;
@@ -986,6 +987,9 @@ async function compressImageToBlob(f) {
 // Faz upload da imagem no ImgBB e retorna a URL pública permanente
 async function uploadImageToStorage(file) {
     try {
+        if (typeof configsPromise !== "undefined") {
+            await configsPromise.catch(() => {});
+        }
         // Comprime para WebP antes do upload
         const webpBlob = await compressImageToBlob(file);
         const finalFile = webpBlob || file;
@@ -1588,6 +1592,7 @@ window.revokeVip = async (id) => {
 window.saveGlobalConfig = async () => {
     const notice = document.getElementById('cfgHomeNotice')?.value || '';
     const token = document.getElementById('cfgPromisseToken')?.value || '';
+    const imgbbApiKey = document.getElementById('cfgImgbbApiKey')?.value || '';
     const pubKey = document.getElementById('cfgEmailjsPublicKey')?.value || '';
     const serviceId = document.getElementById('cfgEmailjsServiceId')?.value || '';
     const tempCupons = document.getElementById('cfgEmailjsTemplateCupons')?.value || '';
@@ -1599,6 +1604,7 @@ window.saveGlobalConfig = async () => {
         const data = {
             homeNotice: notice,
             promisseToken: token,
+            imgbbApiKey: imgbbApiKey,
             emailjsPubKey: pubKey,
             emailjsServiceId: serviceId,
             emailjsTemplateCupons: tempCupons,
@@ -1612,8 +1618,9 @@ window.saveGlobalConfig = async () => {
         }
 
         await setDoc(doc(db, "configuracoes", "global"), data, { merge: true });
-        showAlert('Configuraçães Salvas com Sucesso!', 'success');
+        showAlert('Configurações Salvas com Sucesso!', 'success');
         if (token) PROMISSE_TOKEN = token;
+        if (imgbbApiKey) IMGBB_API_KEY = imgbbApiKey.trim();
         if (newAdminPass.trim() !== "") {
             document.getElementById('cfgAdminPassword').value = '';
         }

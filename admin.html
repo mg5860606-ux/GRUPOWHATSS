@@ -437,6 +437,10 @@
                                 <input type="password" class="form-input" id="cfgPromisseToken" placeholder="Chave da API">
                             </div>
                             <div class="form-group">
+                                <label>Chave API ImgBB</label>
+                                <input type="password" class="form-input" id="cfgImgbbApiKey" placeholder="Chave ImgBB">
+                            </div>
+                            <div class="form-group">
                                 <label>Nova Senha Admin</label>
                                 <input type="password" class="form-input" id="cfgAdminPassword" placeholder="Deixe em branco para não alterar">
                             </div>
@@ -1091,6 +1095,7 @@
                     const d = snap.data();
                     if (d.homeNotice) document.getElementById('cfgHomeNotice').value = d.homeNotice;
                     if (d.promisseToken) document.getElementById('cfgPromisseToken').value = d.promisseToken;
+                    if (d.imgbbApiKey) document.getElementById('cfgImgbbApiKey').value = d.imgbbApiKey;
                     if (d.supportPhone) document.getElementById('cfgSupportPhone').value = d.supportPhone;
                     if (d.emailjsPubKey) document.getElementById('cfgEmailjsPublicKey').value = d.emailjsPubKey;
                     if (d.emailjsServiceId) document.getElementById('cfgEmailjsServiceId').value = d.emailjsServiceId;
@@ -1105,6 +1110,7 @@
                 const data = {
                     homeNotice: document.getElementById('cfgHomeNotice').value,
                     promisseToken: document.getElementById('cfgPromisseToken').value,
+                    imgbbApiKey: document.getElementById('cfgImgbbApiKey').value,
                     supportPhone: document.getElementById('cfgSupportPhone').value,
                     emailjsPubKey: document.getElementById('cfgEmailjsPublicKey').value,
                     emailjsServiceId: document.getElementById('cfgEmailjsServiceId').value,
