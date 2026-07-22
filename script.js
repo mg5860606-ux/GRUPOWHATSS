@@ -277,7 +277,7 @@ function renderGroups() {
     }
 
     const noResults = document.getElementById('noResults');
-    const PER_PAGE = 20;
+    const PER_PAGE = 12; // 12 grupos por página para paginar adequadamente
     const params = new URLSearchParams(window.location.search);
     const currentPage = Math.max(1, parseInt(params.get('page')) || 1);
     const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
@@ -297,29 +297,36 @@ function renderGroups() {
     const prev = document.getElementById('btnPrevPage');
     const next = document.getElementById('btnNextPage');
     const info = document.getElementById('pageInfo');
-    if (bar && filtered.length > 0) {
+
+    if (bar && filtered.length > 0 && totalPages > 1) {
         bar.style.display = 'flex';
         bar.style.justifyContent = 'center';
         bar.style.alignItems = 'center';
         bar.style.flexWrap = 'wrap';
-        bar.style.gap = '6px';
+        bar.style.gap = '8px';
         info.textContent = `Página ${page} de ${totalPages}`;
+
+        const urlPrev = new URL(window.location.href);
+        urlPrev.searchParams.set('page', page - 1);
+
+        const urlNext = new URL(window.location.href);
+        urlNext.searchParams.set('page', page + 1);
 
         if (page > 1) {
             prev.style.display = 'inline-block';
-            prev.href = `?page=${page - 1}`;
+            prev.href = urlPrev.pathname + urlPrev.search;
+            prev.onclick = null;
         } else {
             prev.style.display = 'none';
         }
 
         if (page < totalPages) {
             next.style.display = 'inline-block';
-            next.href = `?page=${page + 1}`;
+            next.href = urlNext.pathname + urlNext.search;
+            next.onclick = null;
         } else {
             next.style.display = 'none';
         }
-
-        // Auto-scroll removido para manter o topo do site ao carregar/atualizar a pígina
     } else if (bar) {
         bar.style.display = 'none';
     }
