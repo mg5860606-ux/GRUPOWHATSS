@@ -133,7 +133,49 @@ html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-ap
 .dark .invite-box span{color:#aebac1}
 .invite-box .copy-badge{font-size:.7rem;background:#25d366;color:#fff;padding:3px 10px;border-radius:12px;font-weight:700}
 
-/* Member actions */
+/* ===== EMOJI PICKER ===== */
+.ep{display:none;background:#fff;border-top:1px solid #e0e0e0;padding:6px 10px;max-height:200px;overflow-y:auto;flex-shrink:0}
+.dark .ep{background:#1f2c33;border-color:#2a3a45}
+.ep.sh{display:block}
+.ep .est{font-size:.65rem;font-weight:800;color:#888;text-transform:uppercase;margin:6px 0 3px;letter-spacing:.3px}
+.dark .ep .est{color:#8696a0}
+.ep .eg{display:flex;flex-wrap:wrap;gap:1px}
+.ep .ei{font-size:1.3rem;padding:3px 5px;cursor:pointer;border-radius:5px;line-height:1.2}
+.ep .ei:hover{background:#f0f0f0}
+.dark .ep .ei:hover{background:#2a3a45}
+
+/* ===== TYPING BAR ===== */
+.tib{display:none;padding:6px 14px;background:#f0f2f5;align-items:center;gap:8px;font-size:.72rem;color:#888;font-weight:600;flex-shrink:0}
+.dark .tib{background:#1f2c33;color:#8696a0}
+.tib.sh{display:flex}
+.tib .tdots{display:flex;gap:2px}
+.tib .tdots span{width:5px;height:5px;background:#888;border-radius:50%;animation:typingDot 1.4s infinite}
+.dark .tib .tdots span{background:#8696a0}
+.tib .tdots span:nth-child(2){animation-delay:.2s}
+.tib .tdots span:nth-child(3){animation-delay:.4s}
+@keyframes typingDot{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+
+/* ===== REACTION PICKER ===== */
+.rpk{display:none;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#fff;border-radius:16px;box-shadow:0 -4px 20px rgba(0,0,0,.15);z-index:250;padding:10px 12px}
+.dark .rpk{background:#1f2c33;box-shadow:0 -4px 20px rgba(0,0,0,.4)}
+.rpk.sh{display:flex}
+.rpk .rpkg{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.rpk .rpki{font-size:1.6rem;cursor:pointer;padding:4px;border:none;background:none;border-radius:8px;transition:all .15s;line-height:1}
+.rpk .rpki:hover{background:#f0f2f5;transform:scale(1.2)}
+.dark .rpk .rpki:hover{background:#2a3a45}
+
+/* ===== REACTIONS ON MESSAGES ===== */
+.rab{display:flex;justify-content:center;gap:2px;padding:2px 0;flex-wrap:wrap}
+.rab button{background:none;border:none;font-size:.85rem;cursor:pointer;padding:2px 4px;border-radius:4px;transition:all .15s;line-height:1;display:flex;align-items:center;gap:1px}
+.rab button:hover{background:rgba(0,0,0,.06);transform:scale(1.1)}
+.rab button .rcnt{font-size:.52rem;font-weight:800;color:#555;margin-left:1px}
+.dark .rab button .rcnt{color:#8696a0}
+
+.react-add-btn{background:none;border:none;color:#8696a0;font-size:.72rem;cursor:pointer;padding:2px 6px;border-radius:4px;margin-top:2px;transition:all .15s;display:flex;align-items:center;gap:2px}
+.react-add-btn:hover{background:rgba(0,0,0,.05);color:#25d366}
+.dark .react-add-btn:hover{background:rgba(255,255,255,.08);color:#25d366}
+
+/* ===== MEMBER ACTIONS ===== */
 .btn-sm{padding:6px 12px;border:none;border-radius:8px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
 .btn-danger{background:#f85149;color:#fff}
 .btn-danger:hover{background:#da3633}
@@ -168,13 +210,20 @@ html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-ap
 <div id="loadingOlder" style="display:none;text-align:center;padding:8px;color:#888;font-size:.75rem"><i class="fas fa-circle-notch fa-spin"></i> Carregando...</div>
 </div>
 
+<!-- TYPING BAR -->
+<div class="tib" id="typingBar"><div class="tdots"><span></span><span></span><span></span></div><span id="typingText"></span></div>
+
 <!-- PREVIEW BARS -->
 <div class="ipb" id="imgPreviewBar"><img id="imgPreviewThumb" src=""><span>Foto selecionada</span><button class="cip" onclick="cancelImgPreview()"><i class="fas fa-times-circle"></i></button><button class="sip" onclick="sendImage()"><i class="fas fa-paper-plane"></i> Enviar</button></div>
 <div class="ipb" id="videoPreviewBar"><video id="videoPreviewThumb" style="height:40px;width:40px;object-fit:cover;border-radius:6px"></video><span>Video selecionado</span><button class="cip" onclick="cancelVideoPreview()"><i class="fas fa-times-circle"></i></button><button class="sip" onclick="sendVideoFile()"><i class="fas fa-paper-plane"></i> Enviar</button></div>
 
+<!-- EMOJI PICKER -->
+<div class="ep" id="emojiPicker"></div>
+
 <!-- INPUT BAR -->
 <div class="cib" id="chatInputBar" style="position:relative">
 <button class="abtn" onclick="toggleAttach()" id="clipBtn"><i class="fas fa-plus-circle"></i></button>
+<button class="abtn" onclick="toggleEmojiPicker()" id="emojiBtn" title="Emoji"><i class="far fa-smile"></i></button>
 <textarea class="tin" id="chatInput" placeholder="Digite uma mensagem..." rows="1" style="height:38px"></textarea>
 <button class="sbn" onclick="sendMessage()" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
 <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="previewImg(event)">
@@ -186,8 +235,12 @@ html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-ap
 <button class="api" onclick="document.getElementById('photoInput').click();closeAttach()"><div class="aic" style="background:#7f66ff"><i class="fas fa-image"></i></div> Foto</button>
 <button class="api" onclick="document.getElementById('videoInput').click();closeAttach()"><div class="aic" style="background:#007bfc"><i class="fas fa-video"></i></div> Video</button>
 <button class="api" onclick="document.getElementById('docInput').click();closeAttach()"><div class="aic" style="background:#e67e22"><i class="fas fa-file"></i></div> Documento</button>
+<button class="api" onclick="toggleEmojiPicker();closeAttach()"><div class="aic" style="background:#ffc107"><i class="fas fa-smile"></i></div> Emoji</button>
 </div>
 </div>
+
+<!-- REACTION PICKER (floating) -->
+<div class="rpk" id="reactionPicker"><div class="rpkg" id="reactionGrid"></div></div>
 
 <!-- REPLY PREVIEW -->
 <div class="ipb" id="replyPreview" style="display:none"><span id="replyInfo">Respondendo</span><button class="cip" onclick="cancelReply()"><i class="fas fa-times-circle"></i></button></div>
@@ -199,9 +252,17 @@ html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-ap
 <h3><i class="fas fa-info-circle" style="color:#25d366"></i> Info do Grupo</h3>
 <div class="mbody">
 <div style="text-align:center;margin-bottom:16px">
-<div id="modalGroupAvatar" style="width:80px;height:80px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#fff;background:#54656f;overflow:hidden"><span id="modalGroupInitial">G</span></div>
-<div id="modalGroupName" style="font-size:1.2rem;font-weight:800">Nome do Grupo</div>
+<div id="modalGroupAvatar" style="width:80px;height:80px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#fff;background:#54656f;overflow:hidden;position:relative;cursor:pointer" onclick="updateGroupPhoto()" title="Clique para alterar foto" onmouseenter="document.getElementById('photoOverlay').style.display='flex'" onmouseleave="document.getElementById('photoOverlay').style.display='none'">
+<span id="modalGroupInitial">G</span>
+<div id="photoOverlay" style="position:absolute;inset:0;background:rgba(0,0,0,.4);border-radius:50%;display:none;align-items:center;justify-content:center;font-size:1.2rem;color:#fff"><i class="fas fa-camera"></i></div>
+</div>
+<div id="modalGroupName" style="font-size:1.2rem;font-weight:800;display:inline;cursor:pointer" onclick="editGroupName()" title="Clique para editar nome">Nome do Grupo</div>
+<i class="fas fa-pen" style="font-size:.7rem;color:#888;margin-left:4px;cursor:pointer" onclick="editGroupName()" title="Editar nome"></i>
 <div id="modalGroupMemberCount" style="font-size:.78rem;color:#888;margin-top:4px">0 membros</div>
+<div id="adminGroupControls" style="display:none;gap:12px;justify-content:center;margin-top:8px">
+<button onclick="updateGroupPhoto()" style="background:none;border:1px solid #ddd;border-radius:20px;padding:5px 14px;font-size:.75rem;font-weight:700;color:#555;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit"><i class="fas fa-camera"></i> Foto</button>
+<button onclick="editGroupName()" style="background:none;border:1px solid #ddd;border-radius:20px;padding:5px 14px;font-size:.75rem;font-weight:700;color:#555;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit"><i class="fas fa-pen"></i> Nome</button>
+</div>
 </div>
 <div class="invite-box" id="inviteBox" onclick="copyInviteLink()">
 <i class="fas fa-link"></i>

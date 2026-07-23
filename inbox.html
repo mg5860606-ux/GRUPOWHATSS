@@ -253,6 +253,7 @@ html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-ap
 <div class="wa-acts">
 <button onclick="toggleSearch()" title="Buscar"><i class="fas fa-search"></i></button>
 <button onclick="window.location.href='settings.html'" title="Configurações"><i class="fas fa-cog"></i></button>
+<button onclick="openCreateGroup()" title="Criar grupo" style="color:#25D366"><i class="fas fa-user-plus"></i></button>
 </div>
 </div>
 <div class="wa-tabs">
@@ -370,6 +371,88 @@ try{viewedStatuses=JSON.parse(localStorage.getItem('gw_viewed_statuses')||'{}');
 if(!myUid){myUid='u_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem('gw_chat_uid',myUid);}
 if(!myColor){myColor=COLORS[Math.floor(Math.random()*COLORS.length)];localStorage.setItem('gw_chat_color',myColor);}
 
+// ===== GROUP CREATION =====
+window.openCreateGroup=function(){
+    var name=prompt('Nome do grupo:');
+    if(!name||name.trim().length<2){alert('O nome deve ter pelo menos 2 caracteres.');return;}
+    name=name.trim();
+    var btn=document.querySelector('.wa-acts button[title="Criar grupo"]');
+    if(btn){btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>';btn.disabled=true;}
+    ensureAuth().then(function(){
+        var inviteCode=Math.random().toString(36).substring(2,8)+Math.random().toString(36).substring(2,8);
+        return db.collection('groups').add({
+            name:name,
+            createdBy:myUid,
+            createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+            members:[myUid],
+            admins:[myUid],
+            inviteCode:inviteCode,
+            lastMessage:'Grupo criado',
+            lastTimestamp:firebase.firestore.FieldValue.serverTimestamp()
+        });
+    }).then(function(ref){
+        var gid=ref.id;
+        // Add system message
+        db.collection('groupMessages').add({
+            groupId:gid,type:'system',
+            text:myNick+' criou o grupo "'+name+'".',
+            username:'Sistema',uid:'system',
+            timestamp:firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(function(){});
+        // Add to conversations
+        db.collection('chatConversations').doc('group_'+gid).set({
+            participants:[myUid],
+            isGroup:true,
+            groupId:gid,
+            lastTimestamp:firebase.firestore.FieldValue.serverTimestamp()
+        },{merge:true}).catch(function(){});
+        var link=window.location.origin+'/GRUPOSWHATSS/group-chat.html?code='+inviteCode;
+        if(navigator.clipboard){
+            navigator.clipboard.writeText(link).then(function(){
+                alert('Grupo criado! Link de convite copiado para a area de transferencia.\n\nCompartilhe: '+link);
+                window.location.href='group-chat.html?id='+gid;
+            }).catch(function(){window.location.href='group-chat.html?id='+gid;});
+        }else{
+            alert('Grupo criado! Link de convite: '+link);
+            window.location.href='group-chat.html?id='+gid;
+        }
+    }).catch(function(e){console.error(e);alert('Erro ao criar grupo.');if(btn){btn.innerHTML='<i class="fas fa-user-plus"></i>';btn.disabled=false;}});
+};
+
+// ===== LOAD GROUP CONVERSATIONS =====
+var groupConversations=[];
+window.loadGroupConversations=function(){
+    if(!myUid)return;
+    db.collection('groups').where('members','array-contains',myUid).get().then(function(snap){
+        groupConversations=snap.docs.map(function(d){var data=d.data();data.id=d.id;return {id:'group_'+d.id,groupId:d.id,isGroup:true,name:data.name||'Grupo',lastMessage:data.lastMessage||'',lastTimestamp:data.lastTimestamp,lastSender:data.lastSender,members:data.members||[],memberCount:(data.members||[]).length,inviteCode:data.inviteCode||''};});
+        renderConversationsFromCache();
+    }).catch(function(){});
+};
+
+// ===== MODIFY renderConversationsFromCache to show groups =====
+var _origRender=renderConversationsFromCache;
+renderConversationsFromCache=function(){
+    // Merge groups into conversations
+    var convsCopy=lastConvs.slice();
+    groupConversations.forEach(function(gc){
+        var existing=convsCopy.filter(function(c){return c.id===gc.id;}).length>0;
+        if(!existing){
+            convsCopy.push({id:gc.id,isGroup:true,groupId:gc.groupId,lastMessage:gc.lastMessage,lastTimestamp:gc.lastTimestamp,lastSender:gc.lastSender,groupName:gc.name,memberCount:gc.memberCount,inviteCode:gc.inviteCode||''});
+        }else{
+            convsCopy.forEach(function(c){if(c.id===gc.id){c.groupName=gc.name;c.memberCount=gc.memberCount;c.inviteCode=gc.inviteCode||'';}});
+        }
+    });
+    lastConvs=convsCopy;
+    _origRender();
+};
+
+// ===== ADD group support to renderConvList =====
+// Override the display name to show group names properly with group icon
+var _origGetDisplay=function(c){
+    if(c.isGroup){return '<i class="fas fa-users" style="font-size:.75rem;margin-right:4px;color:#25D366"></i> '+escHtml(c.groupName||'Grupo');}
+    return escHtml(c.otherName||c.otherUid||'Conversa');
+};
+
 // NICKNAME
 (function(){if(!myNick){var m=document.getElementById('nickModal');if(m)m.classList.add('sh');}})();
 window.saveNickname=function(){
@@ -410,7 +493,7 @@ window.switchTab=function(tab,btn){
     currentTab=tab;
     document.querySelectorAll('.wa-tabs button').forEach(function(b){b.classList.remove('act');});
     if(btn)btn.classList.add('act');
-    if(tab==='chats'){renderConversationsFromCache();document.getElementById('waSearchInput').placeholder='Buscar conversa...';}
+    if(tab==='chats'){renderConversationsFromCache();document.getElementById('waSearchInput').placeholder='Buscar conversa...';loadGroupConversations();}
     else if(tab==='status'){renderStatusTab();document.getElementById('waSearchInput').placeholder='Buscar status...';}
 };
 

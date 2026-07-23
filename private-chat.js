@@ -383,14 +383,14 @@ window.showStickerTab=function(tab){
         var custom;try{custom=JSON.parse(localStorage.getItem('gw_custom_stickers')||'[]');}catch(e){custom=[];}
         var h='<div class="sg">';
         if(custom.length===0){
-            h+='<div class="semp"><i class="fas fa-upload"></i>Nenhum sticker personalizado.<br><button onclick="uploadCustomSticker()">Adicionar sticker</button></div>';
+            h+='<div class="semp"><i class="fas fa-upload"></i>Nenhum sticker personalizado.<br><button onclick="createSticker()"><i class="fas fa-magic"></i> Criar Sticker</button></div>';
         }else{
             custom.forEach(function(st,idx){
                 h+='<div class="si" onclick="sendSticker(\''+st.data+'\')" title="Enviar"><img src="'+escUrl(st.data)+'">';
                 h+='<button class="ssr" onclick="event.stopPropagation();removeCustomSticker('+idx+')" title="Remover"><i class="fas fa-times"></i></button>';
                 h+='</div>';
             });
-            h+='<div class="semp"><button onclick="uploadCustomSticker()"><i class="fas fa-plus"></i> Adicionar</button></div>';
+            h+='<div class="semp"><button onclick="createSticker()"><i class="fas fa-plus"></i> Criar Sticker</button></div>';
         }
         h+='</div>';
         content.innerHTML=h;
@@ -430,25 +430,82 @@ window.removeSavedSticker=function(s){
     localStorage.setItem('gw_saved_stickers',JSON.stringify(saved));
     showStickerTab('salvos');
 };
-window.uploadCustomSticker=function(){
-    var inp=document.createElement('input');inp.type='file';inp.accept='image/png,image/webp,image/gif,image/jpeg';
-    inp.onchange=function(e){
+// ===== STICKER CREATION (Foto / GIF / Video) =====
+function saveCustomStickerData(data){
+    var custom;try{custom=JSON.parse(localStorage.getItem('gw_custom_stickers')||'[]');}catch(e){custom=[];}
+    if(custom.length>=20){alert('Maximo de 20 stickers personalizados. Remova alguns para adicionar novos.');return false;}
+    custom.push({data:data,added:Date.now()});
+    localStorage.setItem('gw_custom_stickers',JSON.stringify(custom));
+    buildStickersPicker();showStickerTab('meus-stickers');
+    return true;
+}
+function resizeToSticker(img,w,h){
+    var max=512,ratio=Math.min(max/w,max/h,1);
+    w=Math.round(w*ratio);h=Math.round(h*ratio);
+    var c=document.createElement('canvas');c.width=w;c.height=h;
+    var ctx=c.getContext('2d');ctx.drawImage(img,0,0,w,h);
+    var data=c.toDataURL('image/webp',0.85);
+    if(data.length>500*1024){data=c.toDataURL('image/png',0.8);}
+    return data;
+}
+window.createSticker=function(){
+    var modal=document.getElementById('createStickerModal');
+    if(!modal){
+        var div=document.createElement('div');div.id='createStickerModal';div.className='mo';
+        div.innerHTML='<div class="nmb" style="max-width:340px"><h3><i class="fas fa-magic" style="color:#00a884"></i> Criar Sticker</h3><p style="font-size:.8rem;color:#888">Selecione o tipo de midia</p><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px"><button onclick="pickStickerPhoto()" style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #e0e0e0;border-radius:12px;background:#fff;font-size:.88rem;font-weight:700;cursor:pointer;text-align:left"><div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#7f66ff,#5b4ad0);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem"><i class="fas fa-image"></i></div><span>Foto <span style="font-weight:400;color:#888;font-size:.75rem">(estatico)</span></span></button><button onclick="pickStickerGif()" style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #e0e0e0;border-radius:12px;background:#fff;font-size:.88rem;font-weight:700;cursor:pointer;text-align:left"><div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#9b59b6,#8e44ad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem"><i class="fas fa-icons"></i></div><span>GIF Animado <span style="font-weight:400;color:#888;font-size:.75rem">(animado!)</span></span></button><button onclick="pickStickerVideo()" style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #e0e0e0;border-radius:12px;background:#fff;font-size:.88rem;font-weight:700;cursor:pointer;text-align:left"><div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#007bfc,#0056d6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem"><i class="fas fa-video"></i></div><span>Video <span style="font-weight:400;color:#888;font-size:.75rem">(extrair frame)</span></span></button></div><button onclick="document.getElementById('createStickerModal').classList.remove('sh')" style="background:#f0f0f0;color:#555;border:none;padding:10px;border-radius:10px;font-weight:700;cursor:pointer;width:100%">Cancelar</button></div>';
+        document.body.appendChild(div);
+    }
+    modal.classList.add('sh');
+};
+window.pickStickerPhoto=function(){
+    document.getElementById('createStickerModal').classList.remove('sh');
+    var inp=document.createElement('input');inp.type='file';inp.accept='image/png,image/webp,image/jpeg';inp.onchange=function(e){
         var f=e.target.files[0];if(!f)return;
-        if(f.size>5*1024*1024){alert('Imagem muito grande. Maximo 5MB.');return;}
+        if(f.size>10*1024*1024){alert('Imagem muito grande. Maximo 10MB.');return;}
         var r=new FileReader();r.onload=function(ev){
             var img=new Image();img.onload=function(){
-                var max=512,w=img.width,h=img.height,ratio=Math.min(max/w,max/h,1);
-                w=Math.round(w*ratio);h=Math.round(h*ratio);
-                var c=document.createElement('canvas');c.width=w;c.height=h;
-                var ctx=c.getContext('2d');ctx.drawImage(img,0,0,w,h);
-                var data=c.toDataURL('image/webp',0.85);
-                if(data.length>500*1024){data=c.toDataURL('image/png',0.8);}
-                var custom;try{custom=JSON.parse(localStorage.getItem('gw_custom_stickers')||'[]');}catch(e){custom=[];}
-                if(custom.length>=20){alert('Maximo de 20 stickers personalizados. Remova alguns para adicionar novos.');return;}
-                custom.push({data:data,added:Date.now()});
-                localStorage.setItem('gw_custom_stickers',JSON.stringify(custom));
-                buildStickersPicker();showStickerTab('meus-stickers');
+                var data=resizeToSticker(img,img.width,img.height);
+                saveCustomStickerData(data);
             };img.src=ev.target.result;
+        };r.readAsDataURL(f);
+    };inp.click();
+};
+window.pickStickerGif=function(){
+    document.getElementById('createStickerModal').classList.remove('sh');
+    var inp=document.createElement('input');inp.type='file';inp.accept='image/gif';inp.onchange=function(e){
+        var f=e.target.files[0];if(!f)return;
+        if(f.size>5*1024*1024){alert('GIF muito grande. Maximo 5MB.');return;}
+        var r=new FileReader();r.onload=function(ev){
+            var data=ev.target.result;
+            // Preserve GIF animation - don't go through canvas!
+            saveCustomStickerData(data);
+        };r.readAsDataURL(f);
+    };inp.click();
+};
+window.pickStickerVideo=function(){
+    document.getElementById('createStickerModal').classList.remove('sh');
+    var inp=document.createElement('input');inp.type='file';inp.accept='video/*';inp.onchange=function(e){
+        var f=e.target.files[0];if(!f)return;
+        if(f.size>50*1024*1024){alert('Video muito grande. Maximo 50MB.');return;}
+        var r=new FileReader();r.onload=function(ev){
+            var video=document.createElement('video');video.preload='metadata';video.muted=true;video.playsInline=true;
+            video.onloadedmetadata=function(){
+                var seekTime=Math.min(0.5,video.duration*0.3);
+                video.currentTime=seekTime;
+            };
+            video.onseeked=function(){
+                var c=document.createElement('canvas');c.width=512;c.height=512;
+                var ctx=c.getContext('2d');
+                var scale=Math.min(512/video.videoWidth,512/video.videoHeight);
+                var dw=Math.round(video.videoWidth*scale),dh=Math.round(video.videoHeight*scale);
+                var dx=Math.round((512-dw)/2),dy=Math.round((512-dh)/2);
+                ctx.fillStyle='#000';ctx.fillRect(0,0,512,512);
+                ctx.drawImage(video,dx,dy,dw,dh);
+                var data=c.toDataURL('image/webp',0.85);
+                saveCustomStickerData(data);
+            };
+            video.onerror=function(){alert('Erro ao carregar video.');};
+            video.src=ev.target.result;
         };r.readAsDataURL(f);
     };inp.click();
 };
