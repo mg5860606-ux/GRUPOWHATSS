@@ -1,4 +1,63 @@
-﻿User-agent: *
+﻿# ============================================
+# GruposWhats - Robots.txt Nivel Deus
+# ============================================
+# https://mg5860606-ux.github.io/GRUPOWHATSS/
+
+User-agent: *
 Allow: /
-Disallow: /admin
+Disallow: /admin.html
+Disallow: /private-chat.html
+Disallow: /user-groups.html
+Disallow: /chat.html
+Disallow: /send-group.html
+Disallow: /*?*
+Disallow: /*.json$
+
+# Google
+User-agent: Googlebot
+Allow: /
+Disallow: /admin.html
+Disallow: /private-chat.html
+Disallow: /user-groups.html
+Crawl-delay: 1
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Disallow: /admin.html
+Disallow: /private-chat.html
 Sitemap: https://mg5860606-ux.github.io/GRUPOWHATSS/sitemap.xml
+
+# Yandex
+User-agent: Yandex
+Allow: /
+Disallow: /admin.html
+Sitemap: https://mg5860606-ux.github.io/GRUPOWHATSS/sitemap.xml
+
+# IA bots - bloquear scraping agressivo
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+# Sitemaps
+Sitemap: https://mg5860606-ux.github.io/GRUPOWHATSS/sitemap.xml
+
+# Indexador principal
+Sitemap: https://mg5860606-ux.github.io/GRUPOWHATSS/index.html

@@ -1,63 +1,90 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Pagina Principal -->
   <url>
     <loc>https://mg5860606-ux.github.io/GRUPOWHATSS/</loc>
     <lastmod>2026-07-22</lastmod>
-    <changefreq>always</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://mg5860606-ux.github.io/GRUPOWHATSS/index.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>always</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://mg5860606-ux.github.io/GRUPOWHATSS/send-group.html</loc>
-    <lastmod>2026-07-22</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.9</priority>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://mg5860606-ux.github.io/GRUPOWHATSS/preview-vip.jpg</image:loc>
+      <image:title>GruposWhats - O Maior Diretorio de Grupos de WhatsApp do Brasil</image:title>
+      <image:caption>Encontre os melhores grupos de WhatsApp ativos e seguros no Brasil</image:caption>
+    </image:image>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://mg5860606-ux.github.io/GRUPOWHATSS/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mg5860606-ux.github.io/GRUPOWHATSS/" />
   </url>
-  <url>
-    <loc>https://mg5860606-ux.github.io/GRUPOWHATSS/user-groups.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>always</changefreq>
-    <priority>0.8</priority>
-  </url>
+
+  <!-- Detalhes do Grupo -->
   <url>
     <loc>https://mg5860606-ux.github.io/GRUPOWHATSS/group-details.html</loc>
     <lastmod>2026-07-22</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mg5860606-ux.github.io/GRUPOWHATSS/preview-vip.jpg</image:loc>
+      <image:title>Detalhes do Grupo de WhatsApp</image:title>
+      <image:caption>Veja detalhes e regras do grupo antes de entrar</image:caption>
+    </image:image>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://mg5860606-ux.github.io/GRUPOWHATSS/group-details.html" />
   </url>
+
+  <!-- Enviar Grupo -->
+  <url>
+    <loc>https://mg5860606-ux.github.io/GRUPOWHATSS/send-group.html</loc>
+    <lastmod>2026-07-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://mg5860606-ux.github.io/GRUPOWHATSS/preview-vip.jpg</image:loc>
+      <image:title>Cadastrar Grupo de WhatsApp Gratis</image:title>
+      <image:caption>Envie seu grupo de WhatsApp gratuitamente no maior diretorio do Brasil</image:caption>
+    </image:image>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://mg5860606-ux.github.io/GRUPOWHATSS/send-group.html" />
+  </url>
+
+  <!-- Planos VIP -->
   <url>
     <loc>https://mg5860606-ux.github.io/GRUPOWHATSS/vip.html</loc>
     <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://mg5860606-ux.github.io/GRUPOWHATSS/preview-vip.jpg</image:loc>
+      <image:title>Planos VIP GruposWhats</image:title>
+      <image:caption>Destaque seu grupo e cresca mais rapido</image:caption>
+    </image:image>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://mg5860606-ux.github.io/GRUPOWHATSS/vip.html" />
   </url>
+
+  <!-- Chat ao Vivo -->
   <url>
-    <loc>https://mg5860606-ux.github.io/GRUPOWHATSS/faq.html</loc>
+    <loc>https://mg5860606-ux.github.io/GRUPOWHATSS/chat.html</loc>
     <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>always</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://mg5860606-ux.github.io/GRUPOWHATSS/chat.html" />
   </url>
+
+  <!-- Chat Privado -->
   <url>
-    <loc>https://mg5860606-ux.github.io/GRUPOWHATSS/blog.html</loc>
+    <loc>https://mg5860606-ux.github.io/GRUPOWHATSS/private-chat.html</loc>
+    <lastmod>2026-07-22</lastmod>
+    <changefreq>always</changefreq>
+    <priority>0.4</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://mg5860606-ux.github.io/GRUPOWHATSS/private-chat.html" />
+  </url>
+
+  <!-- Meus Grupos -->
+  <url>
+    <loc>https://mg5860606-ux.github.io/GRUPOWHATSS/user-groups.html</loc>
     <lastmod>2026-07-22</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://mg5860606-ux.github.io/GRUPOWHATSS/user-groups.html" />
   </url>
-  <url>
-    <loc>https://mg5860606-ux.github.io/GRUPOWHATSS/termos.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://mg5860606-ux.github.io/GRUPOWHATSS/privacidade.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
+
 </urlset>

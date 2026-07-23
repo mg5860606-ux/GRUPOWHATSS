@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GRUPOSWHATS - VERSÃO FINAL ESTABILIZADA
  * Todos os direitos reservados ao Corvo.
  */
@@ -46,6 +46,8 @@ let meusGrupos = JSON.parse(localStorage.getItem('meusGrupos') || '[]');
 let currentFilter = 'todos';
 let userCountry = 'BR';
 let currentBoostGroupId = null;
+let pollingIntervalId = null;
+let configsPromise = null;
 let selectedPackageHours = 12; // Default 12h
 let selectedPackagePrice = 9.90; // Default 9.90
 let visibleCount = 20;
@@ -64,7 +66,7 @@ async function loadGlobalConfigs() {
             applyConfigs(data);
             return;
         }
-    } catch (e) { /* ignore */ }
+    } catch (e) { console.warn("Erro ao ler cache de configs:", e); }
 
     try {
         const configSnap = await getDoc(doc(db, "configuracoes", "global"));
@@ -75,10 +77,10 @@ async function loadGlobalConfigs() {
             try {
                 localStorage.setItem(CONFIGS_CACHE_KEY, JSON.stringify(data));
                 localStorage.setItem(CONFIGS_CACHE_TIME_KEY, String(Date.now()));
-            } catch (e) { /* ignore */ }
+            } catch (e) { console.warn("Erro ao salvar cache de configs:", e); }
         }
     } catch (err) {
-        console.error("Erro ao carregar configuraçães globais:", err);
+        console.error("Erro ao carregar configurações globais:", err);
     }
 }
 
@@ -100,11 +102,12 @@ function applyConfigs(data) {
 
 async function loadGroups() {
     // Dispara configs e grupos AO MESMO TEMPO (não espera configs antes de buscar grupos)
-    const configsPromise = loadGlobalConfigs();
+    configsPromise = loadGlobalConfigs();
 
     const cached = loadGroupsFromCache();
     if (cached) {
         grupos = cached.groups;
+        shuffleAllGroups();
         renderAll();
         loadFooterDiscovery();
         if (cached.fresh) {
@@ -127,23 +130,8 @@ async function loadGroups() {
 
         if (mudou) {
             grupos = fresh;
-            const now = Date.now();
-
-            // Separa por prioridade
-            const vips = grupos.filter(g => g.vip && g.vipExpires > now);
-            const boosts = grupos.filter(g => !g.vip || g.vipExpires <= now).filter(g => g.freeBoostUntil && g.freeBoostUntil > now);
-            const normais = grupos.filter(g => (!g.vip || g.vipExpires <= now) && (!g.freeBoostUntil || g.freeBoostUntil <= now));
-
-            // Embaralha apenas os grupos normais (Fisher-Yates)
-            for (let i = normais.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [normais[i], normais[j]] = [normais[j], normais[i]];
-            }
-
-            // VIPs primeiro → Impulsionados → Normais (aleatórios)
-            grupos = [...vips, ...boosts, ...normais];
-
             saveGroupsToCache(grupos);
+            shuffleAllGroups();
             renderAll();
             loadFooterDiscovery();
         }
@@ -174,7 +162,7 @@ function loadGroupsFromCache() {
                 return { groups: parsed, age, fresh: age < CACHE_MAX_AGE };
             }
         }
-    } catch (e) { /* ignore */ }
+    } catch (e) { console.warn("Erro ao ler cache de grupos:", e); }
     return null;
 }
 
@@ -182,14 +170,14 @@ function saveGroupsToCache(groups) {
     try {
         localStorage.setItem(CACHE_KEY, JSON.stringify(groups));
         localStorage.setItem(CACHE_TIME_KEY, String(Date.now()));
-    } catch (e) { /* ignore quota errors */ }
+    } catch (e) { console.warn("Erro ao salvar cache de grupos:", e); }
 }
 
 function clearGroupsCache() {
     try {
         localStorage.removeItem(CACHE_KEY);
         localStorage.removeItem(CACHE_TIME_KEY);
-    } catch (e) { /* ignore */ }
+    } catch (e) { console.warn("Erro ao limpar cache:", e); }
 }
 
 // Make cache functions available globally for admin panel
@@ -255,6 +243,25 @@ function renderAll() {
 function renderTrendingGroups() {
     const grid = document.getElementById('trendingGrid');
     if (grid) grid.style.display = 'none';
+}
+
+function fisherYates(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function shuffleAllGroups() {
+    const now = Date.now();
+    const vips = grupos.filter(g => g.vip && g.vipExpires > now);
+    const boosts = grupos.filter(g => (!g.vip || g.vipExpires <= now) && g.freeBoostUntil && g.freeBoostUntil > now);
+    const normais = grupos.filter(g => (!g.vip || g.vipExpires <= now) && (!g.freeBoostUntil || g.freeBoostUntil <= now));
+    fisherYates(vips);
+    fisherYates(boosts);
+    fisherYates(normais);
+    grupos = [...vips, ...boosts, ...normais];
 }
 
 let currentPageNum = 1;
@@ -374,17 +381,17 @@ function createGroupCard(g, rank = null) {
     return `
         <article class="group-card ${isVip ? 'vip' : ''} ${rank ? 'elite-card' : ''}">
             <div class="group-image-wrapper" onclick="window.location.href='${detailsUrl}'" style="cursor:pointer;">
-                <img src="${g.imagem}" class="group-image" alt="${g.nome}" loading="lazy" onerror="this.src='logo.svg'; this.onerror=null;">
-                <div class="card-category-badge">${catName}</div>
+                <img src="${escUrl(g.imagem)}" class="group-image" alt="${escHtml(g.nome)}" loading="lazy" onerror="this.src='logo.svg'; this.onerror=null;">
+                <div class="card-category-badge">${escHtml(catName)}</div>
                 ${isVip ? '<div class="vip-star-badge"><i class="fas fa-star"></i></div>' : ''}
                 ${rankBadge}
             </div>
             <div class="group-content">
-                <h3 class="group-title" onclick="window.location.href='${detailsUrl}'" style="cursor:pointer;">${g.nome}</h3>
-                <p class="group-desc">${g.descricao}</p>
+                <h3 class="group-title" onclick="window.location.href='${detailsUrl}'" style="cursor:pointer;">${escHtml(g.nome)}</h3>
+                <p class="group-desc">${escHtml(g.descricao)}</p>
                 ${g.status === 'reprovado' ? `
                     <div class="rejection-banner">Grupo reprovado</div>
-                    <p class="rejection-reason">${g.motivoRecusa || 'Inadequado'}</p>
+                    <p class="rejection-reason">${escHtml(g.motivoRecusa || 'Inadequado')}</p>
                 ` : `
                     <button class="btn-join" onclick="window.location.href='${detailsUrl}'" style="text-transform: none; font-size: 1.1rem; padding: 14px;">Entrar no Grupo</button>
                 `}
@@ -437,11 +444,11 @@ async function validateLink() {
             }
             showAlert('✅ Dados carregados com sucesso!', 'success');
         } else {
-            showAlert('⚠ ï¸ Preencha os dados do grupo manualmente.', 'info');
+            showAlert('Preencha os dados do grupo manualmente.', 'info');
         }
     } catch (e) {
         console.warn("Erro ao validar metadados:", e);
-        showAlert('⚠ ï¸ Preencha os dados do grupo manualmente.', 'info');
+        showAlert('Preencha os dados do grupo manualmente.', 'info');
     } finally {
         btn.innerText = "VALIDAR LINK";
         btn.disabled = false;
@@ -458,7 +465,7 @@ async function validateLink() {
 }
 
 async function addGroup(e) {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     if (meusGrupos.length >= 8) {
         return showAlert('❅ Você atingiu o limite de 8 grupos por pessoa!', 'error');
     }
@@ -520,7 +527,7 @@ async function addGroup(e) {
         }
 
         const notify = document.getElementById('notifyEmail')?.checked;
-        const donoEmail = document.getElementById('userEmail')?.value?.trim() || "An´nimo";
+        const donoEmail = document.getElementById('userEmail')?.value?.trim() || "Anônimo";
 
         const data = {
             nome: name, link, categoria: cat, descricao: desc, imagem: img,
@@ -540,7 +547,7 @@ async function addGroup(e) {
         setTimeout(() => window.location.href = 'user-groups.html', 1500);
     } catch (err) {
         console.error("Erro no addGroup:", err);
-        const detail = err?.message || 'Erro no banco de dados ou conex£o.';
+        const detail = err?.message || 'Erro no banco de dados ou conexão.';
         showAlert(`❅ Erro ao enviar: ${detail}`, 'error');
         btn.disabled = false; btn.innerText = "🚀 Enviar Grupo/Canal";
     }
@@ -610,7 +617,7 @@ async function renderMyGroups() {
                     <i class="fas fa-folder-open" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
                     <h3 style="color: #333; font-weight: 800; margin-bottom: 10px;">Nenhum grupo encontrado neste navegador</h3>
                     <p style="color: #666; font-size: 0.95rem; max-width: 500px; margin: 0 auto 20px auto;">
-                        Se vocú acabou de enviar um grupo, certifique-se de preencher todo o formulário. Grupos em análise aparecem aqui automaticamente com o status <strong>⏳ EM ANáLISE</strong>.
+                        Se você acabou de enviar um grupo, certifique-se de preencher todo o formulário. Grupos em análise aparecem aqui automaticamente com o status <strong>⏳ EM ANÁLISE</strong>.
                     </p>
                     <a href="send-group.html" class="btn-join" style="display: inline-block; width: auto; padding: 12px 25px; text-decoration: none;">
                         🚀 Enviar Grupo Agora
@@ -625,12 +632,12 @@ async function renderMyGroups() {
                     <div class="group-content" style="padding:20px; text-align:center;">
                         <i class="fas fa-exclamation-triangle" style="font-size:2.5rem; color:#dc3545; margin-bottom:15px; display:block;"></i>
                         <h3 style="color:#dc3545; font-weight:800; margin-bottom:10px; font-size:1.2rem;">Grupo Removido pelo Moderador</h3>
-                        <p style="color:#666; font-size:0.95rem; margin-bottom:8px;"><strong>${g.groupName || 'Seu grupo'}</strong></p>
-                        <p style="color:#888; font-size:0.85rem; margin-bottom:20px;">Motivo: <span style="color:#dc3545; font-weight:600;">${g.motivo || 'Não especificado'}</span></p>
+                        <p style="color:#666; font-size:0.95rem; margin-bottom:8px;"><strong>${escHtml(g.groupName || 'Seu grupo')}</strong></p>
+                        <p style="color:#888; font-size:0.85rem; margin-bottom:20px;">Motivo: <span style="color:#dc3545; font-weight:600;">${escHtml(g.motivo || 'Não especificado')}</span></p>
                         <p style="color:#999; font-size:0.8rem; margin-bottom:20px;">Seu grupo foi removido por violar nossas regras. Você pode enviá-lo novamente corrigindo o problema.</p>
                         <a href="send-group.html" style="display:inline-block; padding:12px 25px; background:#28a745; color:white; border-radius:6px; font-weight:800; text-decoration:none; margin-bottom:10px;">Enviar Novamente</a>
                         <br>
-                        <button onclick="window.dismissPunishment('${g.id}')" style="margin-top:10px; padding:8px 20px; background:white; color:#999; border:1px solid #ddd; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600;">Apagar notificação</button>
+                        <button onclick="window.dismissPunishment('${escHtml(g.id)}')" style="margin-top:10px; padding:8px 20px; background:white; color:#999; border:1px solid #ddd; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight:600;">Apagar notificação</button>
                     </div>
                 </article>`;
             }
@@ -640,61 +647,61 @@ async function renderMyGroups() {
                     <h3 style="margin-top:0; text-align:center;">Editar Grupo</h3>
                     
                     <label style="font-size:0.8rem; font-weight:800;">Nome</label>
-                    <input type="text" id="editName_${g.id}" value="${g.nome}" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px;">
+                    <input type="text" id="editName_${g.id}" value="${escHtml(g.nome)}" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px;">
                     
-                    <label style="font-size:0.8rem; font-weight:800;">Descriç£o</label>
-                    <textarea id="editDesc_${g.id}" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px; resize:vertical;">${g.descricao}</textarea>
+                    <label style="font-size:0.8rem; font-weight:800;">Descrição</label>
+                    <textarea id="editDesc_${g.id}" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px; resize:vertical;">${escHtml(g.descricao)}</textarea>
                     
                     <label style="font-size:0.8rem; font-weight:800;">Link do Grupo</label>
-                    <input type="text" id="editLink_${g.id}" value="${g.link}" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px;">
+                    <input type="text" id="editLink_${g.id}" value="${escHtml(g.link)}" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px;">
                     
                     <label style="font-size:0.8rem; font-weight:800;">URL da Imagem</label>
-                    <input type="text" id="editImg_${g.id}" value="${g.imagem}" style="width:100%; padding:8px; margin-bottom:15px; border:1px solid #ccc; border-radius:4px;">
+                    <input type="text" id="editImg_${g.id}" value="${escHtml(g.imagem)}" style="width:100%; padding:8px; margin-bottom:15px; border:1px solid #ccc; border-radius:4px;">
                     
                     <div style="display:flex; gap:10px; justify-content:center;">
-                        <button onclick="window.saveMyGroupEdit('${g.id}')" style="flex:1; padding:10px; background:#28a745; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">SALVAR</button>
-                        <button onclick="window.toggleEditMode('${g.id}', false)" style="flex:1; padding:10px; background:#6c757d; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">CANCELAR</button>
+                        <button onclick="window.saveMyGroupEdit('${escHtml(g.id)}')" style="flex:1; padding:10px; background:#28a745; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">SALVAR</button>
+                        <button onclick="window.toggleEditMode('${escHtml(g.id)}', false)" style="flex:1; padding:10px; background:#6c757d; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">CANCELAR</button>
                     </div>
                 </article>`;
             }
             const detailsUrl = `group-details.html?${g.slug ? 'g=' + g.slug : 'id=' + g.id}`;
             const isVip = g.vip && (g.vipExpires > Date.now());
             const statusBadge = g.status === 'pendente' || !g.status
-                ? '<span style="color:#856404; background:#fff3cd; border:1px solid #ffeeba; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:800;">⏳ EM ANáLISE</span>'
+                ? '<span style="color:#856404; background:#fff3cd; border:1px solid #ffeeba; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:800;">⏳ EM ANÁLISE</span>'
                 : g.status === 'reprovado'
                     ? '<span style="color:#721c24; background:#f8d7da; border:1px solid #f5c6cb; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:800;">❅ REPROVADO</span>'
                     : '<span style="color:#155724; background:#d4edda; border:1px solid #c3e6cb; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:800;">✅ ATIVO</span>';
 
             return `<article class="group-card ${isVip ? 'vip' : ''}" style="margin-bottom:15px;">
                 <div class="group-image-wrapper" style="cursor:default;">
-                    <img src="${g.imagem}" class="group-image" alt="${g.nome}" loading="lazy" onerror="this.src='logo.svg'; this.onerror=null;">
-                    <div class="card-category-badge">${(g.categoria || 'GERAL').toUpperCase()}</div>
+                    <img src="${escUrl(g.imagem)}" class="group-image" alt="${escHtml(g.nome)}" loading="lazy" onerror="this.src='logo.svg'; this.onerror=null;">
+                    <div class="card-category-badge">${escHtml((g.categoria || 'GERAL').toUpperCase())}</div>
                     ${isVip ? '<div class="vip-star-badge"><i class="fas fa-star"></i></div>' : ''}
                 </div>
                 <div class="group-content">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px; flex-wrap:wrap;">
-                        <h3 class="group-title" style="cursor:default; margin:0; font-size:1.2rem;">${g.nome}</h3>
+                        <h3 class="group-title" style="cursor:default; margin:0; font-size:1.2rem;">${escHtml(g.nome)}</h3>
                         ${statusBadge}
                     </div>
-                    <div style="font-size:0.72rem;color:#888;font-family:monospace;margin-bottom:10px;cursor:pointer;padding:3px 8px;border-radius:4px;display:inline-block;transition:background .15s" onclick="window.copyId('${g.id}')" title="Clique para copiar ID" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='transparent'"><i class="fas fa-fingerprint" style="margin-right:4px;opacity:.5"></i>${g.id}</div>
-                    <p class="group-desc">${g.descricao}</p>
+                    <div style="font-size:0.72rem;color:#888;font-family:monospace;margin-bottom:10px;cursor:pointer;padding:3px 8px;border-radius:4px;display:inline-block;transition:background .15s" onclick="window.copyId('${escHtml(g.id)}')" title="Clique para copiar ID" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='transparent'"><i class="fas fa-fingerprint" style="margin-right:4px;opacity:.5"></i>${escHtml(g.id)}</div>
+                    <p class="group-desc">${escHtml(g.descricao)}</p>
                     ${g.status === 'reprovado' ? `
                         <div style="background:#fff5f5;border:1px solid #ffcccc;border-radius:6px;padding:10px;margin-bottom:10px;font-size:0.85rem;">
                             <span style="color:#dc3545;font-weight:700;">Motivo:</span>
-                            <span style="color:#666;">${g.motivoRecusa || "Nenhum motivo especificado"}</span>
-                            ${!g.recursoEnviado ? `<br><button onclick="window.enviarRecurso('${g.id}')" style="margin-top:8px;padding:6px 14px;background:#007bff;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;font-weight:700;">Recorrer</button>` : `<br><span style="margin-top:6px;display:inline-block;font-size:0.8rem;color:#28a745;font-weight:700;">✓ Recurso enviado</span>`}
+                            <span style="color:#666;">${escHtml(g.motivoRecusa || "Nenhum motivo especificado")}</span>
+                            ${!g.recursoEnviado ? `<br><button onclick="window.enviarRecurso('${escHtml(g.id)}')" style="margin-top:8px;padding:6px 14px;background:#007bff;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;font-weight:700;">Recorrer</button>` : `<br><span style="margin-top:6px;display:inline-block;font-size:0.8rem;color:#28a745;font-weight:700;">✓ Recurso enviado</span>`}
                         </div>
                     ` : ''}
                     <button class="btn-join" onclick="window.location.href='${detailsUrl}'" style="text-transform:none;font-size:1rem;padding:12px;">Entrar / Ver Detalhes</button>
                     <div style="display:flex; gap:8px; margin-top:8px;">
-                        <button onclick="window.toggleEditMode('${g.id}', true)" style="flex:1; padding:10px; border:1px solid #000; background:white; cursor:pointer; font-weight:800; font-size:0.75rem; text-transform:uppercase;">Editar</button>
-                        <button onclick="window.deleteMyGroup('${g.id}')" style="padding:10px; border:1px solid #000; background:#f8f9fa; cursor:pointer; color:#dc3545;" title="Remover"><i class="fas fa-trash"></i></button>
+                        <button onclick="window.toggleEditMode('${escHtml(g.id)}', true)" style="flex:1; padding:10px; border:1px solid #000; background:white; cursor:pointer; font-weight:800; font-size:0.75rem; text-transform:uppercase;">Editar</button>
+                        <button onclick="window.deleteMyGroup('${escHtml(g.id)}')" style="padding:10px; border:1px solid #000; background:#f8f9fa; cursor:pointer; color:#dc3545;" title="Remover"><i class="fas fa-trash"></i></button>
                     </div>
                     ${(g.status === 'aprovado' || !g.status) && !isVip ? `
                         <div style="display:flex; gap:8px; margin-top:8px;">
-                            <button onclick="window.freeBoost('${g.id}')" style="flex:1; padding:10px; background:#ffc107; color:black; border:none; cursor:pointer; font-weight:800; font-size:0.75rem; text-transform:uppercase;"><i class="fas fa-bolt"></i> Impulso Grátis (2h)</button>
+                            <button onclick="window.freeBoost('${escHtml(g.id)}')" style="flex:1; padding:10px; background:#ffc107; color:black; border:none; cursor:pointer; font-weight:800; font-size:0.75rem; text-transform:uppercase;"><i class="fas fa-bolt"></i> Impulso Grátis (2h)</button>
                         </div>
-                        <button onclick="window.openBoostModalForGroup('${g.id}')" style="width:100%; padding:12px; margin-top:8px; background:#000; color:white; border:none; cursor:pointer; font-weight:800; font-size:0.85rem; text-transform:uppercase;">🚀 Impulsionar VIP</button>
+                        <button onclick="window.openBoostModalForGroup('${escHtml(g.id)}')" style="width:100%; padding:12px; margin-top:8px; background:#000; color:white; border:none; cursor:pointer; font-weight:800; font-size:0.85rem; text-transform:uppercase;">🚀 Impulsionar VIP</button>
                     ` : ''}
                 </div>
             </article>`;
@@ -748,7 +755,7 @@ window.loginAdmin = async (e) => {
         }
     } catch (err) {
         console.error("Erro ao verificar senha no Firestore:", err);
-        showAlert('Erro de conex£o com o banco de dados.', 'error');
+        showAlert('Erro de conexão com o banco de dados.', 'error');
     } finally {
         btn.innerText = originalText;
         btn.disabled = false;
@@ -764,13 +771,13 @@ window.loadPending = async () => {
         list.innerHTML = snap.empty ? '<p>Nada pendente.</p>' : snap.docs.map(d => {
             const g = d.data();
             return `<div style="border:1px solid #ddd; padding:10px; margin-bottom:10px; display:flex; gap:10px; align-items:center;">
-                <img src="${g.imagem}" style="width:50px;" onerror="this.src='logo.svg'; this.onerror=null;">
-                <div style="flex:1;"><b>${g.nome}</b><br>${g.categoria}</div>
-                <button onclick="window.approveGroup('${d.id}')">✅</button>
-                <button onclick="window.showRejectModal('${d.id}')" style="padding:6px 10px;background:#dc3545;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;font-weight:600;">Reprovar</button>
+                <img src="${escUrl(g.imagem)}" style="width:50px;" onerror="this.src='logo.svg'; this.onerror=null;">
+                <div style="flex:1;"><b>${escHtml(g.nome)}</b><br>${escHtml(g.categoria)}</div>
+                <button onclick="window.approveGroup('${escHtml(d.id)}')">✅</button>
+                <button onclick="window.showRejectModal('${escHtml(d.id)}')" style="padding:6px 10px;background:#dc3545;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;font-weight:600;">Reprovar</button>
             </div>`;
         }).join('');
-    } catch (e) { }
+    } catch (e) { console.warn("Erro ao carregar grupos pendentes:", e); }
 }
 
 window.approveGroup = async (id) => {
@@ -786,17 +793,17 @@ window.approveGroup = async (id) => {
             showAlert('✅ Aprovado!', 'success');
             loadPending(); loadGroups(); clearGroupsCache();
 
-            if (data.notifyEmail && data.notifyEmail !== "An´nimo" && typeof emailjs !== 'undefined') {
+            if (data.notifyEmail && data.notifyEmail !== "Anônimo" && typeof emailjs !== 'undefined') {
                 try {
                     emailjs.send(CONFIG.emailjs.serviceId, CONFIG.emailjs.templateRecibo, {
                         to_email: data.notifyEmail,
                         group_name: data.nome,
                         group_link: `https://mg5860606-ux.github.io/GRUPOWHATSS/group-details.html?id=${id}`
                     });
-                } catch (err) { }
+                } catch (err) { console.warn("Erro ao enviar email de notificação:", err); }
             }
         }
-    } catch (e) { }
+    } catch (e) { console.error("Erro no approveGroup:", e); }
 }
 
 window.rejectGroup = async (id, motivo) => {
@@ -875,6 +882,7 @@ async function payWithPix() {
     }
 
     const btn = document.querySelector('#boostModal .btn-join');
+    if (!btn) return showAlert('Botão de pagamento não encontrado.', 'error');
     const originalBtnText = btn.innerText;
     btn.innerText = "⏳ Gerando PIX...";
     btn.disabled = true;
@@ -916,7 +924,7 @@ async function payWithPix() {
         }
 
         if (!response) {
-            throw new Error(lastError?.message || "Erro de conex£o com o sistema de pagamento.");
+            throw new Error(lastError?.message || "Erro de conexão com o sistema de pagamento.");
         }
 
         const responseText = await response.text();
@@ -929,6 +937,7 @@ async function payWithPix() {
 
         if (d && d.pix_code) {
             console.log("PIX gerado com sucesso!", d.id);
+            const pixCode = d.pix_code;
             document.querySelector('#boostModal .modal-body').innerHTML = `
                 <div style="text-align:center; padding: 10px;">
                     <div style="margin-bottom: 20px;">
@@ -938,7 +947,7 @@ async function payWithPix() {
                     </div>
 
                     <div style="background: #f8f9fa; border-radius: 15px; padding: 20px; border: 1px solid #eee; margin-bottom: 20px; position: relative;">
-                         <img src="${d.pix_qrcode_url}" style="width:180px; border-radius: 8px; background: white; padding: 10px; border: 1px solid #ddd;">
+                         <img src="${escUrl(d.pix_qrcode_url)}" style="width:180px; border-radius: 8px; background: white; padding: 10px; border: 1px solid #ddd;">
                          <div style="margin-top: 10px; font-size: 0.75rem; color: #555; font-weight: 700;">
                             <i class="fas fa-qrcode"></i> ESCANEIE O QR CODE ACIMA
                          </div>
@@ -946,19 +955,25 @@ async function payWithPix() {
 
                     <div style="text-align: left; margin-bottom: 20px;">
                         <label style="font-size: 0.75rem; font-weight: 700; color: #888; text-transform: uppercase;">Código Copia e Cola:</label>
-                        <div style="display: flex; gap: 5px; margin-top: 5px; cursor: pointer;" onclick="navigator.clipboard.writeText('${d.pix_code}'); window.showAlert('Código PIX copiado!', 'success');">
-                            <textarea readonly onclick="this.select();" style="flex:1; height:50px; border-radius: 8px; padding: 10px; border: 1px solid #ddd; resize: none; font-family: monospace; font-size: 0.8rem; background: #fff; cursor: pointer;">${d.pix_code}</textarea>
+                        <div style="display: flex; gap: 5px; margin-top: 5px; cursor: pointer;" data-pix-copy>
+                            <textarea readonly onclick="this.select();" style="flex:1; height:50px; border-radius: 8px; padding: 10px; border: 1px solid #ddd; resize: none; font-family: monospace; font-size: 0.8rem; background: #fff; cursor: pointer;">${escHtml(pixCode)}</textarea>
                             <button style="background: #343a40; color: white; border: none; padding: 0 15px; border-radius: 8px; cursor: pointer;"><i class="fas fa-copy"></i></button>
                         </div>
                     </div>
 
-                    <button class="btn-join" onclick="navigator.clipboard.writeText('${d.pix_code}'); window.showAlert('Código PIX copiado!', 'success');" style="width: 100%; background: #28a745; border-radius: 8px; padding: 16px; font-weight: 800; font-size: 1rem; border: none; color: white; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);">COPIAR C"DIGO PIX</button>
+                    <button class="btn-join" data-pix-copy style="width: 100%; background: #28a745; border-radius: 8px; padding: 16px; font-weight: 800; font-size: 1rem; border: none; color: white; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);">COPIAR CÓDIGO PIX</button>
                     
                     <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px; opacity: 0.6;">
                         <div style="font-size: 0.7rem;"><i class="fas fa-shield-alt"></i> Site Seguro</div>
                         <div style="font-size: 0.7rem;"><i class="fas fa-check-circle"></i> Garantia VIP</div>
                     </div>
                 </div>`;
+            document.querySelectorAll('#boostModal [data-pix-copy]').forEach(el => {
+                el.addEventListener('click', function () {
+                    navigator.clipboard.writeText(pixCode);
+                    window.showAlert('Código PIX copiado!', 'success');
+                });
+            });
             startPolling(d.id, currentBoostGroupId, selectedPackageHours);
         } else {
             throw new Error(d.message || "Token inválido.");
@@ -972,7 +987,8 @@ async function payWithPix() {
 }
 
 function startPolling(id, gid, h) {
-    const it = setInterval(async () => {
+    if (pollingIntervalId) clearInterval(pollingIntervalId);
+    pollingIntervalId = setInterval(async () => {
         try {
             const proxies = [
                 `https://api.allorigins.win/raw?url=${encodeURIComponent('https://api.promisse.com.br/transactions/' + id)}`
@@ -986,27 +1002,32 @@ function startPolling(id, gid, h) {
                         d = await r.json();
                         break;
                     }
-                } catch (e) { }
+                } catch (e) { console.warn("Erro ao consultar pagamento:", e); }
             }
 
             if (d && d.status === 'paid') {
-                clearInterval(it);
+                clearInterval(pollingIntervalId);
+                pollingIntervalId = null;
                 await updateDoc(doc(db, "grupos", gid), { vip: true, vipExpires: Date.now() + (h * 3600000) });
                 clearGroupsCache();
                 location.reload();
             }
-        } catch (e) { }
+        } catch (e) { console.warn("Erro no polling de pagamento:", e); }
     }, 5000);
 }
 
 // 8. UTILS
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function escUrl(s){return (s && /^https?:\/\//.test(s)) ? s : '';}
 function showAlert(msg, type) {
     const el = document.createElement('div');
-    el.style = `position:fixed; top:20px; left:50%; transform:translateX(-50%); padding:10px 20px; background:${type === 'success' ? '#28a745' : '#dc3545'}; color:white; z-index:9999; border-radius:5px;`;
+    const bgColor = type === 'success' ? '#28a745' : type === 'info' ? '#17a2b8' : '#dc3545';
+    el.style = `position:fixed; top:20px; left:50%; transform:translateX(-50%); padding:10px 20px; background:${bgColor}; color:white; z-index:9999; border-radius:5px;`;
     el.innerText = msg;
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 3000);
 }
+window.showAlert = showAlert;
 
 window.copyId = function (id) {
     if (navigator.clipboard) {
@@ -1243,12 +1264,12 @@ window.loadReprovados = async () => {
             const motivo = g.motivoRecusa || "Nenhum motivo especificado";
             const dataRep = g.dataReprovacao ? new Date(g.dataReprovacao).toLocaleString("pt-BR") : "Data desconhecida";
             const img = g.imagem
-                ? '<img src="' + g.imagem + '" style="width:45px;height:45px;border-radius:6px;object-fit:cover;">'
+                ? '<img src="' + escUrl(g.imagem) + '" style="width:45px;height:45px;border-radius:6px;object-fit:cover;">'
                 : '<div style="width:45px;height:45px;border-radius:6px;background:#ffe0e0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">📨</div>';
             return '<div style="border:1px solid #ffcccc;background:#fff5f5;border-radius:8px;padding:12px;display:flex;align-items:center;gap:12px;">'
                 + img
-                + '<div style="flex:1;min-width:0;"><b style="font-size:0.9rem;">' + g.nome + '</b><div style="font-size:0.75rem;color:#666;margin-top:2px;">' + (g.categoria || "Sem categoria") + ' · Motivo: ' + motivo + '</div><div style="font-size:0.7rem;color:#999;">Reprovado em: ' + dataRep + '</div></div>'
-                + '<button onclick=\'window.reaprovarGrupo("' + d.id + '")\' style="padding:8px 14px;background:#28a745;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;font-weight:700;white-space:nowrap;">Re-aprovar</button>'
+                + '<div style="flex:1;min-width:0;"><b style="font-size:0.9rem;">' + escHtml(g.nome) + '</b><div style="font-size:0.75rem;color:#666;margin-top:2px;">' + escHtml(g.categoria || "Sem categoria") + ' · Motivo: ' + escHtml(motivo) + '</div><div style="font-size:0.7rem;color:#999;">Reprovado em: ' + dataRep + '</div></div>'
+                + '<button onclick=\'window.reaprovarGrupo("' + escHtml(d.id) + '")\' style="padding:8px 14px;background:#28a745;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;font-weight:700;white-space:nowrap;">Re-aprovar</button>'
                 + '</div>';
         }).join('');
     } catch (e) {
@@ -1275,18 +1296,18 @@ window.loadRecursos = async () => {
             const dataRecurso = g.dataRecurso ? new Date(g.dataRecurso).toLocaleString('pt-BR') : 'Data desconhecida';
             return `<div style="background:#fff;border:1px solid #ffc107;border-radius:8px;padding:15px;">
                 <div style="display:flex;gap:12px;align-items:flex-start;">
-                    ${g.imagem ? `<img src="${g.imagem}" style="width:50px;height:50px;border-radius:6px;object-fit:cover;">` : `<div style="width:50px;height:50px;border-radius:6px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">📸</div>`}
+                    ${g.imagem ? `<img src="${escUrl(g.imagem)}" style="width:50px;height:50px;border-radius:6px;object-fit:cover;">` : `<div style="width:50px;height:50px;border-radius:6px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">📸</div>`}
                     <div style="flex:1;">
-                        <b style="font-size:0.95rem;">${g.nome || 'Sem nome'}</b>
+                        <b style="font-size:0.95rem;">${escHtml(g.nome || 'Sem nome')}</b>
                         <div style="font-size:0.8rem;color:#666;margin-top:4px;">
-                            Motivo: <span style="color:#dc3545;font-weight:600;">${g.motivoRecusa || 'Nenhum'}</span>
+                            Motivo: <span style="color:#dc3545;font-weight:600;">${escHtml(g.motivoRecusa || 'Nenhum')}</span>
                         </div>
                         <div style="font-size:0.75rem;color:#999;margin-top:2px;">
                             Recurso enviado em: ${dataRecurso}
                         </div>
                         <div style="margin-top:8px;display:flex;gap:6px;">
-                            <button onclick="window.aprovarRecurso('${d.id}')" style="padding:6px 14px;background:#28a745;color:#fff;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:0.8rem;">Aprovar</button>
-                            <button onclick="window.manterReprovado('${d.id}')" style="padding:6px 14px;background:#6c757d;color:#fff;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:0.8rem;">Manter Reprovado</button>
+                            <button onclick="window.aprovarRecurso('${escHtml(d.id)}')" style="padding:6px 14px;background:#28a745;color:#fff;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:0.8rem;">Aprovar</button>
+                            <button onclick="window.manterReprovado('${escHtml(d.id)}')" style="padding:6px 14px;background:#6c757d;color:#fff;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:0.8rem;">Manter Reprovado</button>
                         </div>
                     </div>
                 </div>
@@ -1338,7 +1359,8 @@ window.manterReprovado = async (id) => {
 
 window.switchAdminTab = (t) => {
     document.querySelectorAll('.admin-tab-content').forEach(el => el.style.display = 'none');
-    document.getElementById(`admin${t.charAt(0).toUpperCase() + t.slice(1)}Tab`).style.display = 'block';
+    const tabEl = document.getElementById(`admin${t.charAt(0).toUpperCase() + t.slice(1)}Tab`);
+    if (tabEl) tabEl.style.display = 'block';
     if (t === 'pending') loadPending();
 };
 window.openBoostModalForGroup = (id) => {
@@ -1347,6 +1369,7 @@ window.openBoostModalForGroup = (id) => {
     toggleBodyScroll(true);
 };
 window.closeBoostModal = () => {
+    if (pollingIntervalId) { clearInterval(pollingIntervalId); pollingIntervalId = null; }
     document.getElementById('boostModal')?.classList.remove('active');
     toggleBodyScroll(false);
 };
@@ -1377,9 +1400,10 @@ window.likeGroup = async (id, e) => {
     if (e) e.stopPropagation();
     try {
         await updateDoc(doc(db, "grupos", id), { likes: increment(1) });
+        localStorage.setItem('liked_' + id, 'true');
         const c = document.getElementById(`countLike_${id}`); if (c) c.innerText = parseInt(c.innerText) + 1;
         showAlert('❤️ Valeu!', 'success');
-    } catch (err) { }
+    } catch (err) { console.warn("Erro ao curtir grupo:", err); }
 };
 window.dismissPunishment = (id) => {
     const dismissed = JSON.parse(localStorage.getItem('dismissedPunicoes') || '[]');
@@ -1482,8 +1506,10 @@ window.saveMyGroupEdit = async (id) => {
     }
 };
 window.skipValidation = () => {
-    document.getElementById('validationStep').style.display = 'none';
-    document.getElementById('mainFormContainer').style.display = 'block';
+    const vs = document.getElementById('validationStep');
+    if (vs) vs.style.display = 'none';
+    const mf = document.getElementById('mainFormContainer');
+    if (mf) mf.style.display = 'block';
 };
 window.previewImage = (input) => {
     if (input.files && input.files[0]) {
@@ -1516,8 +1542,6 @@ window.freeBoost = async (id) => {
     }
 };
 
-window.searchGroups = () => { renderGroups(); };
-
 window.reportDeadLink = (id, e) => { if (e) e.stopPropagation(); showAlert('Obrigado!', 'success'); };
 
 window.loadAdminStats = async () => {
@@ -1547,12 +1571,12 @@ window.loadAdminStats = async () => {
 
     let repSize = 0;
     let logHTML = '<p>Nenhuma atividade.</p>';
+    let reprovData = { total: 0, motivos: {} };
     try {
         const repSnap = await getDocs(collection(db, "reportes"));
         repSize = repSnap.size;
 
         // Busca estatisticas de grupos reprovados
-        let reprovData = { total: 0, motivos: {} };
         try {
             const reprovSnap = await getDocs(query(collection(db, "gruposPendentes"), where("status", "==", "reprovado")));
             reprovData.total = reprovSnap.size;
@@ -1560,9 +1584,9 @@ window.loadAdminStats = async () => {
                 const m = d.data().motivoRecusa || 'Sem motivo';
                 reprovData.motivos[m] = (reprovData.motivos[m] || 0) + 1;
             });
-        } catch (e) { }
-        logHTML = repSnap.docs.slice(0, 5).map(r => `<p style="font-size:14px; margin-bottom:5px; padding:10px; background:#f8f9fa; border-radius:4px;"><i class="fas fa-flag" style="color:#dc3545;"></i> <b>${r.data().groupName || 'Grupo'}</b> reportado.</p>`).join('');
-    } catch (e) { }
+        } catch (e) { console.warn("Erro ao buscar estatísticas de reprovação:", e); }
+        logHTML = repSnap.docs.slice(0, 5).map(r => `<p style="font-size:14px; margin-bottom:5px; padding:10px; background:#f8f9fa; border-radius:4px;"><i class="fas fa-flag" style="color:#dc3545;"></i> <b>${escHtml(r.data().groupName || 'Grupo')}</b> reportado.</p>`).join('');
+    } catch (e) { console.error("Erro ao carregar stats:", e); }
 
     // Gerar HTML dos motivos de reprovacao
     let reprovMotivosHTML = '';
@@ -1571,12 +1595,12 @@ window.loadAdminStats = async () => {
         const items = sorted.map(function (item) {
             const m = item[0], c = item[1];
             const pct = Math.round(c / reprovData.total * 100);
-            return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:0.85rem;"><span>' + m + '</span><span style="font-weight:800;color:#dc3545;">' + c + ' (' + pct + '%)</span></div>';
+            return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:0.85rem;"><span>' + escHtml(m) + '</span><span style="font-weight:800;color:#dc3545;">' + c + ' (' + pct + '%)</span></div>';
         }).join('');
         reprovMotivosHTML = '<div style="background:#fff5f5;border:1px solid #ffcccc;border-radius:8px;padding:15px;grid-column:1/-1;"><h4 style="margin:0 0 10px 0;font-size:0.9rem;color:#dc3545;">Motivos de Reprovação</h4>' + items + '</div>';
     }
 
-    document.getElementById('adminStatsContent').innerHTML = `
+    document.getElementById('adminStatsTab').innerHTML = `
         <div style="background:#fff; border:1px solid #ddd; padding:20px; border-radius:8px; text-align:center;">
             <i class="fas fa-users" style="font-size:2rem; color:#007bff; margin-bottom:10px;"></i>
             <h3 style="margin:0; font-size:1.8rem;">${elGrupos}</h3>
@@ -1584,18 +1608,18 @@ window.loadAdminStats = async () => {
         </div>
         <div style="background:#fff; border:1px solid #ddd; padding:20px; border-radius:8px; text-align:center;">
             <i class="fas fa-eye" style="font-size:2rem; color:#28a745; margin-bottom:10px;"></i>
+            <h3 style="margin:0; font-size:1.8rem;">${hojeTotal}</h3>
+            <p style="margin:0; font-size:0.85rem; color:#666; font-weight:800;">VISITAS HOJE</p>
+        </div>
         <div style="background:#fff; border:1px solid #ffcccc; padding:20px; border-radius:8px; text-align:center;">
             <i class="fas fa-ban" style="font-size:2rem; color:#dc3545; margin-bottom:10px;"></i>
             <h3 style="margin:0; font-size:1.8rem; color:#dc3545;">${reprovData.total}</h3>
             <p style="margin:0; font-size:0.85rem; color:#666; font-weight:800;">REPROVADOS</p>
         </div>
-            <h3 style="margin:0; font-size:1.8rem;">${hojeTotal}</h3>
-            <p style="margin:0; font-size:0.85rem; color:#666; font-weight:800;">VISITAS HOJE</p>
-        </div>
         <div style="background:#fff; border:1px solid #ddd; padding:20px; border-radius:8px; text-align:center;">
             <i class="fas fa-chart-line" style="font-size:2rem; color:#17a2b8; margin-bottom:10px;"></i>
             <h3 style="margin:0; font-size:1.8rem;">${visitasTotal}</h3>
-            <p style="margin:0; font-size:0.85rem; color:#666; font-weight:800;">VISITAS HIST"RICO</p>
+            <p style="margin:0; font-size:0.85rem; color:#666; font-weight:800;">VISITAS HISTÓRICO</p>
         </div>
         <div style="background:#fff; border:1px solid #ddd; padding:20px; border-radius:8px; text-align:center;">
             <i class="fas fa-exclamation-triangle" style="font-size:2rem; color:#dc3545; margin-bottom:10px;"></i>
@@ -1622,17 +1646,17 @@ window.adminSearchGroups = () => {
     list.innerHTML = filtered.slice(0, 20).map(g => {
         if (window.adminEditingGroups && window.adminEditingGroups[g.id]) {
             return `<div style="border:1px solid #dee2e6; padding:15px; margin-bottom:10px; border-radius:8px;">
-                <input type="text" id="adminEditName_${g.id}" value="${g.nome}" style="width:100%; margin-bottom:5px; padding:8px; border: 1px solid #ccc; border-radius: 4px;">
-                <input type="text" id="adminEditLink_${g.id}" value="${g.link}" style="width:100%; margin-bottom:10px; padding:8px; border: 1px solid #ccc; border-radius: 4px;">
-                <button onclick="window.adminSaveGroupEdit('${g.id}')" style="background:#28a745; color:white; border:none; padding:8px 12px; border-radius:4px; font-weight:bold; cursor:pointer;">Salvar</button>
-                <button onclick="window.adminToggleEdit('${g.id}', false)" style="background:#6c757d; color:white; border:none; padding:8px 12px; border-radius:4px; font-weight:bold; cursor:pointer;">Cancelar</button>
+                <input type="text" id="adminEditName_${escHtml(g.id)}" value="${escHtml(g.nome)}" style="width:100%; margin-bottom:5px; padding:8px; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="text" id="adminEditLink_${escHtml(g.id)}" value="${escHtml(g.link)}" style="width:100%; margin-bottom:10px; padding:8px; border: 1px solid #ccc; border-radius: 4px;">
+                <button onclick="window.adminSaveGroupEdit('${escHtml(g.id)}')" style="background:#28a745; color:white; border:none; padding:8px 12px; border-radius:4px; font-weight:bold; cursor:pointer;">Salvar</button>
+                <button onclick="window.adminToggleEdit('${escHtml(g.id)}', false)" style="background:#6c757d; color:white; border:none; padding:8px 12px; border-radius:4px; font-weight:bold; cursor:pointer;">Cancelar</button>
             </div>`;
         }
         return `<div style="border:1px solid #dee2e6; padding:15px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-        <div><b style="color:#333;">${g.nome}</b> <br> <span style="font-size:12px; color:#666;">ID: ${g.id}</span></div>
+        <div><b style="color:#333;">${escHtml(g.nome)}</b> <br> <span style="font-size:12px; color:#666;">ID: ${escHtml(g.id)}</span></div>
         <div style="display:flex; gap:5px;">
-            <button onclick="window.adminToggleEdit('${g.id}', true)" style="background:#ffc107; color:#000; border:none; padding:8px 12px; border-radius:4px; font-weight:bold; cursor:pointer;"><i class="fas fa-edit"></i> Editar</button>
-            <button onclick="window.deleteAnyGroup('${g.id}')" style="background:#dc3545; color:white; border:none; padding:8px 12px; border-radius:4px; font-weight:bold; cursor:pointer;"><i class="fas fa-trash"></i></button>
+            <button onclick="window.adminToggleEdit('${escHtml(g.id)}', true)" style="background:#ffc107; color:#000; border:none; padding:8px 12px; border-radius:4px; font-weight:bold; cursor:pointer;"><i class="fas fa-edit"></i> Editar</button>
+            <button onclick="window.deleteAnyGroup('${escHtml(g.id)}')" style="background:#dc3545; color:white; border:none; padding:8px 12px; border-radius:4px; font-weight:bold; cursor:pointer;"><i class="fas fa-trash"></i></button>
         </div>
     </div>`}).join('') || '<p>Nenhum grupo encontrado.</p>';
 };
@@ -1670,8 +1694,8 @@ window.loadActiveVips = () => {
     const list = document.getElementById('activeVipsList');
     if (!list) return;
     list.innerHTML = vips.length ? vips.map(g => `<div style="border:1px solid #ffeeba; background:#fff3cd; padding:15px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-        <div><b>${g.nome}</b> <br> <span style="font-size:12px; color:#856404;">Expira em: ${new Date(g.vipExpires).toLocaleString('pt-BR')}</span></div>
-        <button onclick="window.revokeVip('${g.id}')" style="background:#343a40; color:white; border:none; padding:8px 12px; border-radius:4px; font-weight:bold; cursor:pointer;"><i class="fas fa-times"></i> Revogar VIP</button>
+        <div><b>${escHtml(g.nome)}</b> <br> <span style="font-size:12px; color:#856404;">Expira em: ${new Date(g.vipExpires).toLocaleString('pt-BR')}</span></div>
+        <button onclick="window.revokeVip('${escHtml(g.id)}')" style="background:#343a40; color:white; border:none; padding:8px 12px; border-radius:4px; font-weight:bold; cursor:pointer;"><i class="fas fa-times"></i> Revogar VIP</button>
     </div>`).join('') : '<p>Nenhum VIP ativo no momento.</p>';
 };
 
@@ -1726,7 +1750,7 @@ window.saveGlobalConfig = async () => {
 };
 
 window.banUser = async () => {
-    const uid = document.getElementById('adminBanUid')?.value;
+    const uid = document.getElementById('adminBanUid')?.value?.trim();
     if (!uid) return showAlert('Insira o Email ou ID', 'error');
     try {
         await setDoc(doc(db, "blacklist", uid.replace(/\./g, '_')), { banned: true, timestamp: Date.now() });
@@ -1738,9 +1762,15 @@ window.banUser = async () => {
 };
 
 window.exportToCSV = () => {
+    function csvEscape(val) {
+        let s = String(val == null ? '' : val);
+        s = s.replace(/"/g, '""');
+        if (/^[=+\-@]/.test(s)) s = "'" + s;
+        return '"' + s + '"';
+    }
     let csv = "ID,Nome,Categoria,Link,Status,Visitas,VIP\n";
     grupos.forEach(g => {
-        csv += `${g.id},"${g.nome}","${g.categoria}","${g.link}","${g.status}",${g.visitas || 0},${g.vip ? 'SIM' : 'NAO'}\n`;
+        csv += `${csvEscape(g.id)},${csvEscape(g.nome)},${csvEscape(g.categoria)},${csvEscape(g.link)},${csvEscape(g.status)},${g.visitas || 0},${csvEscape(g.vip ? 'SIM' : 'NAO')}\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -1775,11 +1805,12 @@ window.clearRejectedGroups = async () => {
 window.logoutAdmin = async () => {
     try {
         await auth.signOut();
+        localStorage.removeItem('gw_admin_auth');
         document.getElementById('adminPanelSection').style.display = 'none';
         document.getElementById('adminLoginSection').style.display = 'block';
         document.getElementById('adminPassword').value = '';
         showAlert('Desconectado!', 'success');
-    } catch (e) { }
+    } catch (e) { console.error("Erro ao fazer logout:", e); }
 };
 
 const oldSwitchAdminTab = window.switchAdminTab;
@@ -1810,7 +1841,7 @@ window.generateManualCodes = async () => {
         return;
     }
 
-    console.log(`Iniciando geraç£o de ${qty} códigos para pacote: ${pack}`);
+    console.log(`Iniciando geração de ${qty} códigos para pacote: ${pack}`);
     output.style.display = 'block';
     output.innerText = '⏳ Gerando códigos no banco de dados...';
 
@@ -1831,7 +1862,7 @@ window.generateManualCodes = async () => {
 
         const finalOutput = `✅ Códigos Gerados (${qty}x ${pack}):\n\n` + codes.join('\n');
         output.innerText = finalOutput;
-        console.log("Geraç£o concluída com sucesso!");
+        console.log("Geração concluída com sucesso!");
 
         try {
             await navigator.clipboard.writeText(codes.join('\n'));
@@ -1841,7 +1872,7 @@ window.generateManualCodes = async () => {
             showAlert('✅ Gerados! Copie da caixa preta.', 'success');
         }
     } catch (e) {
-        console.error("Erro fatal na geraç£o de códigos:", e);
+        console.error("Erro fatal na geração de códigos:", e);
         const errorMsg = e.message || 'Erro desconhecido';
         output.innerText = `❅ Erro do Firebase: ${errorMsg}\n\nVerifique se o "Anonymous Auth" está ativado no console do Firebase e se as regras do Firestore permitem escrita em /codigos.`;
         showAlert('Erro na gravação do banco.', 'error');

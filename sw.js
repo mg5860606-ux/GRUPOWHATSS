@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gruposwhats-v3';
+const CACHE_NAME = 'gruposwhats-v5';
 const BASE = '/GRUPOWHATSS/';
 const urlsToCache = [
   BASE,

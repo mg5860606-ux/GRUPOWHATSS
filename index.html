@@ -7,7 +7,7 @@
     
     <!-- PRELOAD CRÍTICO -->
     <link rel="preload" href="styles.css?v=2.0" as="style">
-    <link rel="preload" href="script.js?v=2.0" as="script" crossorigin>
+    <link rel="preload" href="script.js?v=3.1" as="script" crossorigin>
     <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
     <link rel="dns-prefetch" href="https://grupos-whats-app.firebaseapp.com">
@@ -183,12 +183,299 @@
       "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Página Inicial", "item": "https://mg5860606-ux.github.io/GRUPOWHATSS/"}]
     }
     </script>
+    <!-- Structured Data: SiteNavigationElement -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SiteNavigationElement",
+      "name": ["Enviar Grupo", "Meus Grupos", "Planos VIP", "Chat ao Vivo", "Blog", "Termos de Uso", "Política de Privacidade", "FAQ"],
+      "url": [
+        "https://mg5860606-ux.github.io/GRUPOWHATSS/send-group.html",
+        "https://mg5860606-ux.github.io/GRUPOWHATSS/user-groups.html",
+        "https://mg5860606-ux.github.io/GRUPOWHATSS/vip.html",
+        "https://mg5860606-ux.github.io/GRUPOWHATSS/chat.html",
+        "https://mg5860606-ux.github.io/GRUPOWHATSS/blog.html",
+        "https://mg5860606-ux.github.io/GRUPOWHATSS/termos.html",
+        "https://mg5860606-ux.github.io/GRUPOWHATSS/privacidade.html",
+        "https://mg5860606-ux.github.io/GRUPOWHATSS/faq.html"
+      ]
+    }
+    </script>
+    <!-- Structured Data: AboutPage -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "AboutPage",
+      "name": "Sobre o GruposWhats",
+      "description": "GruposWhats é o maior e melhor diretório de links de grupos de WhatsApp do Brasil. Fundado em 2024, conecta milhões de brasileiros a grupos ativos e seguros.",
+      "url": "https://mg5860606-ux.github.io/GRUPOWHATSS/",
+      "inLanguage": "pt-BR",
+      "mainEntity": {
+        "@type": "Organization",
+        "name": "GruposWhats",
+        "foundingDate": "2024",
+        "numberOfEmployees": {"@type": "QuantitativeValue", "value": 1},
+        "areaServed": {
+          "@type": "Country",
+          "name": "Brasil"
+        },
+        "knowsLanguage": "pt-BR"
+      }
+    }
+    </script>
     
     <style>
         .admin-tab-btn{background:#eee;border:none;padding:8px 15px;border-radius:6px;font-weight:800;cursor:pointer;font-size:.8rem;color:#666;transition:all .2s;white-space:nowrap}
         .admin-tab-btn.active{background:#1a252f;color:#fff}
         .admin-tab-content{display:none}
         .stat-card i{display:block;margin-bottom:10px}
+
+        /* === BANNER FLUTUANTE CHAT AO VIVO (CICLOS) === */
+        .chat-banner {
+            position: fixed;
+            z-index: 9000;
+            width: 320px;
+            max-width: calc(100vw - 30px);
+            padding: 12px 15px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 40%, #2c5364 100%);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.15);
+            animation: chatBannerPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transform-origin: center center;
+            pointer-events: auto;
+        }
+        @keyframes chatBannerPop {
+            from { opacity: 0; transform: scale(0.85) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .chat-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 80%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(37,211,102,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .chat-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -40%;
+            left: -20%;
+            width: 60%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(0,188,212,0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        /* Posições flutuantes */
+        .chat-banner.pos-tr { top: 80px; right: 20px; }
+        .chat-banner.pos-tl { top: 80px; left: 20px; }
+        .chat-banner.pos-br { bottom: 80px; right: 20px; }
+        .chat-banner.pos-bl { bottom: 80px; left: 20px; }
+        .chat-banner.pos-tc { top: 80px; left: 50%; margin-left: -160px; }
+        .chat-banner.pos-bc { bottom: 80px; left: 50%; margin-left: -160px; }
+
+        .chat-banner-close {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            background: rgba(255,255,255,0.12);
+            border: none;
+            color: rgba(255,255,255,0.7);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: all 0.25s ease;
+            z-index: 5;
+            backdrop-filter: blur(4px);
+        }
+        .chat-banner-close:hover {
+            background: rgba(255,255,255,0.25);
+            color: #fff;
+            transform: rotate(90deg);
+        }
+        .chat-banner-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 2;
+        }
+        .chat-banner-icon {
+            flex-shrink: 0;
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #25d366, #128C7E);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(37,211,102,0.3);
+            animation: chatIconPulse 3s ease-in-out infinite;
+        }
+        @keyframes chatIconPulse {
+            0%, 100% { box-shadow: 0 4px 15px rgba(37,211,102,0.3); }
+            50% { box-shadow: 0 4px 25px rgba(37,211,102,0.6); }
+        }
+        .chat-banner-text {
+            flex: 1;
+            min-width: 0;
+        }
+        .chat-banner-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #fff;
+            margin: 0 0 2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .chat-banner-live {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #25d366;
+            border-radius: 50%;
+            animation: liveDot 1.5s ease-in-out infinite;
+        }
+        @keyframes liveDot {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(37,211,102,0.6); }
+            50% { opacity: 0.6; box-shadow: 0 0 0 6px rgba(37,211,102,0); }
+        }
+        .chat-banner-badge {
+            display: inline-block;
+            background: rgba(37,211,102,0.2);
+            color: #25d366;
+            font-size: 0.55rem;
+            font-weight: 800;
+            padding: 1px 7px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(37,211,102,0.3);
+        }
+        .chat-banner-desc {
+            font-size: 0.68rem;
+            color: rgba(255,255,255,0.75);
+            margin: 0 0 5px;
+            line-height: 1.3;
+        }
+        .chat-banner-features {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .chat-banner-feat {
+            font-size: 0.55rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.85);
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            background: rgba(255,255,255,0.08);
+            padding: 2px 7px;
+            border-radius: 20px;
+        }
+        .chat-banner-feat i {
+            font-size: 0.5rem;
+            color: #25d366;
+        }
+        .chat-banner-action {
+            flex-shrink: 0;
+        }
+        .chat-banner-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #25d366, #1da851);
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.7rem;
+            padding: 7px 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37,211,102,0.35);
+            white-space: nowrap;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .chat-banner-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+        .chat-banner-btn:hover::before {
+            transform: translateX(100%);
+        }
+        .chat-banner-btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 6px 25px rgba(37,211,102,0.5);
+        }
+        .chat-banner-btn:active {
+            transform: translateY(0) scale(0.97);
+        }
+        .chat-banner-online {
+            display: none;
+        }
+
+        /* Animação de saída */
+        .chat-banner.chat-banner-out {
+            animation: chatBannerOut 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+        }
+        @keyframes chatBannerOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.8); pointer-events: none; }
+        }
+
+
+        /* RESPONSIVO - floating */
+        @media (max-width: 768px) {
+            .chat-banner {
+                width: calc(100vw - 24px);
+                max-width: 360px;
+                padding: 10px 12px;
+            }
+            .chat-banner.pos-tr { top: 70px; right: 12px; }
+            .chat-banner.pos-tl { top: 70px; left: 12px; }
+            .chat-banner.pos-br { bottom: 70px; right: 12px; }
+            .chat-banner.pos-bl { bottom: 70px; left: 12px; }
+            .chat-banner.pos-tc { top: 70px; left: 12px; right: 12px; width: auto; }
+            .chat-banner.pos-bc { bottom: 70px; left: 12px; right: 12px; width: auto; }
+            .chat-banner-content {
+                gap: 10px;
+            }
+            .chat-banner-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+            .chat-banner-title {
+                font-size: 0.78rem;
+            }
+            .chat-banner-desc {
+                font-size: 0.62rem;
+            }
+            .chat-banner-btn {
+                font-size: 0.65rem;
+                padding: 6px 12px;
+            }
+        }
     </style>
 </head>
 
@@ -289,11 +576,13 @@
                 <a href="javascript:void(0)" class="cat-item" onclick="filterByCategory('videos')"><i class="fas fa-video"></i><span>Vídeos</span></a>
             </div>
             <button id="btnToggleCats" onclick="toggleCategories()" style="border-radius:999px;border:1px solid #e2e8f0;background:#fff;padding:10px 28px;font-size:.8rem;font-weight:700;color:#1a252f;cursor:pointer;transition:all .3s;box-shadow:0 1px 2px rgba(41,47,59,.04),0 8px 24px -12px rgba(41,47,59,.18);">Ver mais</button>
-            <div style="margin-top:40px;text-align:center;padding:0 15px;margin-bottom:20px;">
+            <div style="margin-top:40px;text-align:center;padding:0 15px;margin-bottom:40px;">
                 <h1 class="main-title" style="font-size:2.2rem;color:#1a252f;font-weight:900;">Grupos de WhatsApp</h1>
             </div>
         </div>
     </section>
+
+
 
     <style>
         .cat-item:hover{transform:scale(1.05)}
@@ -347,66 +636,6 @@
         </div>
     </main>
 
-    <!-- FRASES PARA STATUS -->
-    <section class="seo-promotion" style="background:#f8f9fa;padding:50px 0;border-top:1px solid #eee;">
-        <div class="container-fluid" style="max-width:1000px;margin:0 auto;padding:0 15px;">
-            <h2 style="font-size:1.8rem;font-weight:900;color:#1a252f;text-align:center;margin-bottom:10px;">Frases para Status do WhatsApp</h2>
-            <p style="color:#666;font-size:0.95rem;text-align:center;margin-bottom:30px;max-width:650px;margin-left:auto;margin-right:auto;">Milhares de frases prontas para copiar e colar no seu status. Escolha uma categoria e use com um clique.</p>
-            
-            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(220px,100%),1fr));gap:12px;margin-bottom:30px;">
-                <a href="frases-para-status-academia.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
-                    <i class="fas fa-dumbbell" style="color:#25d366;font-size:1.1rem;"></i> Frases para Status Academia
-                </a>
-                <a href="frases-para-status-amor.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
-                    <i class="fas fa-heart" style="color:#e74c3c;font-size:1.1rem;"></i> Frases para Status Amor
-                </a>
-                <a href="frases-para-status-boa-noite.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
-                    <i class="fas fa-moon" style="color:#8e44ad;font-size:1.1rem;"></i> Frases para Status Boa noite
-                </a>
-                <a href="frases-para-status-bom-dia.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
-                    <i class="fas fa-sun" style="color:#f39c12;font-size:1.1rem;"></i> Frases para Status Bom dia
-                </a>
-                <a href="frases-para-status-curtas.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
-                    <i class="fas fa-bolt" style="color:#e67e22;font-size:1.1rem;"></i> Frases para Status Curtas
-                </a>
-                <a href="frases-para-status-deus.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
-                    <i class="fas fa-cross" style="color:#2c3e50;font-size:1.1rem;"></i> Frases para Status Deus
-                </a>
-                <a href="frases-para-status-engracadas.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
-                    <i class="fas fa-laugh" style="color:#f1c40f;font-size:1.1rem;"></i> Frases para Status Engraçadas
-                </a>
-                <a href="frases-para-status-evangelica.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
-                    <i class="fas fa-bible" style="color:#9b59b6;font-size:1.1rem;"></i> Frases para Status Evangélica
-                </a>
-                <a href="frases-para-status-gratidao.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
-                    <i class="fas fa-hands" style="color:#27ae60;font-size:1.1rem;"></i> Frases para Status Gratidão
-                </a>
-                <a href="frases-para-status-indiretas.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
-                    <i class="fas fa-comment-dots" style="color:#e74c3c;font-size:1.1rem;"></i> Frases para Status Indiretas
-                </a>
-                <a href="frases-para-status-motivacao.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
-                    <i class="fas fa-fire" style="color:#e67e22;font-size:1.1rem;"></i> Frases para Status Motivação
-                </a>
-                <a href="frases-para-status-musicas.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
-                    <i class="fas fa-music" style="color:#1abc9c;font-size:1.1rem;"></i> Frases para Status Músicas
-                </a>
-                <a href="frases-para-status-reflexao.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
-                    <i class="fas fa-brain" style="color:#3498db;font-size:1.1rem;"></i> Frases para Status Reflexão
-                </a>
-                <a href="frases-para-status-sozinha.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
-                    <i class="fas fa-user" style="color:#95a5a6;font-size:1.1rem;"></i> Frases para Status Sozinha
-                </a>
-                <a href="frases-para-status-triste.html" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e9ecef;border-radius:8px;padding:14px 16px;text-decoration:none;color:#333;font-weight:700;font-size:0.95rem;transition:all .2s;">
-                    <i class="fas fa-sad-tear" style="color:#7f8c8d;font-size:1.1rem;"></i> Frases para Status Triste
-                </a>
-            </div>
-            
-            <div style="text-align:center;">
-                <a href="frases-para-status.html" style="display:inline-block;background:#25d366;color:#fff;padding:14px 30px;border-radius:8px;text-decoration:none;font-weight:800;font-size:1rem;transition:all .2s;">Ver todas as frases para status →</a>
-            </div>
-        </div>
-    </section>
-
 
 
     <footer class="footer">
@@ -425,6 +654,91 @@
     <!-- Back to Top -->
     <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;bottom:20px;right:20px;width:45px;height:45px;background:#1a252f;color:#fff;border:none;border-radius:50%;display:none;align-items:center;justify-content:center;z-index:99;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.3);"><i class="fas fa-arrow-up"></i></button>
     <script>window.onscroll=function(){const b=document.getElementById('backToTop');if(document.body.scrollTop>500||document.documentElement.scrollTop>500)b.style.display='flex';else b.style.display='none'}</script>
+
+    <!-- Banner Chat Script (Ciclos) -->
+    <script>
+        (function(){
+            var banner = document.getElementById('chatBanner');
+            if (!banner) return;
+
+            var positions = ['pos-tr','pos-tl','pos-br','pos-bl','pos-tc','pos-bc'];
+            var lastPos = -1;
+            var cycleTimer = null;
+            var isDismissed = false;
+
+            function getRandomPos() {
+                var idx;
+                do {
+                    idx = Math.floor(Math.random() * positions.length);
+                } while (idx === lastPos && positions.length > 1);
+                lastPos = idx;
+                return positions[idx];
+            }
+
+            function showBanner() {
+                if (isDismissed) return;
+                var pos = getRandomPos();
+                banner.className = 'chat-banner ' + pos;
+                banner.style.display = 'block';
+                // Reinicia animação
+                banner.style.animation = 'none';
+                void banner.offsetHeight;
+                banner.style.animation = '';
+            }
+
+            function hideBanner(callback) {
+                banner.classList.add('chat-banner-out');
+                setTimeout(function() {
+                    banner.style.display = 'none';
+                    banner.classList.remove('chat-banner-out');
+                    if (callback) callback();
+                }, 450);
+            }
+
+            function cycleBanner() {
+                showBanner();
+                // Fica visível por 8 segundos
+                clearTimeout(cycleTimer);
+                cycleTimer = setTimeout(function() {
+                    hideBanner(function() {
+                        // Espera 4 segundos invisível
+                        cycleTimer = setTimeout(function() {
+                            cycleBanner();
+                        }, 4000);
+                    });
+                }, 8000);
+            }
+
+            window.dismissChatBanner = function() {
+                if (!banner) return;
+                isDismissed = true;
+                clearTimeout(cycleTimer);
+                banner.classList.add('chat-banner-out');
+                setTimeout(function() {
+                    banner.style.display = 'none';
+                    banner.classList.remove('chat-banner-out');
+                    // Reaparece após 10 segundos mesmo se fechado
+                    isDismissed = false;
+                    cycleTimer = setTimeout(function() {
+                        cycleBanner();
+                    }, 10000);
+                }, 450);
+            };
+
+            // Iniciar ciclo ao carregar
+            function startCycle() {
+                cycleTimer = setTimeout(function() {
+                    cycleBanner();
+                }, 2000); // Delay inicial de 2s
+            }
+
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                startCycle();
+            } else {
+                document.addEventListener('DOMContentLoaded', startCycle);
+            }
+        })();
+    </script>
 
     <!-- Admin Modal -->
     <div class="modal" id="adminModal">
@@ -529,11 +843,40 @@
         </div>
     </div>
 
+    <!-- FLOATING CHAT BANNER (CICLOS) -->
+    <div id="chatBanner" class="chat-banner" style="display:none;">
+        <button class="chat-banner-close" onclick="dismissChatBanner()" aria-label="Fechar banner">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="chat-banner-content">
+            <div class="chat-banner-icon">
+                <i class="fas fa-comments"></i>
+            </div>
+            <div class="chat-banner-text">
+                <h3 class="chat-banner-title"><span class="chat-banner-live"></span> Chat ao Vivo <span class="chat-banner-badge">Grátis</span></h3>
+                <p class="chat-banner-desc">Converse em tempo real com milhares de pessoas. Anônimo, seguro e sem cadastro!</p>
+                <div class="chat-banner-features">
+                    <span class="chat-banner-feat"><i class="fas fa-user-secret"></i> Anônimo</span>
+                    <span class="chat-banner-feat"><i class="fas fa-bolt"></i> Tempo Real</span>
+                    <span class="chat-banner-feat"><i class="fas fa-infinity"></i> Ilimitado</span>
+                    <span class="chat-banner-feat"><i class="fas fa-shield-alt"></i> Seguro</span>
+                </div>
+            </div>
+            <div class="chat-banner-action">
+                <a href="chat.html" class="chat-banner-btn">
+                    <i class="fas fa-comment-dots"></i>
+                    Entrar no Chat
+                </a>
+                <span class="chat-banner-online"><span class="chat-banner-dot"></span> <span id="bannerOnlineCount">0</span> online agora</span>
+            </div>
+        </div>
+    </div>
+
     <!-- EmailJS (defer) -->
     <script defer src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     
     <!-- SCRIPT PRINCIPAL (module com modulepreload) -->
-    <script type="module" src="script.js?v=2.0"></script>
+    <script type="module" src="script.js?v=3.1"></script>
     
     <script>
         const removeTranslate=()=>{const el=document.getElementById('google_translate_element')||document.querySelector('.goog-te-banner-frame')||document.querySelector('.goog-te-menu-value');if(el)el.remove();document.body.style.top='0'};

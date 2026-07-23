@@ -165,6 +165,7 @@
         .log-icon.blue{background:rgba(88,166,255,.12);color:#58a6ff}
         .log-icon.yellow{background:rgba(240,192,0,.12);color:#f0c000}
         .log-icon.red{background:rgba(248,81,73,.12);color:#f85149}
+        .log-icon.purple{background:rgba(163,113,247,.12);color:#a371f7}
         .log-text{flex:1;font-size:.85rem;color:#c9d1d9}
         .log-text strong{color:#e1e4e8}
         .log-time{font-size:.75rem;color:#8b949e;white-space:nowrap}
@@ -253,6 +254,7 @@
                 <div class="sidebar-divider"></div>
                 <a href="#" data-page="analytics"><i class="fas fa-chart-bar"></i> Analytics</a>
                 <a href="#" data-page="settings"><i class="fas fa-cog"></i> Configurações</a>
+                <a href="#" data-page="livechat"><i class="fas fa-comments"></i> Chat ao Vivo</a>
                 <a href="#" data-page="tools"><i class="fas fa-wrench"></i> Ferramentas</a>
             </nav>
             <div class="sidebar-footer">
@@ -386,8 +388,8 @@
             <!-- PAGE: SALES -->
             <div class="page" id="page-sales">
                 <div class="tab-row">
-                    <button class="tab-btn active" onclick="switchSalesTab('history')">Histórico de Vendas</button>
-                    <button class="tab-btn" onclick="switchSalesTab('codes')">Gerador de Cupons</button>
+                    <button class="tab-btn active" onclick="switchSalesTab('history', event)">Histórico de Vendas</button>
+                    <button class="tab-btn" onclick="switchSalesTab('codes', event)">Gerador de Cupons</button>
                 </div>
                 <div id="salesTab-history">
                     <div class="card">
@@ -431,6 +433,147 @@
                 <div class="card" style="margin-top:20px">
                     <div class="card-header"><h3><i class="fas fa-flag"></i> Últimos Reportes</h3></div>
                     <div class="card-body" id="reportsList"></div>
+                </div>
+            </div>
+
+            <!-- PAGE: LIVECHAT -->
+            <div class="page" id="page-livechat">
+                <div class="stats-grid" style="margin-bottom:20px">
+                    <div class="stat-card green">
+                        <div class="stat-icon"><i class="fas fa-circle" style="color:#25D366"></i></div>
+                        <div class="stat-value" id="chatOnlineCount">0</div>
+                        <div class="stat-label">Online Agora</div>
+                    </div>
+                    <div class="stat-card blue">
+                        <div class="stat-icon"><i class="fas fa-comments"></i></div>
+                        <div class="stat-value" id="chatMsgCount">0</div>
+                        <div class="stat-label">Mensagens Hoje</div>
+                    </div>
+                    <div class="stat-card purple">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-value" id="chatTotalProfiles">0</div>
+                        <div class="stat-label">Total Perfis</div>
+                    </div>
+                    <div class="stat-card red">
+                        <div class="stat-icon"><i class="fas fa-ban"></i></div>
+                        <div class="stat-value" id="chatBanCount">0</div>
+                        <div class="stat-label">Bans Ativos</div>
+                    </div>
+                </div>
+
+                <div class="tab-row">
+                    <button class="tab-btn active" onclick="switchChatTab('messages', event)">Mensagens</button>
+                    <button class="tab-btn" onclick="switchChatTab('online', event)">Online Agora</button>
+                    <button class="tab-btn" onclick="switchChatTab('profiles', event)">Perfis</button>
+                    <button class="tab-btn" onclick="switchChatTab('bans', event)">Bans</button>
+                    <button class="tab-btn" onclick="switchChatTab('settings', event)">Configurações</button>
+                </div>
+
+                <!-- TAB: MESSAGES -->
+                <div id="chatTab-messages">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+                        <div class="search-box" style="flex:1;min-width:200px;max-width:400px">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="chatMsgSearch" placeholder="Buscar mensagens..." oninput="filterChatMessages()">
+                        </div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <select id="chatMsgFilter" class="form-input" style="width:auto;padding:8px 14px" onchange="filterChatMessages()">
+                                <option value="all">Todos os tipos</option>
+                                <option value="text">Texto</option>
+                                <option value="image">Imagens</option>
+                                <option value="video">Videos</option>
+                                <option value="audio">Audios</option>
+                                <option value="sticker">Stickers</option>
+                            </select>
+                            <button class="btn btn-danger btn-sm" onclick="clearAllChat()"><i class="fas fa-trash"></i> Limpar Chat</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body" id="chatMessagesList" style="max-height:500px;overflow-y:auto;padding:0"></div>
+                    </div>
+                    <div style="text-align:center;padding:10px">
+                        <button id="btnLoadMoreMsgs" class="btn btn-secondary" onclick="loadMoreChatMsgs()" style="display:none">Carregar mais</button>
+                    </div>
+                </div>
+
+                <!-- TAB: ONLINE -->
+                <div id="chatTab-online" style="display:none">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-circle" style="color:#25D366"></i> Usuarios Online</h3>
+                            <button class="btn btn-sm btn-secondary" onclick="refreshOnlineUsers()"><i class="fas fa-sync"></i> Atualizar</button>
+                        </div>
+                        <div class="card-body" id="chatOnlineList"></div>
+                    </div>
+                </div>
+
+                <!-- TAB: PROFILES -->
+                <div id="chatTab-profiles" style="display:none">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+                        <div class="search-box" style="flex:1;min-width:200px;max-width:400px">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="chatProfileSearch" placeholder="Buscar perfil..." oninput="filterChatProfiles()">
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body" id="chatProfilesList" style="max-height:500px;overflow-y:auto"></div>
+                    </div>
+                </div>
+
+                <!-- TAB: BANS -->
+                <div id="chatTab-bans" style="display:none">
+                    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+                        <input type="text" class="form-input" id="chatBanUid" placeholder="UID do usuario para banir..." style="flex:1;min-width:200px">
+                        <input type="text" class="form-input" id="chatBanReason" placeholder="Motivo do ban..." style="flex:1;min-width:200px">
+                        <button class="btn btn-danger" onclick="banChatUser()"><i class="fas fa-ban"></i> Banir</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-ban" style="color:#f85149"></i> Usuarios Banidos</h3>
+                        </div>
+                        <div class="card-body" id="chatBansList"></div>
+                    </div>
+                </div>
+
+                <!-- TAB: SETTINGS -->
+                <div id="chatTab-settings" style="display:none">
+                    <div class="card">
+                        <div class="card-header"><h3><i class="fas fa-cog"></i> Configuracoes do Chat</h3></div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Mensagem do Sistema (Aviso)</label>
+                                <textarea class="form-input" id="chatSystemMsg" placeholder="Ex: Manutencao programada..." rows="3"></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Slow Mode (segundos entre msgs)</label>
+                                    <input type="number" class="form-input" id="chatSlowMode" value="0" min="0" max="300">
+                                </div>
+                                <div class="form-group">
+                                    <label>Max Mensagens por Usuario</label>
+                                    <input type="number" class="form-input" id="chatMaxMsgs" value="0" min="0" placeholder="0 = ilimitado">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Chat Ativo</label>
+                                    <select class="form-input" id="chatEnabled">
+                                        <option value="true">Ativado</option>
+                                        <option value="false">Desativado</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Apenas Admins Enviam</label>
+                                    <select class="form-input" id="chatAdminOnly">
+                                        <option value="false">Nao</option>
+                                        <option value="true">Sim</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="saveChatConfig()" style="margin-top:10px"><i class="fas fa-save"></i> Salvar Configuracoes</button>
+                            <button class="btn btn-danger" onclick="sendChatSystemMessage()" style="margin-top:10px;margin-left:8px"><i class="fas fa-bullhorn"></i> Enviar Aviso</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -604,6 +747,9 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+        function escAttr(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
         let allGroups = [];
         let allPending = [];
         let adminVisibleCount = 30;
@@ -660,6 +806,13 @@
             return days + 'd';
         }
 
+        function csvEscape(val) {
+            let s = String(val == null ? '' : val);
+            if (/^[=+\-@\t\r\n]/.test(s)) s = "'" + s;
+            if (/[",\r\n]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+            return s;
+        }
+
         // AUTH
         const loginForm = document.getElementById('loginForm');
         const loginOverlay = document.getElementById('loginOverlay');
@@ -668,7 +821,7 @@
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value.trim();
-            const pass = document.getElementById('loginPassword').value.trim();
+            const pass = document.getElementById('loginPassword').value;
             const btn = document.getElementById('loginBtn');
             const errEl = document.getElementById('loginError');
             btn.textContent = 'Autenticando...';
@@ -741,6 +894,7 @@
 
         function populateCategoryFilter() {
             const sel = document.getElementById('groupsFilterCat');
+            while(sel.options.length>1)sel.remove(1);
             CATEGORIES.forEach(c => {
                 const opt = document.createElement('option');
                 opt.value = c;
@@ -748,6 +902,7 @@
                 sel.appendChild(opt);
             });
             const editSel = document.getElementById('editGroupCategory');
+            while(editSel.options.length>1)editSel.remove(1);
             CATEGORIES.forEach(c => {
                 const opt = document.createElement('option');
                 opt.value = c;
@@ -781,8 +936,8 @@
             const sorted = [...allGroups].sort((a, b) => (b.dataCriacao || 0) - (a.dataCriacao || 0)).slice(0, 8);
             document.getElementById('recentGroups').innerHTML = sorted.length ? sorted.map(g => `
                 <div class="log-item">
-                    <img src="${g.imagem}" class="log-icon" style="object-fit:cover;width:36px;height:36px;border-radius:8px">
-                    <div class="log-text"><strong>${g.nome}</strong><br><span style="font-size:.75rem;color:#8b949e">${g.categoria || 'geral'} · ${g.status || 'pendente'}</span></div>
+                    <img src="${escHtml(g.imagem)}" class="log-icon" style="object-fit:cover;width:36px;height:36px;border-radius:8px">
+                    <div class="log-text"><strong>${escHtml(g.nome)}</strong><br><span style="font-size:.75rem;color:#8b949e">${escHtml(g.categoria || 'geral')} · ${escHtml(g.status || 'pendente')}</span></div>
                     <span class="log-time">${timeAgo(g.dataCriacao)}</span>
                 </div>
             `).join('') : '<div class="empty-state"><i class="fas fa-inbox"></i><p>Nenhum grupo ainda</p></div>';
@@ -797,7 +952,7 @@
             logs.push(`<div class="log-item"><div class="log-icon purple"><i class="fas fa-star"></i></div><div class="log-text"><strong>${vips}</strong> VIPs ativos</div></div>`);
             if (reports.length > 0) {
                 reports.slice(0, 5).forEach(g => {
-                    logs.push(`<div class="log-item"><div class="log-icon red"><i class="fas fa-flag"></i></div><div class="log-text"><strong>${g.nome}</strong> reportado (${g.reportes}x)</div></div>`);
+                    logs.push(`<div class="log-item"><div class="log-icon red"><i class="fas fa-flag"></i></div><div class="log-text"><strong>${escHtml(g.nome)}</strong> reportado (${g.reportes}x)</div></div>`);
                 });
             }
             document.getElementById('recentActivity').innerHTML = logs.join('');
@@ -809,7 +964,7 @@
             const statusFilter = document.getElementById('groupsFilterStatus').value;
             const catFilter = document.getElementById('groupsFilterCat').value;
             let filtered = allGroups;
-            if (q) filtered = filtered.filter(g => g.nome.toLowerCase().includes(q) || g.id.toLowerCase().includes(q) || (g.descricao || '').toLowerCase().includes(q));
+            if (q) filtered = filtered.filter(g => (g.nome||'').toLowerCase().includes(q) || g.id.toLowerCase().includes(q) || (g.descricao || '').toLowerCase().includes(q));
             if (statusFilter !== 'all') filtered = filtered.filter(g => g.status === statusFilter);
             if (catFilter !== 'all') filtered = filtered.filter(g => g.categoria === catFilter);
             const toShow = filtered.slice(0, adminVisibleCount);
@@ -820,16 +975,16 @@
                     g.status === 'pendente' ? '<span class="badge badge-warning">Pendente</span>' :
                     '<span class="badge badge-danger">Reprovado</span>';
                 return `<tr>
-                    <td><div style="display:flex;align-items:center;gap:10px"><img src="${g.imagem}" class="group-thumb" loading="lazy"><div><div class="group-name">${g.nome}</div><div class="group-id" onclick="window.copyId('${g.id}')" title="Clique para copiar ID"><i class="fas fa-fingerprint" style="margin-right:3px;opacity:.4"></i>${g.id}</div></div></div></td>
-                    <td style="text-transform:capitalize">${(g.categoria || 'geral').replace(/-/g,' ')}</td>
+                    <td><div style="display:flex;align-items:center;gap:10px"><img src="${escHtml(g.imagem)}" class="group-thumb" loading="lazy"><div><div class="group-name">${escHtml(g.nome)}</div><div class="group-id" onclick="window.copyId('${escAttr(g.id)}')" title="Clique para copiar ID"><i class="fas fa-fingerprint" style="margin-right:3px;opacity:.4"></i>${escHtml(g.id)}</div></div></div></td>
+                    <td style="text-transform:capitalize">${escHtml((g.categoria || 'geral').replace(/-/g,' '))}</td>
                     <td>${statusBadge}</td>
                     <td>${isVip ? '<span class="badge badge-warning"><i class="fas fa-star"></i> VIP</span>' : '<span class="badge badge-info">Free</span>'}</td>
                     <td>${formatNumber(g.visitas || 0)}</td>
                     <td>${g.likes || 0}</td>
                     <td>
                         <div style="display:flex;gap:4px">
-                            <button class="btn btn-sm btn-secondary" onclick="openEditModal('${g.id}')" title="Editar"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteAdminGroup('${g.id}')" title="Excluir"><i class="fas fa-trash"></i></button>
+                            <button class="btn btn-sm btn-secondary" onclick="openEditModal('${escAttr(g.id)}')" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteAdminGroup('${escAttr(g.id)}')" title="Excluir"><i class="fas fa-trash"></i></button>
                         </div>
                     </td>
                 </tr>`;
@@ -903,15 +1058,15 @@
                 }
                 list.innerHTML = allPending.map(g => `
                     <div style="display:flex;align-items:center;gap:12px;padding:14px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:10px;flex-wrap:wrap">
-                        <img src="${g.imagem}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;flex-shrink:0" loading="lazy">
+                        <img src="${escHtml(g.imagem)}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;flex-shrink:0" loading="lazy">
                         <div style="flex:1;min-width:150px">
-                            <div style="font-weight:800;color:#e1e4e8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome}</div>
-                            <div style="font-size:.75rem;color:#8b949e;margin-top:2px">${(g.categoria || '').replace(/-/g,' ')} · Enviado ${timeAgo(g.dataCriacao)}</div>
-                            <div style="font-size:.72rem;color:#484f58;font-family:monospace;margin-top:2px;cursor:pointer;padding:2px 6px;border-radius:4px;transition:background .15s" onclick="window.copyId('${g.id}')" title="Clique para copiar ID" onmouseover="this.style.background='#21262d'" onmouseout="this.style.background='transparent'"><i class="fas fa-fingerprint" style="margin-right:4px;opacity:.5"></i>${g.id}</div>
+                            <div style="font-weight:800;color:#e1e4e8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(g.nome)}</div>
+                            <div style="font-size:.75rem;color:#8b949e;margin-top:2px">${escHtml((g.categoria || '').replace(/-/g,' '))} · Enviado ${timeAgo(g.dataCriacao)}</div>
+                            <div style="font-size:.72rem;color:#484f58;font-family:monospace;margin-top:2px;cursor:pointer;padding:2px 6px;border-radius:4px;transition:background .15s" onclick="window.copyId('${escAttr(g.id)}')" title="Clique para copiar ID" onmouseover="this.style.background='#21262d'" onmouseout="this.style.background='transparent'"><i class="fas fa-fingerprint" style="margin-right:4px;opacity:.5"></i>${escHtml(g.id)}</div>
                         </div>
                         <div style="display:flex;gap:6px;flex-shrink:0;width:100%;justify-content:flex-end">
-                            <button class="btn btn-primary btn-sm" onclick="approveAdminGroup('${g.id}')"><i class="fas fa-check"></i> Aprovar</button>
-                            <button class="btn btn-danger btn-sm" onclick="rejectAdminGroup('${g.id}')"><i class="fas fa-times"></i> Rejeitar</button>
+                            <button class="btn btn-primary btn-sm" onclick="approveAdminGroup('${escAttr(g.id)}')"><i class="fas fa-check"></i> Aprovar</button>
+                            <button class="btn btn-danger btn-sm" onclick="rejectAdminGroup('${escAttr(g.id)}')"><i class="fas fa-times"></i> Rejeitar</button>
                         </div>
                     </div>
                 `).join('');
@@ -970,12 +1125,12 @@
             document.getElementById('vipCount').textContent = vips.length;
             document.getElementById('vipsList').innerHTML = vips.length ? vips.map(g => `
                 <div style="display:flex;align-items:center;gap:12px;padding:14px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:8px;flex-wrap:wrap">
-                    <img src="${g.imagem}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0" loading="lazy">
+                    <img src="${escHtml(g.imagem)}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0" loading="lazy">
                     <div style="flex:1;min-width:120px">
-                        <div style="font-weight:700;color:#e1e4e8;font-size:.88rem">${g.nome}</div>
+                        <div style="font-weight:700;color:#e1e4e8;font-size:.88rem">${escHtml(g.nome)}</div>
                         <div style="font-size:.72rem;color:#f0c000;margin-top:2px">Expira: ${new Date(g.vipExpires).toLocaleString('pt-BR')}</div>
                     </div>
-                    <button class="btn btn-sm btn-danger" onclick="revokeVipAdmin('${g.id}')" style="width:100%;justify-content:center"><i class="fas fa-times"></i> Revogar</button>
+                    <button class="btn btn-sm btn-danger" onclick="revokeVipAdmin('${escAttr(g.id)}')" style="width:100%;justify-content:center"><i class="fas fa-times"></i> Revogar</button>
                 </div>
             `).join('') : '<div class="empty-state"><i class="fas fa-star"></i><p>Nenhum VIP ativo</p></div>';
         }
@@ -1014,8 +1169,8 @@
         };
 
         // SALES TABS
-        window.switchSalesTab = (tab) => {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        window.switchSalesTab = (tab, event) => {
+            document.querySelectorAll('#page-sales .tab-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
             document.getElementById('salesTab-history').style.display = tab === 'history' ? 'block' : 'none';
             document.getElementById('salesTab-codes').style.display = tab === 'codes' ? 'block' : 'none';
@@ -1084,13 +1239,13 @@
                             return `
                             <div class="log-item" style="flex-direction:column;align-items:flex-start;gap:4px;padding:12px;border-bottom:1px solid #21262d;">
                                 <div style="display:flex;justify-content:space-between;width:100%;align-items:center;flex-wrap:wrap;gap:4px">
-                                    <div class="log-text"><strong>${r.groupName || 'Grupo'}</strong></div>
+                                    <div class="log-text"><strong>${escHtml(r.groupName || 'Grupo')}</strong></div>
                                     <span style="font-size:.72rem;color:#8b949e;white-space:nowrap">${dataStr} às ${horaStr}</span>
                                 </div>
-                                <div style="font-size:.8rem;color:#8b949e;">Motivo: <span style="color:#f85149;font-weight:600;">${r.motivo || 'N/A'}</span></div>
-                                <div style="font-size:.72rem;color:#484f58;font-family:monospace;">ID: ${r.groupId || 'N/A'}</div>
+                                <div style="font-size:.8rem;color:#8b949e;">Motivo: <span style="color:#f85149;font-weight:600;">${escHtml(r.motivo || 'N/A')}</span></div>
+                                <div style="font-size:.72rem;color:#484f58;font-family:monospace;">ID: ${escHtml(r.groupId || 'N/A')}</div>
                                 <div style="display:flex;gap:6px;margin-top:8px;width:100%">
-                                    <button onclick="punirGrupo('${d.id}')" style="padding:6px 14px;background:#da3633;color:white;border:none;border-radius:6px;cursor:pointer;font-size:.78rem;font-weight:700;white-space:nowrap"><i class="fas fa-gavel"></i> Punir</button>
+                                    <button onclick="punirGrupo('${escAttr(d.id)}')" style="padding:6px 14px;background:#da3633;color:white;border:none;border-radius:6px;cursor:pointer;font-size:.78rem;font-weight:700;white-space:nowrap"><i class="fas fa-gavel"></i> Punir</button>
                                 </div>
                             </div>`;
                         }).join('');
@@ -1171,19 +1326,21 @@
             a.href = URL.createObjectURL(blob);
             a.download = 'sitemap.xml';
             a.click();
+            URL.revokeObjectURL(a.href);
             showToast('Sitemap baixado!');
         };
 
         window.exportAdminCSV = () => {
             let csv = 'ID,Nome,Categoria,Link,Status,Visitas,Likes,VIP\n';
             allGroups.forEach(g => {
-                csv += `${g.id},"${(g.nome||'').replace(/"/g,'""')}","${g.categoria||''}","${g.link||''}","${g.status||''}",${g.visitas||0},${g.likes||0},${g.vip ? 'SIM' : 'NAO'}\n`;
+                csv += [csvEscape(g.id),csvEscape(g.nome),csvEscape(g.categoria),csvEscape(g.link),csvEscape(g.status),csvEscape(g.visitas||0),csvEscape(g.likes||0),csvEscape(g.vip?'SIM':'NAO')].join(',') + '\n';
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = `gruposwhats_export_${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
+            URL.revokeObjectURL(a.href);
             showToast('CSV baixado!');
         };
 
@@ -1192,7 +1349,7 @@
             const rejected = allGroups.filter(g => g.status === 'reprovado');
             let count = 0;
             for (const g of rejected) {
-                try { await deleteDoc(doc(db, "grupos", g.id)); count++; } catch (e) {}
+                try { await deleteDoc(doc(db, "grupos", g.id)); count++; } catch (e) { console.error(e); }
             }
             allGroups = allGroups.filter(g => g.status !== 'reprovado');
             showToast(`${count} grupos excluídos!`);
@@ -1206,7 +1363,7 @@
         window.filterPending = () => {
             const q = (document.getElementById('pendingSearch')?.value || '').toLowerCase();
             let filtered = allPending;
-            if (q) filtered = filtered.filter(g => g.nome.toLowerCase().includes(q) || g.id.toLowerCase().includes(q) || (g.descricao || '').toLowerCase().includes(q));
+            if (q) filtered = filtered.filter(g => (g.nome||'').toLowerCase().includes(q) || g.id.toLowerCase().includes(q) || (g.descricao || '').toLowerCase().includes(q));
             document.getElementById('moderationBadge').textContent = filtered.length + ' pendentes';
             const list = document.getElementById('pendingList');
             if (filtered.length === 0) {
@@ -1215,17 +1372,17 @@
             }
             list.innerHTML = filtered.map(g => `
                 <div style="display:flex;align-items:center;gap:12px;padding:14px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:10px;transition:border-color .15s;flex-wrap:wrap" onmouseover="this.style.borderColor='#30363d'" onmouseout="this.style.borderColor='#21262d'">
-                    <img src="${g.imagem}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;flex-shrink:0" loading="lazy">
+                    <img src="${escHtml(g.imagem)}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;flex-shrink:0" loading="lazy">
                         <div style="flex:1;min-width:150px">
-                            <div style="font-weight:800;color:#e1e4e8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome}</div>
-                            <div style="font-size:.75rem;color:#8b949e;margin-top:3px">${(g.categoria || '').replace(/-/g,' ')} · Enviado ${timeAgo(g.dataCriacao)}</div>
-                            <div style="font-size:.72rem;color:#484f58;font-family:monospace;margin-top:2px;cursor:pointer;padding:2px 6px;border-radius:4px;transition:background .15s" onclick="window.copyId('${g.id}')" title="Clique para copiar ID" onmouseover="this.style.background='#21262d'" onmouseout="this.style.background='transparent'"><i class="fas fa-fingerprint" style="margin-right:4px;opacity:.5"></i>${g.id}</div>
-                        ${g.descricao ? `<div style="font-size:.75rem;color:#6e7681;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.descricao.substring(0,80)}${g.descricao.length > 80 ? '...' : ''}</div>` : ''}
-                        ${g.regras ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(g.regras || []).slice(0,4).map(r => `<span style="background:#21262d;color:#8b949e;padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:600">${r}</span>`).join('')}</div>` : ''}
+                            <div style="font-weight:800;color:#e1e4e8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(g.nome)}</div>
+                            <div style="font-size:.75rem;color:#8b949e;margin-top:3px">${escHtml((g.categoria || '').replace(/-/g,' '))} · Enviado ${timeAgo(g.dataCriacao)}</div>
+                            <div style="font-size:.72rem;color:#484f58;font-family:monospace;margin-top:2px;cursor:pointer;padding:2px 6px;border-radius:4px;transition:background .15s" onclick="window.copyId('${escAttr(g.id)}')" title="Clique para copiar ID" onmouseover="this.style.background='#21262d'" onmouseout="this.style.background='transparent'"><i class="fas fa-fingerprint" style="margin-right:4px;opacity:.5"></i>${escHtml(g.id)}</div>
+                        ${g.descricao ? `<div style="font-size:.75rem;color:#6e7681;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(g.descricao.substring(0,80))}${g.descricao.length > 80 ? '...' : ''}</div>` : ''}
+                        ${g.regras ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(g.regras || []).slice(0,4).map(r => `<span style="background:#21262d;color:#8b949e;padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:600">${escHtml(r)}</span>`).join('')}</div>` : ''}
                     </div>
                     <div style="display:flex;gap:6px;flex-shrink:0;width:100%;justify-content:flex-end">
-                        <button class="btn btn-primary btn-sm" onclick="approveAdminGroup('${g.id}')" title="Aprovar"><i class="fas fa-check"></i></button>
-                        <button class="btn btn-danger btn-sm" onclick="openRejectModal('${g.id}')" title="Rejeitar"><i class="fas fa-times"></i></button>
+                        <button class="btn btn-primary btn-sm" onclick="approveAdminGroup('${escAttr(g.id)}')" title="Aprovar"><i class="fas fa-check"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="openRejectModal('${escAttr(g.id)}')" title="Rejeitar"><i class="fas fa-times"></i></button>
                     </div>
                 </div>
             `).join('');
@@ -1279,7 +1436,7 @@
                         allPending = allPending.filter(x => x.id !== g.id);
                         count++;
                     }
-                } catch (e) {}
+                } catch (e) { console.error(e); }
             }
             showToast(`${count} grupos aprovados!`);
             loadPending();
@@ -1304,7 +1461,7 @@
                         allPending = allPending.filter(x => x.id !== g.id);
                         count++;
                     }
-                } catch (e) {}
+                } catch (e) { console.error(e); }
             }
             showToast(`${count} grupos rejeitados!`);
             loadPending();
@@ -1316,13 +1473,14 @@
             if (!allPending.length) return showToast('Nenhum grupo pendente', 'error');
             let csv = 'ID,Nome,Categoria,Link,Descricao,DataEnvio,Regras\n';
             allPending.forEach(g => {
-                csv += `${g.id},"${(g.nome||'').replace(/"/g,'""')}","${g.categoria||''}","${g.link||''}","${(g.descricao||'').replace(/"/g,'""')}","${g.data||''}","${(g.regras||[]).join('; ')}"\n`;
+                csv += [csvEscape(g.id),csvEscape(g.nome),csvEscape(g.categoria),csvEscape(g.link),csvEscape(g.descricao),csvEscape(g.data),csvEscape((g.regras||[]).join('; '))].join(',') + '\n';
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = `pendentes_${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
+            URL.revokeObjectURL(a.href);
             showToast('CSV de pendentes baixado!');
         };
 
@@ -1333,7 +1491,7 @@
             if (!confirm(`Excluir ${broken.length} grupos com link vazio/quebrado?`)) return;
             let count = 0;
             for (const g of broken) {
-                try { await deleteDoc(doc(db, "grupos", g.id)); count++; } catch (e) {}
+                try { await deleteDoc(doc(db, "grupos", g.id)); count++; } catch (e) { console.error(e); }
             }
             allGroups = allGroups.filter(g => g.link && g.link !== '' && g.link !== 'undefined' && g.link !== 'null');
             showToast(`${count} grupos quebrados excluídos!`);
@@ -1357,10 +1515,10 @@
                     const id = d.id.replace(/_/g, '.');
                     return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#0d1117;border:1px solid #21262d;border-radius:8px;margin-bottom:6px;flex-wrap:wrap;gap:8px">
                         <div style="flex:1;min-width:120px">
-                            <span style="font-size:.82rem;color:#e1e4e8;font-weight:600;word-break:break-all">${id}</span>
+                            <span style="font-size:.82rem;color:#e1e4e8;font-weight:600;word-break:break-all">${escHtml(id)}</span>
                             <span style="font-size:.72rem;color:#8b949e;margin-left:8px">${timeAgo(d.data().timestamp)}</span>
                         </div>
-                        <button class="btn btn-sm btn-secondary" onclick="unbanUser('${d.id}')" title="Remover ban"><i class="fas fa-undo"></i> Desbanir</button>
+                        <button class="btn btn-sm btn-secondary" onclick="unbanUser('${escAttr(d.id)}')" title="Remover ban"><i class="fas fa-undo"></i> Desbanir</button>
                     </div>`;
                 }).join('');
             } catch (e) { console.error(e); }
@@ -1390,10 +1548,10 @@
             el.innerHTML = top.map((g, i) => `
                 <div style="display:flex;align-items:center;gap:10px;padding:12px;background:#0d1117;border:1px solid #21262d;border-radius:8px;margin-bottom:6px;transition:border-color .15s;flex-wrap:wrap" onmouseover="this.style.borderColor='#30363d'" onmouseout="this.style.borderColor='#21262d'">
                     <span style="font-size:1.2rem;width:32px;text-align:center;flex-shrink:0">${medals[i] || `<span style="font-size:.8rem;color:#8b949e;font-weight:700">#${i+1}</span>`}</span>
-                    <img src="${g.imagem}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0" loading="lazy">
+                    <img src="${escHtml(g.imagem)}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0" loading="lazy">
                     <div style="flex:1;min-width:100px">
-                        <div style="font-weight:700;color:#e1e4e8;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nome}</div>
-                        <div style="font-size:.7rem;color:#8b949e">${(g.categoria||'').replace(/-/g,' ')}</div>
+                        <div style="font-weight:700;color:#e1e4e8;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(g.nome)}</div>
+                        <div style="font-size:.7rem;color:#8b949e">${escHtml((g.categoria||'').replace(/-/g,' '))}</div>
                     </div>
                     <div style="text-align:right;flex-shrink:0">
                         <div style="font-weight:900;color:#25D366;font-size:.95rem">${formatNumber(g.visitas || 0)}</div>
@@ -1402,15 +1560,6 @@
                 </div>
             `).join('');
         }
-
-        // Override navigation to load new data on page switch
-        document.querySelectorAll('.sidebar-nav a[data-page]').forEach(a => {
-            a.addEventListener('click', () => {
-                const page = a.dataset.page;
-                if (page === 'settings') loadBlacklist();
-                if (page === 'tools') loadTopGroups();
-            });
-        });
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeEditModal();
@@ -1433,7 +1582,7 @@
 
                 let deletedFrom = '';
                 try { await deleteDoc(doc(db, "grupos", groupId)); deletedFrom = 'grupos'; } catch (e1) {
-                    try { await deleteDoc(doc(db, "gruposPendentes", groupId)); deletedFrom = 'gruposPendentes'; } catch (e2) { /* */ }
+                    try { await deleteDoc(doc(db, "gruposPendentes", groupId)); deletedFrom = 'gruposPendentes'; } catch (e2) { console.warn(e2); }
                 }
 
                 await addDoc(collection(db, "punicoes"), {
@@ -1454,6 +1603,376 @@
                 alert('Erro ao punir grupo: ' + (err.message || err));
             }
         };
+
+        // ========== CHAT AO VIVO - ADMIN ==========
+
+        let chatAllMessages = [];
+        let chatAllProfiles = [];
+        let chatMsgVisibleCount = 30;
+
+        // TAB SWITCHING
+        window.switchChatTab = (tab, event) => {
+            document.querySelectorAll('#page-livechat .tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            ['messages','online','profiles','bans','settings'].forEach(t => {
+                const el = document.getElementById('chatTab-' + t);
+                if (el) el.style.display = t === tab ? 'block' : 'none';
+            });
+            if (tab === 'online') refreshOnlineUsers();
+            if (tab === 'profiles') loadChatProfiles();
+            if (tab === 'bans') loadChatBans();
+            if (tab === 'settings') loadChatConfig();
+        };
+
+        // LOAD CHAT STATS
+        async function loadChatStats() {
+            try {
+                // Online users
+                const presenceSnap = await getDocs(collection(db, "chatPresence"));
+                document.getElementById('chatOnlineCount').textContent = presenceSnap.size;
+
+                // Total profiles
+                const profilesSnap = await getDocs(collection(db, "chatProfiles"));
+                document.getElementById('chatTotalProfiles').textContent = profilesSnap.size;
+                chatAllProfiles = profilesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                // Bans
+                const bansSnap = await getDocs(collection(db, "chatBans"));
+                document.getElementById('chatBanCount').textContent = bansSnap.size;
+
+                // Messages today
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const todayTs = today.getTime();
+                const msgsSnap = await getDocs(query(
+                    collection(db, "chat"),
+                    where("timestamp", ">=", new Date(todayTs))
+                ));
+                document.getElementById('chatMsgCount').textContent = msgsSnap.size;
+            } catch (e) {
+                console.error('Erro ao carregar stats do chat:', e);
+            }
+        }
+
+        // LOAD MESSAGES
+        async function loadChatMessages() {
+            try {
+                const msgsSnap = await getDocs(query(
+                    collection(db, "chat"),
+                    orderBy("timestamp", "desc"),
+                    fbLimit(200)
+                ));
+                chatAllMessages = msgsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                chatMsgVisibleCount = 30;
+                filterChatMessages();
+            } catch (e) {
+                console.error('Erro ao carregar mensagens:', e);
+                document.getElementById('chatMessagesList').innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><p>Erro ao carregar mensagens</p></div>';
+            }
+        }
+
+        window.filterChatMessages = () => {
+            const search = (document.getElementById('chatMsgSearch')?.value || '').toLowerCase();
+            const typeFilter = document.getElementById('chatMsgFilter')?.value || 'all';
+            let filtered = chatAllMessages;
+            if (search) filtered = filtered.filter(m =>
+                (m.text || '').toLowerCase().includes(search) ||
+                (m.username || '').toLowerCase().includes(search) ||
+                (m.uid || '').toLowerCase().includes(search)
+            );
+            if (typeFilter !== 'all') filtered = filtered.filter(m => m.type === typeFilter);
+
+            const toShow = filtered.slice(0, chatMsgVisibleCount);
+            const list = document.getElementById('chatMessagesList');
+
+            if (toShow.length === 0) {
+                list.innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><p>Nenhuma mensagem encontrada</p></div>';
+                document.getElementById('btnLoadMoreMsgs').style.display = 'none';
+                return;
+            }
+
+            list.innerHTML = toShow.map(m => {
+                const time = m.timestamp?.toDate ? m.timestamp.toDate().toLocaleString('pt-BR') : '--';
+                const typeIcon = m.type === 'image' ? '<i class="fas fa-image" style="color:#a371f7"></i>' :
+                    m.type === 'video' ? '<i class="fas fa-video" style="color:#58a6ff"></i>' :
+                    m.type === 'audio' ? '<i class="fas fa-microphone" style="color:#f0c000"></i>' :
+                    m.type === 'sticker' ? '<i class="fas fa-star" style="color:#25D366"></i>' :
+                    '<i class="fas fa-comment" style="color:#8b949e"></i>';
+
+                const preview = m.type === 'text' ? escHtml((m.text || '').substring(0, 80)) :
+                    m.type === 'image' ? '[Imagem]' :
+                    m.type === 'video' ? '[Video]' :
+                    m.type === 'audio' ? '[Audio]' :
+                    m.type === 'sticker' ? '[Sticker]' :
+                    m.type || '[Sistema]';
+
+                return `<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:8px;transition:border-color .15s" onmouseover="this.style.borderColor='#30363d'" onmouseout="this.style.borderColor='#21262d'">
+                    <div style="width:32px;height:32px;border-radius:50%;background:${escHtml(m.color || '#54656f')};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.75rem;flex-shrink:0">${escHtml((m.username || '??').substring(0, 2).toUpperCase())}</div>
+                    <div style="flex:1;min-width:0">
+                        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                            <span style="font-weight:800;color:#e1e4e8;font-size:.85rem">${escHtml(m.username || 'Anonimo')}</span>
+                            ${typeIcon}
+                            <span style="font-size:.72rem;color:#8b949e">${time}</span>
+                        </div>
+                        <div style="font-size:.82rem;color:#c9d1d9;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${preview}</div>
+                        <div style="font-size:.68rem;color:#484f58;font-family:monospace;margin-top:2px;cursor:pointer" onclick="window.copyId('${escAttr(m.uid || '')}')" title="UID">${escHtml(m.uid || '--')}</div>
+                    </div>
+                    <div style="display:flex;gap:4px;flex-shrink:0">
+                        <button class="btn btn-sm btn-danger" onclick="deleteChatMessage('${escAttr(m.id)}')" title="Deletar mensagem"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-sm btn-warning" onclick="banChatUserDirect('${escAttr(m.uid)}', '${escAttr(m.username || '')}')" title="Banir usuario"><i class="fas fa-ban"></i></button>
+                    </div>
+                </div>`;
+            }).join('');
+
+            document.getElementById('btnLoadMoreMsgs').style.display = filtered.length > chatMsgVisibleCount ? 'inline-flex' : 'none';
+        };
+
+        window.loadMoreChatMsgs = () => {
+            chatMsgVisibleCount += 30;
+            filterChatMessages();
+        };
+
+        window.deleteChatMessage = async (id) => {
+            if (!confirm('Deletar esta mensagem?')) return;
+            try {
+                await deleteDoc(doc(db, "chat", id));
+                chatAllMessages = chatAllMessages.filter(m => m.id !== id);
+                filterChatMessages();
+                showToast('Mensagem deletada!');
+            } catch (e) {
+                showToast('Erro ao deletar mensagem', 'error');
+            }
+        };
+
+        window.clearAllChat = async () => {
+            if (!confirm('DELETAR TODAS as mensagens do chat? Isso nao pode ser desfeito!')) return;
+            if (!confirm('Tem ABSOLUTA certeza? Isso apagara todo o historico do chat.')) return;
+            try {
+                const snap = await getDocs(collection(db, "chat"));
+                let count = 0;
+                for (const d of snap.docs) {
+                    try { await deleteDoc(d.ref); count++; } catch (e) { console.error(e); }
+                }
+                chatAllMessages = [];
+                filterChatMessages();
+                showToast(`${count} mensagens deletadas!`);
+            } catch (e) {
+                showToast('Erro ao limpar chat', 'error');
+            }
+        };
+
+        // ONLINE USERS
+        window.refreshOnlineUsers = async () => {
+            try {
+                const snap = await getDocs(collection(db, "chatPresence"));
+                document.getElementById('chatOnlineCount').textContent = snap.size;
+                const list = document.getElementById('chatOnlineList');
+                if (snap.empty) {
+                    list.innerHTML = '<div class="empty-state"><i class="fas fa-wifi"></i><p>Nenhum usuario online</p></div>';
+                    return;
+                }
+                list.innerHTML = snap.docs.map(d => {
+                    const p = d.data();
+                    const time = p.ts?.toDate ? p.ts.toDate().toLocaleString('pt-BR') : '--';
+                    return `<div style="display:flex;align-items:center;gap:12px;padding:12px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:8px">
+                        <div style="width:36px;height:36px;border-radius:50%;background:${escHtml(p.color || '#54656f')};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.8rem;flex-shrink:0">${escHtml((p.nick || '??').substring(0, 2).toUpperCase())}</div>
+                        <div style="flex:1;min-width:0">
+                            <div style="font-weight:700;color:#e1e4e8;font-size:.88rem">${escHtml(p.nick || 'Anonimo')}</div>
+                            <div style="font-size:.72rem;color:#8b949e">UID: ${escHtml(p.uid || '--')} · Ultimo ping: ${time}</div>
+                        </div>
+                        <div style="display:flex;gap:4px">
+                            <button class="btn btn-sm btn-danger" onclick="banChatUserDirect('${escAttr(p.uid)}', '${escAttr(p.nick || '')}')" title="Banir"><i class="fas fa-ban"></i></button>
+                        </div>
+                    </div>`;
+                }).join('');
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        // PROFILES
+        async function loadChatProfiles() {
+            try {
+                const snap = await getDocs(collection(db, "chatProfiles"));
+                chatAllProfiles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                filterChatProfiles();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        window.filterChatProfiles = () => {
+            const search = (document.getElementById('chatProfileSearch')?.value || '').toLowerCase();
+            let filtered = chatAllProfiles;
+            if (search) filtered = filtered.filter(p =>
+                (p.name || '').toLowerCase().includes(search) ||
+                (p.id || '').toLowerCase().includes(search) ||
+                (p.bio || '').toLowerCase().includes(search)
+            );
+
+            const list = document.getElementById('chatProfilesList');
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty-state"><i class="fas fa-user"></i><p>Nenhum perfil encontrado</p></div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(p => {
+                const color = p.name ? `hsl(${[...p.name].reduce((a, c) => a + c.charCodeAt(0), 0) % 360}, 60%, 50%)` : '#54656f';
+                return `<div style="display:flex;align-items:center;gap:12px;padding:12px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:8px">
+                    <div style="width:40px;height:40px;border-radius:50%;background:${escHtml(color)};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.85rem;flex-shrink:0;overflow:hidden">
+                        ${p.photo ? `<img src="${escHtml(p.photo)}" style="width:100%;height:100%;object-fit:cover">` : escHtml((p.name || '??').substring(0, 2).toUpperCase())}
+                    </div>
+                    <div style="flex:1;min-width:0">
+                        <div style="font-weight:700;color:#e1e4e8;font-size:.88rem">${escHtml(p.name || 'Anonimo')}</div>
+                        <div style="font-size:.72rem;color:#8b949e;margin-top:2px">${escHtml(p.bio || 'Sem bio')}</div>
+                        <div style="font-size:.68rem;color:#484f58;font-family:monospace;margin-top:2px;cursor:pointer" onclick="window.copyId('${escAttr(p.id)}')">UID: ${escHtml(p.id)}</div>
+                    </div>
+                    <div style="display:flex;gap:4px;flex-shrink:0">
+                        <button class="btn btn-sm btn-danger" onclick="banChatUserDirect('${escAttr(p.id)}', '${escAttr(p.name || '')}')" title="Banir"><i class="fas fa-ban"></i></button>
+                        <button class="btn btn-sm btn-secondary" onclick="deleteChatProfile('${escAttr(p.id)}')" title="Deletar perfil"><i class="fas fa-user-slash"></i></button>
+                    </div>
+                </div>`;
+            }).join('');
+        };
+
+        window.deleteChatProfile = async (uid) => {
+            if (!confirm('Deletar este perfil do chat?')) return;
+            try {
+                await deleteDoc(doc(db, "chatProfiles", uid));
+                chatAllProfiles = chatAllProfiles.filter(p => p.id !== uid);
+                filterChatProfiles();
+                showToast('Perfil deletado!');
+            } catch (e) {
+                showToast('Erro ao deletar perfil', 'error');
+            }
+        };
+
+        // BANS
+        window.banChatUser = async () => {
+            const uid = document.getElementById('chatBanUid').value.trim();
+            const reason = document.getElementById('chatBanReason').value.trim() || 'Banido pelo admin';
+            if (!uid) return showToast('Insira o UID do usuario', 'error');
+            try {
+                await setDoc(doc(db, "chatBans", uid), { banned: true, reason, timestamp: Date.now(), by: 'admin' });
+                showToast('Usuario banido do chat!');
+                document.getElementById('chatBanUid').value = '';
+                document.getElementById('chatBanReason').value = '';
+                loadChatBans();
+            } catch (e) {
+                showToast('Erro ao banir', 'error');
+            }
+        };
+
+        window.banChatUserDirect = async (uid, name) => {
+            if (!uid) return;
+            if (!confirm(`Banir "${name || uid}" do chat ao vivo?`)) return;
+            try {
+                await setDoc(doc(db, "chatBans", uid), { banned: true, reason: 'Banido pelo admin', timestamp: Date.now(), by: 'admin' });
+                showToast(`${name || uid} banido do chat!`);
+                loadChatBans();
+            } catch (e) {
+                showToast('Erro ao banir', 'error');
+            }
+        };
+
+        async function loadChatBans() {
+            try {
+                const snap = await getDocs(collection(db, "chatBans"));
+                document.getElementById('chatBanCount').textContent = snap.size;
+                const list = document.getElementById('chatBansList');
+                if (snap.empty) {
+                    list.innerHTML = '<div class="empty-state"><i class="fas fa-shield-alt" style="color:#25D366"></i><p>Nenhum usuario banido</p></div>';
+                    return;
+                }
+                list.innerHTML = snap.docs.map(d => {
+                    const b = d.data();
+                    const time = b.timestamp ? new Date(b.timestamp).toLocaleString('pt-BR') : '--';
+                    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:#0d1117;border:1px solid #21262d;border-radius:10px;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+                        <div style="flex:1;min-width:150px">
+                            <div style="font-weight:700;color:#e1e4e8;font-size:.85rem;word-break:break-all">${escHtml(d.id)}</div>
+                            <div style="font-size:.72rem;color:#f85149;margin-top:2px">Motivo: ${escHtml(b.reason || '--')}</div>
+                            <div style="font-size:.68rem;color:#8b949e;margin-top:2px">${time}</div>
+                        </div>
+                        <button class="btn btn-sm btn-secondary" onclick="unbanChatUser('${escAttr(d.id)}')"><i class="fas fa-undo"></i> Desbanir</button>
+                    </div>`;
+                }).join('');
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        window.unbanChatUser = async (uid) => {
+            if (!confirm('Remover este ban do chat?')) return;
+            try {
+                await deleteDoc(doc(db, "chatBans", uid));
+                showToast('Ban removido!');
+                loadChatBans();
+            } catch (e) {
+                showToast('Erro ao desbanir', 'error');
+            }
+        };
+
+        // CHAT SETTINGS
+        async function loadChatConfig() {
+            try {
+                const snap = await getDoc(doc(db, "configuracoes", "chatConfig"));
+                if (snap.exists()) {
+                    const d = snap.data();
+                    if (d.systemMsg) document.getElementById('chatSystemMsg').value = d.systemMsg;
+                    if (d.slowMode !== undefined) document.getElementById('chatSlowMode').value = d.slowMode;
+                    if (d.maxMsgsPerUser !== undefined) document.getElementById('chatMaxMsgs').value = d.maxMsgsPerUser;
+                    if (d.enabled !== undefined) document.getElementById('chatEnabled').value = String(d.enabled);
+                    if (d.adminOnly !== undefined) document.getElementById('chatAdminOnly').value = String(d.adminOnly);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        window.saveChatConfig = async () => {
+            try {
+                await setDoc(doc(db, "configuracoes", "chatConfig"), {
+                    slowMode: parseInt(document.getElementById('chatSlowMode').value) || 0,
+                    maxMsgsPerUser: parseInt(document.getElementById('chatMaxMsgs').value) || 0,
+                    enabled: document.getElementById('chatEnabled').value === 'true',
+                    adminOnly: document.getElementById('chatAdminOnly').value === 'true'
+                }, { merge: true });
+                showToast('Configuracoes do chat salvas!');
+            } catch (e) {
+                showToast('Erro ao salvar', 'error');
+            }
+        };
+
+        window.sendChatSystemMessage = async () => {
+            const text = document.getElementById('chatSystemMsg').value.trim();
+            if (!text) return showToast('Digite a mensagem do sistema', 'error');
+            try {
+                await addDoc(collection(db, "chat"), {
+                    type: 'system',
+                    text: text,
+                    timestamp: serverTimestamp(),
+                    uid: 'admin',
+                    username: 'ADMIN'
+                });
+                showToast('Mensagem do sistema enviada!');
+                document.getElementById('chatSystemMsg').value = '';
+            } catch (e) {
+                showToast('Erro ao enviar mensagem', 'error');
+            }
+        };
+
+        // Override navigation to load chat data on page switch
+        document.querySelectorAll('.sidebar-nav a[data-page]').forEach(a => {
+            a.addEventListener('click', () => {
+                const page = a.dataset.page;
+                if (page === 'livechat') {
+                    loadChatStats();
+                    loadChatMessages();
+                }
+                if (page === 'settings') loadBlacklist();
+                if (page === 'tools') loadTopGroups();
+            });
+        });
     </script>
 </body>
 </html>

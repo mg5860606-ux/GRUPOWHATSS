@@ -58,6 +58,37 @@
     <meta name="geo.placename" content="Brasil">
     <meta name="language" content="pt-BR">
     <meta name="revisit-after" content="3 days">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- JSON-LD Structured Data: BreadcrumbList + ItemList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Início", "item": "https://mg5860606-ux.github.io/GRUPOWHATSS/"},
+        {"@type": "ListItem", "position": 2, "name": "Detalhes do Grupo", "item": "https://mg5860606-ux.github.io/GRUPOWHATSS/group-details.html"}
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Detalhes do Grupo de WhatsApp | GruposWhats",
+      "description": "Veja detalhes, regras e informações do grupo de WhatsApp antes de entrar. Diretório GruposWhats - os melhores grupos ativos do Brasil.",
+      "url": "https://mg5860606-ux.github.io/GRUPOWHATSS/group-details.html",
+      "inLanguage": "pt-BR",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "GruposWhats",
+        "url": "https://mg5860606-ux.github.io/GRUPOWHATSS/"
+      },
+      "about": {
+        "@type": "Thing",
+        "name": "Grupos de WhatsApp"
+      }
+    }
+    </script>
     <style>
         .details-container { max-width: 800px; margin: 40px auto; padding: 20px; }
         .group-card { background: white; border-radius: 4px; border: 2px solid #000; overflow: hidden; margin-bottom: 30px; }
@@ -384,6 +415,9 @@
             document.head.appendChild(script);
         }
 
+        function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+        function escUrl(s){return (s && (/^https?:\/\//.test(s) || /^data:image\//.test(s) || /^data:video\//.test(s) || /^data:audio\//.test(s))) ? s : '';}
+
         function renderPage(g) {
             document.getElementById('loadingDetails').style.display = 'none';
             document.getElementById('detailsContent').style.display = 'block';
@@ -395,26 +429,26 @@
             document.getElementById('groupCardContainer').innerHTML = `
                 <div class="details-title">
                     <span class="prefix">Grupo de WhatsApp</span>
-                    <span class="group-name">${g.nome}</span>
+                    <span class="group-name">${escHtml(g.nome)}</span>
                 </div>
                 <article class="group-card ${isVip ? 'vip' : ''}" style="max-width:350px;margin:0 auto 30px auto;">
                     <div class="group-image-wrapper">
-                        <img src="${g.imagem}" class="group-image" alt="${g.nome}" loading="lazy" onerror="this.src='logo.svg'; this.onerror=null;">
-                        <div class="card-category-badge">${catName}</div>
+                        <img src="${escUrl(g.imagem)}" class="group-image" alt="${escHtml(g.nome)}" loading="lazy" onerror="this.src='logo.svg'; this.onerror=null;">
+                        <div class="card-category-badge">${escHtml(catName)}</div>
                         ${isVip ? '<div class="vip-star-badge"><i class="fas fa-star"></i></div>' : ''}
                     </div>
                     <div class="group-content">
-                        <h3 class="group-title">${g.nome}</h3>
-                        <p class="group-desc">${g.descricao || ''}</p>
-                        <button onclick="window.open('${g.link}', '_blank')" class="btn-join" style="text-transform:none;font-size:1.1rem;padding:14px;">Entrar no Grupo</button>
+                        <h3 class="group-title">${escHtml(g.nome)}</h3>
+                        <p class="group-desc">${escHtml(g.descricao || '')}</p>
+                        <button onclick="window.open('${escUrl(g.link)}', '_blank')" class="btn-join" style="text-transform:none;font-size:1.1rem;padding:14px;">Entrar no Grupo</button>
                         <div style="display:flex;gap:10px;margin-top:12px;">
-                            <button onclick="window.shareWhatsApp('${g.nome}', '${g.id}')" style="flex:1;background:#25d366;color:white;border:none;padding:12px;border-radius:6px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+                            <button onclick="window.shareWhatsApp('${escHtml(g.nome)}', '${escHtml(g.id)}')" style="flex:1;background:#25d366;color:white;border:none;padding:12px;border-radius:6px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
                                 <i class="fab fa-whatsapp"></i> Compartilhar
                             </button>
-                            <button onclick="window.shareFacebook('${g.id}')" style="background:#1877f2;color:white;border:none;padding:12px 20px;border-radius:6px;font-weight:800;cursor:pointer;" title="Compartilhar no Facebook">
+                            <button onclick="window.shareFacebook('${escHtml(g.id)}')" style="background:#1877f2;color:white;border:none;padding:12px 20px;border-radius:6px;font-weight:800;cursor:pointer;" title="Compartilhar no Facebook">
                                 <i class="fab fa-facebook-f"></i>
                             </button>
-                            <button onclick="window.copyLink('${g.id}')" style="background:#343a40;color:white;border:none;padding:12px 20px;border-radius:6px;font-weight:800;cursor:pointer;" title="Copiar Link">
+                            <button onclick="window.copyLink('${escHtml(g.id)}')" style="background:#343a40;color:white;border:none;padding:12px 20px;border-radius:6px;font-weight:800;cursor:pointer;" title="Copiar Link">
                                 <i class="fas fa-link"></i>
                             </button>
                         </div>
@@ -436,15 +470,15 @@
             const dateAprov = g.dataAprovacao ? formatDateTime(g.dataAprovacao) : 'Aguardando';
             
             document.getElementById('approvalInfo').innerHTML = `
-                Este grupo de whatsapp foi <strong>enviado em ${dateEnvio}</strong> e 
-                <strong>aprovado em ${dateAprov}</strong> pela moderação do site.
+                Este grupo de whatsapp foi <strong>enviado em ${escHtml(dateEnvio)}</strong> e 
+                <strong>aprovado em ${escHtml(dateAprov)}</strong> pela moderação do site.
             `;
 
             document.getElementById('rulesWarningText').innerHTML = `
-                Antes de acessar o grupo de whatsapp ${g.nome}, esteja ciente que você precisa estar de acordo com todas as regras do grupo. É importante dizer também que este é um grupo independente, sem nenhuma relação com o nosso site e o único responsável por ele é o administrador do grupo. O ${g.nome} faz parte da categoria de ${g.categoria.charAt(0).toUpperCase() + g.categoria.slice(1)} e já foi acessado ${(g.visitas || 0) + 1} vezes através do nosso site.
+                Antes de acessar o grupo de whatsapp ${escHtml(g.nome)}, esteja ciente que você precisa estar de acordo com todas as regras do grupo. É importante dizer também que este é um grupo independente, sem nenhuma relação com o nosso site e o único responsável por ele é o administrador do grupo. O ${escHtml(g.nome)} faz parte da categoria de ${escHtml(g.categoria.charAt(0).toUpperCase() + g.categoria.slice(1))} e já foi acessado ${(g.visitas || 0) + 1} vezes através do nosso site.
             `;
 
-            document.getElementById('seoTextContainer').innerHTML = getSEOText(g.categoria, g.nome);
+            document.getElementById('seoTextContainer').innerHTML = getSEOText(escHtml(g.categoria), escHtml(g.nome));
 
             // Load Related Groups
             loadRelatedGroups(g.categoria, g.id);
@@ -478,13 +512,13 @@
                 return `
                 <article class="group-card ${isVip ? 'vip' : ''}" style="cursor: pointer;">
                     <div class="group-image-wrapper" onclick="window.location.href='${detailsUrl}'" style="cursor:pointer;">
-                        <img src="${g.imagem}" class="group-image" alt="${g.nome}" loading="lazy" onerror="this.src='logo.svg'; this.onerror=null;">
-                        <div class="card-category-badge">${(g.categoria || "Geral").toUpperCase()}</div>
+                        <img src="${escUrl(g.imagem)}" class="group-image" alt="${escHtml(g.nome)}" loading="lazy" onerror="this.src='logo.svg'; this.onerror=null;">
+                        <div class="card-category-badge">${escHtml((g.categoria || "Geral").toUpperCase())}</div>
                         ${isVip ? '<div class="vip-star-badge"><i class="fas fa-star"></i></div>' : ''}
                     </div>
                     <div class="group-content">
-                        <h3 class="group-title" onclick="window.location.href='${detailsUrl}'" style="cursor:pointer;">${g.nome}</h3>
-                        <p class="group-desc">${g.descricao || ''}</p>
+                        <h3 class="group-title" onclick="window.location.href='${detailsUrl}'" style="cursor:pointer;">${escHtml(g.nome)}</h3>
+                        <p class="group-desc">${escHtml(g.descricao || '')}</p>
                         <button class="btn-join" onclick="window.location.href='${detailsUrl}'" style="text-transform:none;font-size:1.1rem;padding:14px;">Entrar no Grupo</button>
                     </div>
                 </article>`;
@@ -559,7 +593,7 @@
 
         window.openReportModal = () => {
             currentGroupName = document.getElementById('groupNameRef').innerText;
-            document.getElementById('reportGroupName').innerHTML = `◇ 『 ${currentGroupName} 』 ◇`;
+            document.getElementById('reportGroupName').textContent = `◇ 『 ${currentGroupName} 』 ◇`;
             document.getElementById('reportModal').style.display = 'flex';
             document.body.classList.add('modal-open');
         };
