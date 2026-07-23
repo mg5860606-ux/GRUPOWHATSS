@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>GruposWhats</title>
+<meta name="description" content="Chat e Status - GruposWhats">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1a252f">
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+
+/* ===== WHATSAPP LAYOUT ===== */
+.wa-wrap{display:flex;height:100vh;height:100dvh;background:#efeae2}
+.wa-sidebar{width:100%;max-width:420px;background:#fff;display:flex;flex-direction:column;border-right:1px solid #e0e0e0;flex-shrink:0;position:relative;z-index:2}
+.wa-main{flex:1;display:flex;flex-direction:column;background:linear-gradient(180deg,#1a252f,#2c3e50);position:relative;overflow:hidden;min-width:0}
+.wa-main::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+
+/* ===== SIDEBAR HEADER ===== */
+.wa-shdr{background:#1a252f;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;flex-shrink:0;min-height:56px}
+.wa-shdr .wa-prof{width:38px;height:38px;border-radius:50%;overflow:hidden;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;color:#fff;background:rgba(255,255,255,.15)}
+.wa-shdr .wa-prof img{width:100%;height:100%;object-fit:cover}
+.wa-shdr .wa-acts{display:flex;gap:2px}
+.wa-shdr .wa-acts button{background:transparent;border:none;color:#aebac1;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.15rem;transition:all .15s}
+.wa-shdr .wa-acts button:hover{background:rgba(255,255,255,.1);color:#fff}
+
+/* ===== SIDEBAR TABS ===== */
+.wa-tabs{display:flex;flex-shrink:0;border-bottom:1px solid #e0e0e0}
+.wa-tabs button{flex:1;border:none;background:#fff;padding:12px 6px;font-size:.78rem;font-weight:700;color:#888;cursor:pointer;position:relative;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.wa-tabs button i{font-size:.9rem}
+.wa-tabs button:hover{background:#f5f5f5}
+.wa-tabs button.act{color:#1a252f}
+.wa-tabs button.act::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:3px;background:#1a252f;border-radius:3px 3px 0 0}
+.wa-tabs button .badge{background:#e74c3c;color:#fff;font-size:.5rem;font-weight:800;min-width:16px;height:16px;border-radius:8px;padding:0 4px;display:flex;align-items:center;justify-content:center;position:absolute;top:4px;right:10%}
+
+/* ===== SEARCH ===== */
+.wa-srch{background:#fff;padding:8px 14px;flex-shrink:0}
+.wa-srch .srch-inner{background:#f0f2f5;border-radius:10px;display:flex;align-items:center;padding:0 12px;transition:all .2s}
+.wa-srch .srch-inner:focus-within{background:#fff;box-shadow:0 0 0 2px #00a884}
+.wa-srch .srch-inner i{color:#999;font-size:.78rem;flex-shrink:0}
+.wa-srch .srch-inner input{flex:1;border:none;background:transparent;padding:9px 8px;font-size:.85rem;outline:none;font-family:inherit;min-width:0}
+
+/* ===== STATUS SECTION (SIDEBAR) ===== */
+.wa-ss{background:#fff;padding:8px 14px 6px;flex-shrink:0;border-bottom:1px solid #f0f2f5}
+.wa-ss .wa-ssl{font-size:.65rem;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;padding-left:2px}
+.wa-ss .wa-ssl i{color:#25d366;font-size:.4rem;vertical-align:middle;margin-right:3px}
+.wa-ssr{display:flex;gap:12px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}
+.wa-ssr::-webkit-scrollbar{display:none}
+.wa-ssi{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;flex-shrink:0;width:60px}
+
+
+.wa-ssi .ssr .ssi{width:100%;height:100%;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#fff}
+.wa-ssi .ssr .ssi img{width:100%;height:100%;object-fit:cover}
+.wa-ssi .ssr .ssb{position:absolute;bottom:-1px;right:-1px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #fff;font-size:.5rem;color:#fff;z-index:2}
+.wa-ssi .ssr .ssb.plus{background:#25d366}
+.wa-ssi .ssr .ssb.mine{background:#54656f;font-size:.6rem}
+.wa-ssi .ssr.unv{background:conic-gradient(#25d366 0deg,#25d366 360deg)}
+.wa-ssi .ssr.vd{background:#ddd}
+.wa-ssi .ssn{font-size:.6rem;color:#555;font-weight:600;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60px}
+
+/* ===== CHAT LIST ===== */
+.wa-list{flex:1;overflow-y:auto;background:#fff;scroll-behavior:smooth}
+.wa-list::-webkit-scrollbar{width:4px}
+.wa-list::-webkit-scrollbar-thumb{background:#ddd;border-radius:4px}
+
+/* ===== CHAT ITEM ===== */
+.wa-li{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;transition:background .15s;border-bottom:1px solid #f5f5f5;min-height:64px}
+.wa-li:hover{background:#f0f2f5}
+.wa-li:active{background:#e4e6e9}
+.wa-li.pub{background:linear-gradient(135deg,#f0fff4,#e8f5e9)}
+.wa-li.pub:hover{background:linear-gradient(135deg,#e8f5e9,#d0edd6)}
+.wa-li.act{background:#f0f2f5}
+.wa-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#fff;flex-shrink:0;overflow:hidden;position:relative}
+.wa-av img{width:100%;height:100%;object-fit:cover}
+.wa-av .od{position:absolute;bottom:0;right:0;width:12px;height:12px;background:#25d366;border:2px solid #fff;border-radius:50%;display:none}
+.wa-av .od.sh{display:block}
+.wa-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.wa-top{display:flex;align-items:center;gap:6px}
+.wa-nome{font-size:.9rem;font-weight:800;color:#1a252f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.wa-time{font-size:.64rem;color:#999;white-space:nowrap;flex-shrink:0;font-weight:600}
+.wa-bot{display:flex;align-items:center;gap:6px}
+.wa-prev{font-size:.8rem;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;line-height:1.3}
+.wa-prev .wl{font-weight:700;color:#555;margin-right:2px}
+.wa-bdg{background:#25d366;color:#fff;font-size:.58rem;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 5px;flex-shrink:0}
+.wa-bdg.sh{display:flex}
+.wa-typ{font-size:.76rem;color:#00a884;font-weight:700;font-style:italic}
+
+/* ===== MAIN PANEL ===== */
+.wa-welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;position:relative;z-index:1}
+.wa-welcome .wa-logo{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#00a884,#25d366);display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#fff;margin-bottom:20px;box-shadow:0 8px 30px rgba(0,168,132,.3)}
+.wa-welcome h2{font-size:1.5rem;font-weight:300;color:#fff;margin-bottom:8px}
+.wa-welcome p{font-size:.88rem;color:rgba(255,255,255,.5);max-width:320px;line-height:1.5;margin-bottom:6px}
+.wa-welcome .wa-div{width:60px;height:1px;background:rgba(255,255,255,.2);margin:14px 0}
+.wa-welcome small{font-size:.72rem;color:rgba(255,255,255,.3)}
+
+/* ===== MAIN CHAT HEADER ===== */
+.wa-chdr{background:#1a252f;color:#fff;display:flex;align-items:center;gap:10px;padding:10px 16px;flex-shrink:0;z-index:2;min-height:56px}
+.wa-chdr .cav{width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;color:#fff;cursor:pointer}
+.wa-chdr .cav img{width:100%;height:100%;object-fit:cover}
+.wa-chdr .cinfo{flex:1;min-width:0}
+.wa-chdr .cname{font-size:.92rem;font-weight:800;cursor:pointer}
+.wa-chdr .cstatus{font-size:.68rem;color:rgba(255,255,255,.5);font-weight:600}
+.wa-chdr .cact{background:transparent;border:none;color:#aebac1;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all .15s}
+.wa-chdr .cact:hover{background:rgba(255,255,255,.1);color:#fff}
+
+/* ===== EMPTY STATE ===== */
+.wa-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;color:#bbb;background:#fff}
+.wa-empty i{font-size:3rem;margin-bottom:12px;opacity:.3}
+.wa-empty h3{font-size:1rem;color:#999;margin-bottom:4px}
+.wa-empty p{font-size:.78rem;color:#bbb;text-align:center;line-height:1.5}
+
+/* ===== MODAL COMMON ===== */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:14px}
+.mo.sh{display:flex}
+.pmb{background:#fff;border-radius:14px;max-width:380px;width:100%;overflow:hidden;box-shadow:0 16px 50px rgba(0,0,0,.3)}
+.ph{padding:24px 20px 14px;text-align:center}
+.paw{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:900;color:#fff;margin:0 auto 10px;overflow:hidden}
+.paw img{width:100%;height:100%;object-fit:cover}
+.pn{font-size:1.1rem;font-weight:800}
+.pid{font-size:.65rem;color:#999;word-break:break-all}
+.pbd{padding:0 20px 20px}
+.pbio{font-size:.82rem;color:#555;padding:10px;background:#f0f2f5;border-radius:10px;margin-bottom:10px;line-height:1.4}
+.pbio.em{color:#bbb;font-style:italic}
+.nmb{background:#fff;border-radius:14px;padding:28px 20px;max-width:360px;width:100%;text-align:center;box-shadow:0 16px 50px rgba(0,0,0,.3)}
+.nmb h3{font-size:1.1rem;margin-bottom:8px}
+.nmb p{font-size:.82rem;color:#666;margin-bottom:14px}
+.nmb input{width:100%;padding:10px 14px;border:2px solid #ddd;border-radius:10px;font-size:.9rem;outline:none;margin-bottom:12px}
+.nmb input:focus{border-color:#25d366}
+.nmb button{background:#25d366;color:#fff;border:none;width:100%;padding:11px;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer}
+
+/* ===== STATUS VIEWER ===== */
+.st-overlay{display:none;position:fixed;inset:0;background:#000;z-index:500;flex-direction:column}
+.st-overlay.sh{display:flex;animation:stPop .2s ease}
+.st-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.15);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1.1rem;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center}
+.st-close:hover{background:rgba(255,255,255,.25)}
+.st-progress{display:flex;gap:3px;padding:10px 10px 6px;flex-shrink:0;z-index:5}
+.st-progress .st-bar{flex:1;height:3px;background:rgba(255,255,255,.25);border-radius:2px;overflow:hidden}
+.st-progress .st-bar .st-fill{height:100%;background:#fff;border-radius:2px;width:0%;transition:width .1s linear}
+.st-progress .st-bar.active .st-fill{width:100%;transition:width 4s linear}
+.st-progress .st-bar.done .st-fill{width:100%;background:rgba(255,255,255,.6)}
+.st-info{display:flex;align-items:center;gap:8px;padding:6px 14px 10px;flex-shrink:0;z-index:5}
+.st-info .st-iav{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.75rem;color:#fff;flex-shrink:0;overflow:hidden}
+.st-info .st-iav img{width:100%;height:100%;object-fit:cover}
+.st-info .st-iname{font-size:.85rem;font-weight:700;color:#fff;flex:1}
+.st-info .st-time{font-size:.65rem;color:rgba(255,255,255,.5);font-weight:600}
+.st-content{flex:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.st-content .st-text{font-size:2rem;font-weight:700;color:#fff;text-align:center;padding:30px;word-break:break-word;max-width:90%;line-height:1.4}
+.st-content .st-media{max-width:100%;max-height:100%;object-fit:contain}
+.st-nav{position:absolute;inset:0;display:flex;z-index:2}
+.st-nav .st-left{flex:1;cursor:pointer}
+.st-nav .st-right{flex:1;cursor:pointer}
+.st-views{display:flex;align-items:center;gap:4px;font-size:.68rem;color:rgba(255,255,255,.5);font-weight:600;cursor:pointer}
+.st-views i{font-size:.7rem}
+@keyframes stPop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* ===== CREATE STATUS ===== */
+.st-create{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;flex-direction:column;padding:14px}
+.st-create.sh{display:flex}
+.st-create .st-ch{display:flex;align-items:center;gap:10px;padding:10px 0;flex-shrink:0}
+.st-create .st-ch h3{font-size:1rem;font-weight:800;color:#fff;flex:1}
+.st-create .st-ch button{background:rgba(255,255,255,.15);border:none;color:#fff;padding:7px 16px;border-radius:18px;font-size:.78rem;font-weight:700;cursor:pointer}
+.st-create .st-ch .close-btn{background:none;width:32px;height:32px;border-radius:50%;padding:0;font-size:1rem;display:flex;align-items:center;justify-content:center}
+.st-create .st-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.st-create .st-body textarea{width:100%;max-width:360px;background:transparent;border:none;color:#fff;font-size:1.4rem;font-weight:700;text-align:center;outline:none;resize:none;font-family:inherit;min-height:100px;line-height:1.4}
+.st-create .st-body textarea::placeholder{color:rgba(255,255,255,.3)}
+.st-create .st-body .st-preview{max-width:100%;max-height:50vh;border-radius:12px;object-fit:contain}
+.st-colors{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:12px 0;flex-shrink:0}
+.st-colors .st-c{width:32px;height:32px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .15s}
+.st-colors .st-c:hover{transform:scale(1.15)}
+.st-colors .st-c.sel{border-color:#fff;transform:scale(1.2)}
+.st-midias{display:flex;gap:16px;justify-content:center;padding:10px 0;flex-shrink:0}
+.st-midias button{background:rgba(255,255,255,.12);border:none;color:#fff;width:48px;height:48px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.st-midias button:hover{background:rgba(255,255,255,.2);transform:scale(1.1)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+.wa-sidebar{max-width:100%;border-right:none}
+.wa-main{display:none}
+.wa-main.sh{display:flex;position:fixed;inset:0;z-index:100}
+.wa-wrap.mobile-chat .wa-sidebar{display:none}
+.wa-wrap.mobile-chat .wa-main{display:flex;position:fixed;inset:0;z-index:100}
+}
+@media(max-width:480px){
+.wa-li{padding:10px 12px;min-height:60px}
+.wa-av{width:44px;height:44px}
+.wa-nome{font-size:.85rem}
+.wa-prev{font-size:.76rem}
+.wa-shdr{padding:8px 12px;min-height:50px}
+.wa-ss{padding:6px 12px}
+.wa-ssi{width:54px}
+.wa-ssi .ssr{width:48px;height:48px}
+.wa-welcome{padding:20px}
+.wa-welcome .wa-logo{width:70px;height:70px;font-size:1.8rem}
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.wa-li{animation:fadeIn .25s ease both}
+.wa-li:nth-child(1){animation-delay:0s}
+.wa-li:nth-child(2){animation-delay:.03s}
+.wa-li:nth-child(3){animation-delay:.06s}
+
+/* ===== CROP MODAL ===== */
+.crop-modal{position:fixed;inset:0;z-index:600;background:#000;display:none;flex-direction:column}
+.crop-modal.sh{display:flex}
+.crop-modal .crop-hdr{display:flex;align-items:center;padding:12px 16px;color:#fff;background:#1a252f;flex-shrink:0}
+.crop-modal .crop-hdr h3{flex:1;font-size:.92rem;font-weight:700;text-align:center}
+.crop-modal .crop-hdr button{background:none;border:none;color:#00a884;font-size:.85rem;font-weight:700;cursor:pointer;padding:6px 10px}
+.crop-modal .crop-hdr button.cancel{color:#aebac1}
+.crop-modal .crop-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:10px;min-height:0}
+.crop-modal .crop-frame{position:relative;width:100%;max-width:500px;overflow:hidden;border:1px solid rgba(255,255,255,.15);border-radius:4px;touch-action:none;cursor:grab}
+.crop-modal .crop-frame:active{cursor:grabbing}
+.crop-modal .crop-frame img{display:block;pointer-events:none;user-select:none;-webkit-user-drag:none;position:absolute;max-width:none;max-height:none}
+.crop-modal .crop-mask{position:absolute;inset:0;pointer-events:none;box-shadow:0 0 0 9999px rgba(0,0,0,.5)}
+.crop-modal .crop-grid{position:absolute;inset:0;pointer-events:none}
+.crop-modal .crop-grid::before{content:'';position:absolute;top:33.33%;bottom:33.33%;left:0;right:0;border-top:1px solid rgba(255,255,255,.4);border-bottom:1px solid rgba(255,255,255,.4)}
+.crop-modal .crop-grid::after{content:'';position:absolute;left:33.33%;right:33.33%;top:0;bottom:0;border-left:1px solid rgba(255,255,255,.4);border-right:1px solid rgba(255,255,255,.4)}
+.crop-modal .crop-hint{color:rgba(255,255,255,.35);font-size:.7rem;padding:8px;font-weight:600;flex-shrink:0;text-align:center}</style>
+</head>
+<body>
+<div class="wa-wrap" id="waWrap">
+<!-- ===== SIDEBAR ===== -->
+<div class="wa-sidebar" id="waSidebar">
+<div class="wa-shdr">
+<div class="wa-prof" id="sidebarProfile" onclick="openInboxProfile()"></div>
+<div class="wa-acts">
+<button onclick="toggleSearch()" title="Buscar"><i class="fas fa-search"></i></button>
+<button onclick="window.location.href='index.html'" title="Menu"><i class="fas fa-ellipsis-v"></i></button>
+</div>
+</div>
+<div class="wa-tabs">
+<button class="act" onclick="switchTab('chats',this)"><i class="fas fa-comment-dots"></i> Chats</button>
+<button onclick="switchTab('status',this)"><i class="fas fa-circle" style="color:#25d366;font-size:.5rem;vertical-align:middle"></i> Status</button>
+</div>
+<div class="wa-srch">
+<div class="srch-inner"><i class="fas fa-search"></i><input type="text" id="waSearchInput" placeholder="Buscar conversa..." oninput="filterList(this.value)" autocomplete="off"></div>
+</div>
+
+<!-- STATUS ROW (always visible) -->
+<div class="wa-ss" id="waStatusSec">
+<div class="wa-ssl"><i class="fas fa-circle"></i> Status</div>
+<div class="wa-ssr" id="waStatusRow"></div>
+</div>
+
+<!-- CONVERSATIONS LIST / STATUS TAB -->
+<div class="wa-list" id="waListContent">
+<div class="wa-empty"><i class="fas fa-circle-notch fa-spin"></i><p>Carregando...</p></div>
+</div>
+</div>
+
+<!-- ===== MAIN PANEL ===== -->
+<div class="wa-main" id="waMain">
+<div class="wa-welcome" id="waWelcome">
+<div class="wa-logo"><i class="fas fa-comments"></i></div>
+<h2>GruposWhats</h2>
+<p>Converse no chat público ou inicie conversas privadas com outros usuários.</p>
+<div class="wa-div"></div>
+<small>Clique em uma conversa para começar</small>
+</div>
+</div>
+</div>
+
+<!-- ===== MODALS ===== -->
+<div class="mo" id="profileModal"><div class="pmb" id="profileBox"></div></div>
+<div class="mo" id="nickModal"><div class="nmb"><h3>Bem-vindo!</h3><p>Escolha um apelido para começar</p><input type="text" id="nickInput" placeholder="Seu apelido..." maxlength="20" autocomplete="off"><button onclick="saveNickname()">Entrar</button></div></div>
+
+<!-- STATUS VIEWER -->
+<div class="st-overlay" id="statusViewer">
+<button class="st-close" onclick="closeStatusViewer()"><i class="fas fa-times"></i></button>
+<div class="st-progress" id="stProgress"></div>
+<div class="st-info">
+<div class="st-iav" id="stViewerAvatar"></div>
+<div class="st-iname" id="stViewerName"></div>
+<div class="st-time" id="stViewerTime"></div>
+<div class="st-views" id="stViewerViews" style="display:none" onclick="showViewers()"><i class="fas fa-eye"></i> <span id="stViewCount">0</span></div>
+</div>
+<div class="st-content" id="stContent">
+<div class="st-nav"><div class="st-left" onclick="stPrev()"></div><div class="st-right" onclick="stNext()"></div></div>
+</div>
+</div>
+
+<!-- CREATE STATUS -->
+<div class="st-create" id="stCreateModal">
+<div class="st-ch">
+<button class="close-btn" onclick="closeCreateStatus()"><i class="fas fa-times"></i></button>
+<h3 id="stCreateTitle">Novo Status</h3>
+<button onclick="postStatus()" id="stSendBtn" style="display:none"><i class="fas fa-paper-plane"></i> Enviar</button>
+</div>
+<div class="st-body" id="stCreateBody" style="background:linear-gradient(135deg,#1a252f,#2c3e50)">
+<textarea id="stTextInput" placeholder="Digite seu status..." maxlength="200" oninput="document.getElementById('stSendBtn').style.display=this.value.trim()?'':''"></textarea>
+<img id="stMediaPreview" class="st-preview" style="display:none">
+<video id="stVideoPreview" class="st-preview" style="display:none" muted playsinline></video>
+</div>
+<div class="st-colors" id="stColorPicker"></div>
+<div class="st-midias">
+<button onclick="selectStatusMedia()" title="Foto"><i class="fas fa-image"></i></button>
+<button onclick="selectStatusVideo()" title="Vídeo"><i class="fas fa-video"></i></button>
+</div>
+<input type="file" id="stPhotoInput" accept="image/*" style="display:none" onchange="previewStatusMedia(event,'image')">
+<input type="file" id="stVideoInput" accept="video/*" style="display:none" onchange="previewStatusMedia(event,'video')">
+</div>
+
+<!-- CROP MODAL -->
+<div class="crop-modal" id="cropModal">
+<div class="crop-hdr">
+<button class="cancel" onclick="cancelCrop()">Cancelar</button>
+<h3>Mover e redimensionar</h3>
+<button onclick="confirmCrop()" style="color:#25d366">OK</button>
+</div>
+<div class="crop-body">
+<div class="crop-frame" id="cropFrame">
+<img id="cropImage" src="" alt="">
+<div class="crop-mask"></div>
+<div class="crop-grid"></div>
+</div>
+<div class="crop-hint">Arraste para ajustar a foto</div>
+</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
+<script>
+var cfg={apiKey:"AIzaSyDgtqqGgjGgYmmNYg9cxhHIc-VIPASz3uE",authDomain:"grupos-whats-app.firebaseapp.com",projectId:"grupos-whats-app",storageBucket:"grupos-whats-app.appspot.com",messagingSenderId:"326359053624",appId:"1:326359053624:web:6a73ed5758052f2331e8be"};
+if(!firebase.apps.length)firebase.initializeApp(cfg);
+var db=firebase.firestore(),auth=firebase.auth(),storage=firebase.storage();
+var COLORS=['#e74c3c','#e67e22','#f1c40f','#2ecc71','#1abc9c','#3498db','#9b59b6','#e84393','#00b894','#6c5ce7','#fd79a0','#00cec9','#74b9ff','#a29bfe','#ff6348'];
+var BG_COLORS=['#1a252f','#2c3e50','#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6','#e84393','#00b894','#6c5ce7','#fd79a0','#d35400','#c0392b','#8e44ad'];
+var myNick=localStorage.getItem('gw_chat_nick')||'';
+var myUid=localStorage.getItem('gw_chat_uid')||'';
+var myColor=localStorage.getItem('gw_chat_color')||'';
+var profilesCache={},onlineUsers={},allStatuses=[],statusUsers=[],viewedStatuses={},lastConvs=[];
+var unsubConversations=null,unsubStatuses=null;
+var currentTab='chats';
+var viewerUser=null,viewerIdx=0,viewerTimer=null;
+var pendingStatusData=null,pendingStatusType='text';
+try{viewedStatuses=JSON.parse(localStorage.getItem('gw_viewed_statuses')||'{}');}catch(e){}
+if(!myUid){myUid='u_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem('gw_chat_uid',myUid);}
+if(!myColor){myColor=COLORS[Math.floor(Math.random()*COLORS.length)];localStorage.setItem('gw_chat_color',myColor);}
+
+// NICKNAME
+(function(){if(!myNick){var m=document.getElementById('nickModal');if(m)m.classList.add('sh');}})();
+window.saveNickname=function(){
+    var inp=document.getElementById('nickInput'),name=inp.value.trim();
+    if(!name||name.length<2){alert('Apelido precisa ter pelo menos 2 caracteres.');return;}
+    myNick=name;localStorage.setItem('gw_chat_nick',name);
+    document.getElementById('nickModal').classList.remove('sh');initApp();
+};
+function ensureAuth(){return auth.signInAnonymously().catch(function(e){console.warn(e);return Promise.reject(e);});}
+function getInitials(n){var p=n.trim().split(/\s+/);return p.length>=2?(p[0][0]+p[1][0]).toUpperCase():n.substring(0,2).toUpperCase();}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function escUrl(s){return (s && (/^https?:\/\//.test(s) || /^data:image\//.test(s) || /^data:video\//.test(s))) ? s : '';}
+function makeChatId(a,b){return a<b?a+'_'+b:b+'_'+a;}
+function getColor(n){var h=0;for(var i=0;i<n.length;i++)h=n.charCodeAt(i)+((h<<5)-h);return COLORS[Math.abs(h)%COLORS.length];}
+function getOtherUid(p){return p.filter(function(u){return u!==myUid;})[0]||'';}
+
+function formatConvTime(ts){
+    if(!ts)return'';var d=ts.toDate?ts.toDate():new Date(ts);
+    var n=new Date(),t=new Date(n.getFullYear(),n.getMonth(),n.getDate());
+    var y=new Date(t);y.setDate(y.getDate()-1);
+    var md=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+    if(md.getTime()===t.getTime())return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    if(md.getTime()===y.getTime())return'Ontem';
+    if(d.getFullYear()===n.getFullYear())return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+}
+function loadProfile(uid){if(profilesCache[uid])return Promise.resolve(profilesCache[uid]);return loadProfileFresh(uid);}
+function loadProfileFresh(uid){return db.collection('chatProfiles').doc(uid).get().then(function(s){if(s.exists){profilesCache[uid]=s.data();return s.data();}return null;}).catch(function(){return null;});}
+function getMessagePreview(msg){
+    if(!msg)return'';var t=msg.lastType||'text';
+    if(t==='image')return'🖼️ Foto';if(t==='video')return'🎬 Vídeo';if(t==='audio')return'🎤 Áudio';
+    if(t==='sticker')return'🎯 Figurinha';if(t==='document')return'📄 Documento';
+    return msg.lastMessage||'';
+}
+
+// ===== TAB SWITCHING =====
+window.switchTab=function(tab,btn){
+    currentTab=tab;
+    document.querySelectorAll('.wa-tabs button').forEach(function(b){b.classList.remove('act');});
+    if(btn)btn.classList.add('act');
+    if(tab==='chats'){renderConversationsFromCache();document.getElementById('waSearchInput').placeholder='Buscar conversa...';}
+    else if(tab==='status'){renderStatusTab();document.getElementById('waSearchInput').placeholder='Buscar status...';}
+};
+
+// ===== RENDER STATUS TAB =====
+function renderStatusTab(){
+    var list=document.getElementById('waListContent');
+    var h='<div style="padding:8px 14px;border-bottom:1px solid #f0f2f5">';
+    // My status button
+    var myPhoto='',myProf=profilesCache[myUid];
+    if(myProf&&myProf.photo)myPhoto=myProf.photo;
+    var myCount=allStatuses.filter(function(s){return s.uid===myUid;}).length;
+    h+='<div class="wa-li" onclick="openMyStatus()" style="min-height:56px">';
+    h+='<div class="wa-av" style="width:44px;height:44px;background:'+myColor+'">'+(myPhoto?'<img src="'+escUrl(myPhoto)+'">':getInitials(myNick||'U'))+'</div>';
+    h+='<div class="wa-info"><div class="wa-top"><span class="wa-nome">Meu status</span></div><div class="wa-bot"><span class="wa-prev">'+(myCount>0?'Toque para ver seu status':'Toque para adicionar um status')+'</span></div></div>';
+    h+='</div></div>';
+    // Other users
+    statusUsers.forEach(function(su){
+        if(su.uid===myUid)return;
+        var hasUnviewed=su.statuses.some(function(s){return !viewedStatuses[s.id];});
+        var prof=profilesCache[su.uid];
+        var photo='',name=su.name,color=su.color;
+        if(prof){if(prof.photo)photo=prof.photo;if(prof.name)name=prof.name;}
+        var timeStr=su.statuses.length>0&&su.statuses[0].timestamp?formatConvTime(su.statuses[0].timestamp):'';
+        h+='<div class="wa-li" onclick="openStatusViewer(\''+escHtml(su.uid)+'\')">';
+        h+='<div class="wa-av" style="width:44px;height:44px;background:'+color+';padding:2px;'+(hasUnviewed?'border:3px solid #25d366':'border:3px solid #ddd')+'">'+(photo?'<img src="'+escUrl(photo)+'">':getInitials(name||'?'))+'</div>';
+        h+='<div class="wa-info"><div class="wa-top"><span class="wa-nome">'+escHtml(name||'Usuário')+'</span><span class="wa-time">'+timeStr+'</span></div>';
+        h+='<div class="wa-bot"><span class="wa-prev">'+(su.statuses.length+' status'+(su.statuses.length>1?'s':''))+'</span></div></div></div>';
+    });
+    if(statusUsers.length<=1){h+='<div class="wa-empty" style="min-height:100px"><i class="fas fa-camera"></i><h3>Nenhum status</h3><p>Os status aparecerão aqui quando alguém postar.</p></div>';}
+    list.innerHTML=h;
+}
+
+// ===== RENDER STATUS ROW (SIDEBAR) =====
+function renderStatusRow(){
+    var row=document.getElementById('waStatusRow');
+    if(!row)return;var h='';
+    var myPhoto='',myProf=profilesCache[myUid];
+    if(myProf&&myProf.photo)myPhoto=myProf.photo;
+    h+='<div class="wa-ssi"><div class="ssr vd"><div class="ssi" style="background:'+myColor+'">'+(myPhoto?'<img src="'+escUrl(myPhoto)+'">':getInitials(myNick||'U'))+'<div class="ssb mine"><i class="fas fa-plus"></i></div></div></div><span class="ssn">Meu status</span></div>';
+    statusUsers.forEach(function(su){
+        if(su.uid===myUid)return;
+        var hasUnviewed=su.statuses.some(function(s){return !viewedStatuses[s.id];});
+        var prof=profilesCache[su.uid];
+        var photo='',name=su.name,color=su.color;
+        if(prof){if(prof.photo)photo=prof.photo;if(prof.name)name=prof.name;}
+        h+='<div class="wa-ssi" onclick="openStatusViewer(\''+escHtml(su.uid)+'\')"><div class="ssr '+(hasUnviewed?'unv':'vd')+'"><div class="ssi" style="background:'+color+'">'+(photo?'<img src="'+escUrl(photo)+'">':getInitials(name||'?'))+'</div></div><span class="ssn">'+escHtml(name||'U')+'</span></div>';
+    });
+    row.innerHTML=h;
+    // click on my status
+    var first=row.querySelector('.wa-ssi:first-child');
+    if(first)first.onclick=function(){openMyStatus();};
+}
+
+// ===== RENDER CONVERSATIONS =====
+function renderConversations(convs){lastConvs=convs;renderConversationsFromCache();}
+function renderConversationsFromCache(){
+    if(currentTab!=='chats')return;
+    var list=document.getElementById('waListContent');
+    if(!list)return;
+    var convs=lastConvs.slice();
+    convs.sort(function(a,b){
+        var ta=a.lastTimestamp?((a.lastTimestamp.toDate?a.lastTimestamp.toDate().getTime():new Date(a.lastTimestamp).getTime())||0):0;
+        var tb=b.lastTimestamp?((b.lastTimestamp.toDate?b.lastTimestamp.toDate().getTime():new Date(b.lastTimestamp).getTime())||0):0;
+        return tb-ta;
+    });
+    var h='';
+    // Chat Público
+    h+='<div class="wa-li pub" onclick="window.location.href=\'chat.html\'">';
+    h+='<div class="wa-av" style="background:#00a884;font-size:1.2rem"><i class="fas fa-comments"></i></div>';
+    h+='<div class="wa-info"><div class="wa-top"><span class="wa-nome">Chat ao Vivo</span></div><div class="wa-bot"><span class="wa-prev">Converse com todos em tempo real 💬</span></div></div></div>';
+    if(convs.length===0){
+        h+='<div class="wa-empty"><i class="fas fa-comment-slash"></i><h3>Nenhuma conversa privada</h3><p>Clique em alguém no Chat ao Vivo para conversar.</p></div>';
+        list.innerHTML=h;return;
+    }
+    convs.forEach(function(conv){
+        var ou=getOtherUid(conv.participants||[]),on=conv.otherName||'Usuário',oc=conv.otherColor||getColor(ou);
+        var lm=getMessagePreview(conv),tm=formatConvTime(conv.lastTimestamp),ur=(conv.unread&&conv.unread[myUid])||0;
+        var io=onlineUsers[ou],pf=profilesCache[ou];
+        var ah;if(pf&&pf.photo){ah='<img src=\"'+escUrl(pf.photo)+'\">';}else{ah=getInitials(on);}
+        var sl='';if(conv.lastSender&&conv.lastSender!==myUid&&conv.lastSenderName){sl='<span class="wl">'+escHtml(conv.lastSenderName)+': </span>';}
+        var th='';if(conv.typing&&conv.typing[ou]){th='<div class="wa-typ">digitando...</div>';}
+        h+='<div class="wa-li" onclick="openConversation(\''+escHtml(ou)+'\',\''+escHtml(on)+'\',\''+escHtml(oc)+'\')">';
+        h+='<div class="wa-av" style="background:'+oc+'">'+ah+'<span class="od'+(io?' sh':'')+'"></span></div>';
+        h+='<div class="wa-info"><div class="wa-top"><span class="wa-nome">'+escHtml(on)+'</span><span class="wa-time">'+tm+'</span></div>';
+        if(th){h+='<div class="wa-bot">'+th+'</div>';}else{
+            h+='<div class="wa-bot"><span class="wa-prev">'+sl+escHtml(lm)+'</span>';
+            if(ur>0)h+='<span class="wa-bdg sh">'+(ur>99?'99+':ur)+'</span>';
+            h+='</div>';}
+        h+='</div></div>';
+    });
+    list.innerHTML=h;
+}
+
+// ===== OPEN CONVERSATION =====
+window.openConversation=function(uid,name,color){
+    var cid=makeChatId(myUid,uid);
+    db.collection('chatConversations').doc(cid).set({['unread.'+myUid]:0,lastTimestamp:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(function(){});
+    window.location.href='private-chat.html?uid='+encodeURIComponent(uid)+'&name='+encodeURIComponent(name)+'&color='+encodeURIComponent(color);
+};
+
+// ===== LISTENERS =====
+function listenConversations(){
+    if(!myUid||!myNick)return;
+    ensureAuth().then(function(){
+        if(unsubConversations)unsubConversations();
+        unsubConversations=db.collection('chatConversations').where('participants','array-contains',myUid).orderBy('lastTimestamp','desc').onSnapshot(function(snap){
+            var convs=[],uids=[];
+            snap.forEach(function(doc){var d=doc.data();convs.push(d);var ou=getOtherUid(d.participants||[]);if(ou&&!profilesCache[ou])uids.push(ou);});
+            if(uids.length>0){Promise.all(uids.map(function(uid){return loadProfile(uid);})).then(function(){renderConversations(convs);});}else{renderConversations(convs);}
+        },function(err){console.error(err);document.getElementById('waListContent').innerHTML='<div class="wa-empty"><i class="fas fa-exclamation-triangle"></i><h3>Erro</h3><p><button onclick="location.reload()" style="background:#25d366;border:none;color:#fff;padding:8px 20px;border-radius:20px;font-weight:700;cursor:pointer;margin-top:10px">Recarregar</button></p></div>';});
+        db.collection('chatPresence').onSnapshot(function(snap){snap.forEach(function(doc){if(doc.exists){var d=doc.data(),ts=d.ts;if(ts){var tss=ts.toDate?ts.toDate().getTime():0;onlineUsers[doc.id]=Date.now()-tss<120000;}}});},function(){});
+    }).catch(function(){document.getElementById('waListContent').innerHTML='<div class="wa-empty"><i class="fas fa-exclamation-triangle"></i><h3>Erro de autenticação</h3></div>';});
+}
+
+// ===== STATUS =====
+function listenStatuses(){
+    if(!myUid||!myNick)return;
+    if(unsubStatuses)unsubStatuses();
+    var cutoff=new Date(Date.now()-25*60*60*1000);
+    var tryQuery=function(order){
+        var q=db.collection('chatStatuses').where('expiresAt','>',cutoff);
+        if(order)q=q.orderBy('expiresAt','desc');
+        return q.onSnapshot(function(snap){
+            allStatuses=[];var umap={};
+            snap.forEach(function(doc){var d=Object.assign({id:doc.id},doc.data());allStatuses.push(d);var uid=d.uid;
+                if(!umap[uid])umap[uid]={uid:uid,name:d.username||'Usuário',color:d.userColor||getColor(d.username||''),statuses:[]};
+                umap[uid].statuses.push(d);
+                if(uid===myUid&&!viewedStatuses[d.id]){viewedStatuses[d.id]=true;saveViewed();}});
+            statusUsers=Object.keys(umap).map(function(k){return umap[k];});
+            renderStatusRow();renderConversationsFromCache();
+            if(currentTab==='status')renderStatusTab();
+        },function(err){
+            console.error('Status err:',err);
+            if(order)tryQuery(false);
+        });
+    };
+    unsubStatuses=tryQuery(true);
+}
+function saveViewed(){try{localStorage.setItem('gw_viewed_statuses',JSON.stringify(viewedStatuses));}catch(e){}}
+
+// STATUS VIEWER
+window.openMyStatus=function(){
+    var myS=allStatuses.filter(function(s){return s.uid===myUid;});
+    if(myS.length>0)openStatusViewer(myUid);else openCreateStatus();
+};
+window.openStatusViewer=function(uid){
+    var su=statusUsers.find(function(u){return u.uid===uid;});
+    if(!su||su.statuses.length===0)return;
+    viewerUser=su;viewerIdx=0;
+    su.statuses.forEach(function(s){viewedStatuses[s.id]=true;});saveViewed();
+    renderStatusRow();if(currentTab==='status')renderStatusTab();
+    showStatusItem();document.getElementById('statusViewer').classList.add('sh');
+};
+function showStatusItem(){
+    if(!viewerUser||viewerIdx>=viewerUser.statuses.length||viewerIdx<0){closeStatusViewer();return;}
+    var st=viewerUser.statuses[viewerIdx],isMe=st.uid===myUid;
+    var bars='';viewerUser.statuses.forEach(function(s,i){bars+='<div class="st-bar'+(i<viewerIdx?' done':(i===viewerIdx?' active':''))+'"><div class="st-fill"></div></div>';});
+    document.getElementById('stProgress').innerHTML=bars;
+    var prof=profilesCache[st.uid],photo='',name=st.username||'Usuário',color=st.userColor||getColor(st.username||'');
+    if(prof){if(prof.photo)photo=prof.photo;if(prof.name)name=prof.name;}
+    var avEl=document.getElementById('stViewerAvatar');avEl.style.background=color;
+    avEl.innerHTML=photo?'<img src="'+escUrl(photo)+'">':getInitials(name);
+    document.getElementById('stViewerName').textContent=name;
+    document.getElementById('stViewerTime').textContent=st.timestamp?formatConvTime(st.timestamp):'';
+    if(isMe&&st.viewers){document.getElementById('stViewerViews').style.display='flex';document.getElementById('stViewCount').textContent=(st.viewers.length||0);}
+    else{document.getElementById('stViewerViews').style.display='none';}
+    var ct=document.getElementById('stContent');
+    if(st.type==='text'){ct.innerHTML='<div class="st-nav"><div class="st-left" onclick="stPrev()"></div><div class="st-right" onclick="stNext()"></div></div><div class="st-text">'+escHtml(st.content)+'</div>';ct.style.background=st.bgColor||'#1a252f';}
+    else if(st.type==='image'){ct.innerHTML='<div class="st-nav"><div class="st-left" onclick="stPrev()"></div><div class="st-right" onclick="stNext()"></div></div><img class="st-media" src="'+escUrl(st.content)+'" alt="Status">';ct.style.background='#000';}
+    else if(st.type==='video'){ct.innerHTML='<div class="st-nav"><div class="st-left" onclick="stPrev()"></div><div class="st-right" onclick="stNext()"></div></div><video class="st-media" src="'+escUrl(st.content)+'" autoplay muted playsinline></video>';ct.style.background='#000';}
+    clearInterval(viewerTimer);
+    viewerTimer=setInterval(function(){viewerIdx++;if(viewerIdx>=viewerUser.statuses.length){closeStatusViewer();return;}showStatusItem();},4000);
+    if(!isMe&&st.id&&!viewedStatuses[st.id]){viewedStatuses[st.id]=true;saveViewed();db.collection('chatStatuses').doc(st.id).update({viewers:firebase.firestore.FieldValue.arrayUnion(myUid)}).catch(function(){});}
+}
+window.stNext=function(){clearInterval(viewerTimer);if(viewerIdx<viewerUser.statuses.length-1){viewerIdx++;showStatusItem();}else{closeStatusViewer();}};
+window.stPrev=function(){clearInterval(viewerTimer);if(viewerIdx>0){viewerIdx--;showStatusItem();}else{closeStatusViewer();}};
+window.closeStatusViewer=function(){clearInterval(viewerTimer);document.getElementById('statusViewer').classList.remove('sh');};
+window.showViewers=function(){if(!viewerUser)return;var st=viewerUser.statuses[viewerIdx];if(!st||!st.viewers||st.viewers.length===0){alert('Ninguém visualizou.');return;}alert(st.viewers.length+' visualizaram.');};
+
+// CREATE STATUS
+window.openCreateStatus=function(){
+    document.getElementById('stCreateModal').classList.add('sh');
+    document.getElementById('stTextInput').style.display='block';document.getElementById('stMediaPreview').style.display='none';
+    document.getElementById('stVideoPreview').style.display='none';document.getElementById('stTextInput').value='';
+    document.getElementById('stSendBtn').style.display='none';pendingStatusData=null;pendingStatusType='text';
+    document.getElementById('stCreateBody').style.background='linear-gradient(135deg,#1a252f,#2c3e50)';
+    var cp=document.getElementById('stColorPicker');cp.innerHTML='';
+    BG_COLORS.forEach(function(c,i){cp.innerHTML+='<div class="st-c'+(i===0?' sel':'')+'" style="background:'+c+'" onclick="selectStatusColor(this,\''+c+'\')"></div>';});
+    document.getElementById('stTextInput').focus();
+};
+window.closeCreateStatus=function(){document.getElementById('stCreateModal').classList.remove('sh');pendingStatusData=null;};
+window.selectStatusColor=function(el,color){document.querySelectorAll('.st-c').forEach(function(c){c.classList.remove('sel');});el.classList.add('sel');document.getElementById('stCreateBody').style.background=color;};
+window.selectStatusMedia=function(){document.getElementById('stPhotoInput').click();};
+window.selectStatusVideo=function(){document.getElementById('stVideoInput').click();};
+window.previewStatusMedia=function(e,type){
+    var f=e.target.files[0];if(!f)return;
+    if(f.size>20*1024*1024){alert('Maximo 20MB.');e.target.value='';return;}
+    var r=new FileReader();
+    r.onload=function(ev){
+        var data=ev.target.result;pendingStatusData=data;pendingStatusType=type;
+        document.getElementById('stTextInput').style.display='none';
+        document.getElementById('stMediaPreview').style.display='none';document.getElementById('stVideoPreview').style.display='none';
+        if(type==='image'){var img=document.getElementById('stMediaPreview');img.src=data;img.style.display='block';}
+        else if(type==='video'){var vid=document.getElementById('stVideoPreview');vid.src=data;vid.style.display='block';vid.play().catch(function(){});}
+        document.getElementById('stSendBtn').style.display='';document.getElementById('stCreateTitle').textContent=type==='image'?'Nova Foto':'Novo Vídeo';
+    };r.readAsDataURL(f);e.target.value='';
+};
+window.postStatus=function(){
+    var content,type,textEl=document.getElementById('stTextInput');
+    if(textEl.style.display!=='none'){content=textEl.value.trim();type='text';if(!content){alert('Digite algo.');return;}
+    }else{content=pendingStatusData;type=pendingStatusType;if(!content){alert('Selecione midia.');return;}}
+    var bg=document.getElementById('stCreateBody').style.background||'#1a252f';
+    var btn=document.getElementById('stSendBtn');btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';btn.disabled=true;
+    ensureAuth().then(function(){
+        return db.collection('chatStatuses').add({uid:myUid,username:myNick,userColor:myColor,userPhoto:profilesCache[myUid]&&profilesCache[myUid].photo?profilesCache[myUid].photo:'',type:type,content:content,bgColor:type==='text'?bg:'',timestamp:firebase.firestore.FieldValue.serverTimestamp(),expiresAt:new Date(Date.now()+24*60*60*1000),viewers:[]});
+    }).then(function(){closeCreateStatus();btn.innerHTML='<i class="fas fa-paper-plane"></i> Enviar';btn.disabled=false;document.getElementById('stCreateTitle').textContent='Novo Status';
+    }).catch(function(e){console.error(e);alert('Erro.');btn.innerHTML='<i class="fas fa-paper-plane"></i> Enviar';btn.disabled=false;});
+};
+
+// ===== SEARCH =====
+window.toggleSearch=function(){
+    var inp=document.getElementById('waSearchInput');
+    inp.focus();
+};
+window.filterList=function(q){
+    var items=document.querySelectorAll('.wa-li');
+    if(!q||q.length<2){items.forEach(function(i){i.style.display='flex';});return;}
+    var ql=q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    items.forEach(function(i){
+        var n=i.querySelector('.wa-nome');
+        var m=n&&n.textContent.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').indexOf(ql)!==-1;
+        i.style.display=m?'flex':'none';
+    });
+};
+
+// ===== PROFILE =====
+var _inboxProfilePhoto='',_inboxCoverPhoto='';
+window.openInboxProfile=function(){
+    loadProfileFresh(myUid).then(function(prof){
+        var name=prof&&prof.name?prof.name:myNick,bio=prof&&prof.bio?prof.bio:'',photo=prof&&prof.photo?prof.photo:'',cover=prof&&prof.cover?prof.cover:'';
+        var en=escHtml(name),eb=escHtml(bio),ep=escUrl(photo),ec=escHtml(myColor),ecv=escUrl(cover),init=getInitials(name);
+        var hasCapa=ecv||ep;
+        var hasStatus=allStatuses.some(function(s){return s.uid===myUid;});
+        _inboxProfilePhoto='';_inboxCoverPhoto='';
+        var h='<div style="position:relative"><div style="position:relative;height:150px;overflow:hidden;background:linear-gradient(180deg,#1a252f,#2c3e50)">'
+           +(hasCapa?'<div style="position:absolute;inset:0;background-image:url(\''+(ecv||ep)+'\');background-size:cover;background-position:center;filter:blur(20px);transform:scale(1.1);opacity:.5"></div>':'')
+           +'<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,37,47,.3),rgba(44,62,80,.7))"></div>'
+           +'<div style="position:absolute;bottom:-35px;left:50%;transform:translateX(-50%);width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:900;color:#fff;overflow:hidden;border:3px solid #fff;box-shadow:0 2px 12px rgba(0,0,0,.3);background:'+ec+'">'+(photo?'<img src="'+ep+'" style="width:100%;height:100%;object-fit:cover">':init)+'</div></div>'
+           +'<div style="padding:44px 20px 16px;text-align:center"><div style="font-size:1.1rem;font-weight:800;color:#1a252f">'+en+'</div>'+(bio?'<div style="font-size:.82rem;color:#666;margin-top:4px">'+eb+'</div>':'<div style="font-size:.82rem;color:#bbb;margin-top:4px;font-style:italic">Sem bio</div>')+'</div>'
+           +'<div class="pbd">'
+           +'<label style="font-size:.78rem;color:#888;cursor:pointer;display:block;text-align:center;padding:10px;border:2px dashed #ddd;border-radius:10px;margin-bottom:8px"><i class="fas fa-image"></i> Foto de capa <input type="file" accept="image/*" style="display:none" onchange="previewInboxCoverPhoto(event)"></label>'
+           +'<img id="ibCoverPrev" src="'+ecv+'" style="display:'+(cover?'block':'none')+';width:100%;height:80px;object-fit:cover;border-radius:10px;margin-bottom:8px">'
+           +'<input id="ibNameIn" placeholder="Seu nome" value="'+en+'" maxlength="20" style="width:100%;padding:10px 14px;border:2px solid #ddd;border-radius:10px;font-size:.85rem;outline:none;margin-bottom:8px;font-family:inherit">'
+           +'<textarea id="ibBioIn" placeholder="Sua bio..." maxlength="150" style="width:100%;padding:10px 14px;border:2px solid #ddd;border-radius:10px;font-size:.82rem;outline:none;margin-bottom:8px;font-family:inherit;resize:none;height:50px">'+eb+'</textarea>'
+           +'<label style="font-size:.72rem;color:#888;cursor:pointer;display:block;text-align:center;margin:4px 0 8px"><i class="fas fa-camera"></i> Trocar foto de perfil <input type="file" accept="image/*" style="display:none" onchange="previewInboxProfilePhoto(event)"></label>'
+           +'<img id="ibPhotoPrev" src="'+ep+'" style="display:none;width:44px;height:44px;object-fit:cover;border-radius:50%;margin:0 auto 8px">'
+           +'<button onclick="saveInboxProfile()" style="width:100%;background:#25d366;color:#fff;border:none;padding:10px;border-radius:10px;font-weight:700;cursor:pointer;font-size:.82rem;margin-bottom:6px"><i class="fas fa-save"></i> Salvar</button>'
+           +'<button onclick="closeInboxProfile();openCreateStatus()" style="width:100%;background:#e8f5e9;color:#1b5e20;border:none;padding:10px;border-radius:10px;font-weight:700;cursor:pointer;font-size:.82rem;margin-bottom:6px"><i class="fas fa-plus-circle"></i> Adicionar status</button>'
+           +(hasStatus?'<button onclick="closeInboxProfile();openMyStatus()" style="width:100%;background:#f0f0f0;color:#555;border:none;padding:10px;border-radius:10px;font-weight:700;cursor:pointer;font-size:.82rem;margin-bottom:6px"><i class="fas fa-eye"></i> Meus status ('+allStatuses.filter(function(s){return s.uid===myUid;}).length+')</button>':'')
+           +'<button onclick="closeInboxProfile()" style="width:100%;background:#f0f0f0;color:#555;border:none;padding:10px;border-radius:10px;font-weight:700;cursor:pointer;font-size:.82rem">Fechar</button>'
+           +'</div></div>';
+        document.getElementById('profileBox').innerHTML=h;
+        document.getElementById('profileModal').classList.add('sh');
+    });
+};
+// ===== CROP MODAL =====
+var cropState={imgData:null,x:0,y:0,scale:1,frameW:0,frameH:0,callback:null,dragging:false,startX:0,startY:0,startImgX:0,startImgY:0};
+
+window.openCropModal=function(imgData,aspectRatio,callback){
+    cropState.imgData=imgData;cropState.callback=callback;
+    var img=new Image();img.onload=function(){
+        var frame=document.getElementById('cropFrame');
+        var fw=frame.offsetWidth;var fh=fw/aspectRatio;
+        frame.style.aspectRatio=aspectRatio;
+        var iw=img.naturalWidth,ih=img.naturalHeight;
+        var scale;if(iw/ih>aspectRatio){scale=fh/ih;}else{scale=fw/iw;}
+        var dw=iw*scale,dh=ih*scale;
+        var ix=(fw-dw)/2,iy=(fh-dh)/2;
+        cropState.scale=scale;cropState.frameW=fw;cropState.frameH=fh;
+        cropState.x=ix;cropState.y=iy;
+        var imgEl=document.getElementById('cropImage');
+        imgEl.src=imgData;imgEl.style.width=dw+'px';imgEl.style.height=dh+'px';
+        imgEl.style.left=ix+'px';imgEl.style.top=iy+'px';
+        document.getElementById('cropModal').classList.add('sh');
+    };img.src=imgData;
+};
+
+function initCropDrag(e){
+    var t=e.touches?e.touches[0]:e;
+    cropState.dragging=true;cropState.startX=t.clientX;cropState.startY=t.clientY;
+    cropState.startImgX=cropState.x;cropState.startImgY=cropState.y;e.preventDefault();
+}
+function moveCropDrag(e){
+    if(!cropState.dragging)return;
+    var t=e.touches?e.touches[0]:e;
+    var dx=t.clientX-cropState.startX,dy=t.clientY-cropState.startY;
+    var imgEl=document.getElementById('cropImage');
+    cropState.x=cropState.startImgX+dx;cropState.y=cropState.startImgY+dy;
+    var dw=parseFloat(imgEl.style.width),dh=parseFloat(imgEl.style.height);
+    cropState.x=Math.min(0,Math.max(cropState.frameW-dw,cropState.x));
+    cropState.y=Math.min(0,Math.max(cropState.frameH-dh,cropState.y));
+    imgEl.style.left=cropState.x+'px';imgEl.style.top=cropState.y+'px';e.preventDefault();
+}
+function endCropDrag(e){cropState.dragging=false;}
+
+window.confirmCrop=function(){
+    if(!cropState.imgData)return;
+    var canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+    var cropX=Math.round(-cropState.x/cropState.scale);
+    var cropY=Math.round(-cropState.y/cropState.scale);
+    var cropW=Math.round(cropState.frameW/cropState.scale);
+    var cropH=Math.round(cropState.frameH/cropState.scale);
+    var maxW=800,maxH=400,cw,ch;
+    if(cropW>maxW||cropH>maxH){var r=Math.min(maxW/cropW,maxH/cropH);cw=Math.round(cropW*r);ch=Math.round(cropH*r);}else{cw=cropW;ch=cropH;}
+    canvas.width=cw;canvas.height=ch;
+    var img=new Image();img.onload=function(){
+        ctx.drawImage(img,cropX,cropY,cropW,cropH,0,0,cw,ch);
+        var result=canvas.toDataURL('image/jpeg',0.85);
+        if(cropState.callback)cropState.callback(result);
+        cancelCrop();
+    };img.src=cropState.imgData;
+};
+window.cancelCrop=function(){document.getElementById('cropModal').classList.remove('sh');cropState.imgData=null;cropState.callback=null;};
+
+// Attach drag events
+(function(){
+    var frame=document.getElementById('cropFrame');
+    frame.addEventListener('mousedown',initCropDrag);
+    frame.addEventListener('touchstart',initCropDrag,{passive:false});
+    document.addEventListener('mousemove',moveCropDrag);
+    document.addEventListener('touchmove',moveCropDrag,{passive:false});
+    document.addEventListener('mouseup',endCropDrag);
+    document.addEventListener('touchend',endCropDrag);
+})();
+
+window.closeInboxProfile=function(){document.getElementById('profileModal').classList.remove('sh');_inboxProfilePhoto='';_inboxCoverPhoto='';};
+
+window.previewInboxCoverPhoto=function(e){
+    var f=e.target.files[0];if(!f)return;
+    if(f.size>20*1024*1024){alert('Imagem muito grande. Maximo 20MB.');return;}
+    var r=new FileReader();r.onload=function(ev){
+        openCropModal(ev.target.result, 2, function(cropped){
+            _inboxCoverPhoto = cropped;
+            document.getElementById('ibCoverPrev').src = cropped;
+            document.getElementById('ibCoverPrev').style.display = 'block';
+        });
+    };r.readAsDataURL(f);
+};
+window.previewInboxProfilePhoto=function(e){
+    var f=e.target.files[0];if(!f)return;
+    if(f.size>10*1024*1024){alert('Imagem muito grande. Maximo 10MB.');return;}
+    var r=new FileReader();r.onload=function(ev){
+        var img=new Image();img.onload=function(){
+            var maxSz=200,canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+            var w=img.width,h=img.height;
+            if(w>maxSz||h>maxSz){if(w>h){h=Math.round(h*maxSz/w);w=maxSz;}else{w=Math.round(w*maxSz/h);h=maxSz;}}
+            canvas.width=w;canvas.height=h;ctx.drawImage(img,0,0,w,h);
+            _inboxProfilePhoto=canvas.toDataURL('image/jpeg',0.7);
+            document.getElementById('ibPhotoPrev').src=_inboxProfilePhoto;
+            document.getElementById('ibPhotoPrev').style.display='block';
+        };img.src=ev.target.result;
+    };r.readAsDataURL(f);
+};
+window.saveInboxProfile=function(){
+    var name=document.getElementById('ibNameIn').value.trim(),bio=document.getElementById('ibBioIn').value.trim();
+    if(!name||name.length<2){document.getElementById('ibNameIn').style.borderColor='#e74c3c';return;}
+    var data={name:name,bio:bio};
+    if(_inboxCoverPhoto)data.cover=_inboxCoverPhoto;
+    if(_inboxProfilePhoto)data.photo=_inboxProfilePhoto;
+    var btn=document.getElementById('sidebarProfile');
+    ensureAuth().then(function(){return db.collection('chatProfiles').doc(myUid).set(data,{merge:true});}).then(function(){
+        myNick=name;localStorage.setItem('gw_chat_nick',name);
+        var cached=profilesCache[myUid]||{};cached.name=name;cached.bio=bio;
+        if(_inboxProfilePhoto)cached.photo=_inboxProfilePhoto;
+        profilesCache[myUid]=cached;
+        if(cached.photo)btn.innerHTML='<img src="'+escUrl(cached.photo)+'">';else btn.innerHTML=getInitials(name);
+        _inboxProfilePhoto='';_inboxCoverPhoto='';
+        closeInboxProfile();
+    }).catch(function(e){console.error(e);if(e.message&&e.message.indexOf('too large')!==-1){alert('Foto muito grande.');}else{alert('Erro ao salvar perfil.');}});
+};
+
+// ===== ONLINE HEARTBEAT =====
+function goOnline(){
+    if(!myUid)return;
+    var pr=db.collection('chatPresence').doc(myUid);
+    pr.set({uid:myUid,nick:myNick,ts:firebase.firestore.FieldValue.serverTimestamp(),color:myColor},{merge:true}).catch(function(){});
+    setInterval(function(){pr.set({ts:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(function(){});},30000);
+}
+
+// ===== INIT =====
+function initApp(){
+    if(!myNick)return;
+    ensureAuth().then(function(){listenStatuses();}).catch(function(){});
+    listenConversations();goOnline();
+    loadProfile(myUid).then(function(prof){
+        var btn=document.getElementById('sidebarProfile');
+        if(prof&&prof.photo)btn.innerHTML='<img src="'+escUrl(prof.photo)+'">';else btn.innerHTML=getInitials(myNick);
+    }).catch(function(){});
+}
+setTimeout(function(){if(myNick)initApp();},500);
+document.addEventListener('click',function(e){
+    if(e.target.closest('#nickModal button')&&myNick)initApp();
+});
+</script>
+</body>
+</html>
