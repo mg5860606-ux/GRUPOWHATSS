@@ -2448,8 +2448,7 @@ body.modal-open {
     font-size: 2.5rem;
     font-weight: 900;
     color: #2c3e50;
-    margin: 120px 0 40px;
-    /* Espaço suficiente para o header fixo */
+    margin: 30px 0 40px;
     text-align: center;
 }
 

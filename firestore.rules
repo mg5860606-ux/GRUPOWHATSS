@@ -79,14 +79,14 @@ service cloud.firestore {
     // 10. Perfis do Chat
     match /chatProfiles/{userId} {
       allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null;
     }
 
-    // 11. Presença do Chat
+    // 11. Presença do Chat (o app usa IDs proprios, nao auth.uid)
     match /chatPresence/{userId} {
       allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == userId;
-      allow delete: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null;
+      allow delete: if request.auth != null;
     }
   }
 }

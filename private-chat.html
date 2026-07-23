@@ -101,7 +101,7 @@ html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-ap
 .mu{font-size:.68rem;font-weight:800;margin-bottom:1px}.mu:hover{text-decoration:underline}
 .mt{font-size:.88rem;color:#303030;word-break:break-word;line-height:1.3}
 .mti{font-size:.6rem;color:rgba(0,0,0,.4);white-space:nowrap;margin-left:6px;flex-shrink:0}
-.mi{max-width:100%;border-radius:8px;margin-top:3px;cursor:pointer;display:block;max-height:280px;object-fit:cover}
+.mi{max-width:100%;border-radius:8px;margin-top:3px;cursor:pointer;display:block}
 .mst{font-size:3.2rem;line-height:1;margin-top:1px}
 .mau{margin-top:3px}.mau audio{height:34px;max-width:170px}
 .mlk{color:#007bff;text-decoration:underline;word-break:break-all;font-size:.82rem}
@@ -225,6 +225,17 @@ html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-ap
 .mrq .mrqn{font-weight:800;color:#00a884}
 .mrq .mrqt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rpk{display:none;position:fixed;bottom:70px;left:0;right:0;background:#fff;border-radius:16px 16px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,.15);z-index:250;transform:translateY(100%);transition:transform .25s ease;padding:12px 8px}
+.map{position:fixed;z-index:999;background:#fff;border-radius:14px;box-shadow:0 4px 24px rgba(0,0,0,.25);padding:8px 10px;display:none;animation:apin .15s ease;min-width:200px}
+.map.map-above::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%) rotate(45deg);width:12px;height:12px;background:#fff;border-radius:2px;box-shadow:2px 2px 4px rgba(0,0,0,.1)}
+.map:not(.map-above)::after{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%) rotate(45deg);width:12px;height:12px;background:#fff;border-radius:2px;box-shadow:-2px -2px 4px rgba(0,0,0,.1)}
+.map-top{display:flex;gap:4px;justify-content:center;padding:2px 0}
+.map-top button{background:none;border:none;font-size:1.5rem;cursor:pointer;padding:4px 6px;border-radius:8px;transition:all .15s;line-height:1}
+.map-top button:hover{background:#f0f2f5;transform:scale(1.2)}
+.map-top button.add-emoji{font-size:.85rem;color:#888;font-weight:700}
+.map-divider{height:1px;background:#f0f0f0;margin:4px 0}
+.map-bot{display:flex;gap:4px;justify-content:center;flex-wrap:wrap}
+.map-bot button{background:#f0f0f0;border:none;padding:4px 10px;border-radius:6px;font-size:.7rem;font-weight:700;color:#555;cursor:pointer;display:flex;align-items:center;gap:4px;transition:background .15s}
+.map-bot button:hover{background:#e0e0e0}
 .rpk.sh{display:flex;transform:translateY(0)}
 .rpk .rpkh{display:flex;justify-content:center;padding-bottom:8px}
 .rpk .rpkh span{width:36px;height:4px;background:#ddd;border-radius:2px}
@@ -239,7 +250,7 @@ html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-ap
 .srb .sn{font-size:.75rem;font-weight:700;color:#888;white-space:nowrap}
 .ct .hb{background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.9rem}
 .ct .hb:hover{background:rgba(255,255,255,.2)}
-@media(min-width:768px){.cp{max-width:700px;margin:0 auto}.ct{border-radius:0 0 12px 12px}}
+@media(min-width:768px){.cp{max-width:100%;margin:0}.ct{border-radius:0}}
 @media(max-width:480px){.mb{max-width:92%}.cib{padding:5px 6px}.cm{padding:10px}.ep .ei{font-size:1.1rem;padding:2px 3px}.rpk{bottom:50px}.rpv{margin-left:38px}}
 </style>
 </head>
@@ -292,14 +303,17 @@ html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-ap
 </div>
 <div class="rpv" id="replyPreview"><div class="rpx"><div class="rpn" id="replyName"></div><div class="rpt" id="replyText"></div></div><button class="rcl" onclick="cancelReply()"><i class="fas fa-times"></i></button></div>
 <div class="rpk" id="reactionPicker"><div class="rpkh"><span></span></div><div class="rpkg" id="reactionGrid"></div></div>
+<div class="map" id="msgActionsPopup"><div class="map-top" id="mapReactions"></div><div class="map-divider" id="mapDivider" style="display:none"></div><div class="map-bot" id="mapActions"></div></div>
 <div class="mo" id="nickModal"><div class="nmb"><h3>Bem-vindo ao Chat!</h3><p>Escolha um apelido para participar</p><input type="text" id="nickInput" placeholder="Seu apelido..." maxlength="20" autocomplete="off"><button onclick="saveNickname()">Entrar no Chat</button></div></div>
 <div class="mo" id="profileModal"><div class="pmb" id="profileModalBox"></div></div>
 <div class="fio" id="fullImgOverlay"><button class="cf" onclick="closeFullImg()"><i class="fas fa-times"></i></button><img id="fullImgEl" src="" alt=""><div class="fio-actions"><button onclick="downloadFullImg()"><i class="fas fa-download"></i> Baixar</button></div></div>
 <div class="mctx" id="msgContextMenu"><button class="reply-btn" onclick="ctxReplyMsg()" style="color:#00a884"><i class="fas fa-reply" style="color:#00a884"></i> Responder</button><button onclick="ctxEditMsg()"><i class="fas fa-pen"></i> Editar mensagem</button><button onclick="ctxDeleteMsg()"><i class="fas fa-trash"></i> Apagar mensagem</button></div>
 <div class="mo" id="editMsgModal"><div class="nmb"><h3>Editar Mensagem</h3><textarea id="editMsgInput" rows="3" maxlength="1000" style="width:100%;padding:10px 14px;border:2px solid #ddd;border-radius:10px;font-size:.9rem;outline:none;font-family:inherit;resize:none"></textarea><div style="display:flex;gap:8px;margin-top:12px"><button onclick="confirmEditMsg()" style="flex:1;background:#25d366;color:#fff;border:none;padding:11px;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer">Salvar</button><button onclick="document.getElementById('editMsgModal').classList.remove('sh')" style="flex:1;background:#f0f0f0;color:#555;border:none;padding:11px;border-radius:10px;font-weight:700;cursor:pointer">Cancelar</button></div></div></div>
+<div class="mo" id="forwardModal"><div class="nmb"><h3><i class="fas fa-share" style="color:#3498db"></i> Reenviar no Chat</h3><p style="font-size:.82rem;color:#666;margin-bottom:14px">Esta midia sera publicada como uma nova mensagem sua no chat privado.</p><button onclick="forwardToChat()" style="background:#25d366;color:#fff;border:none;width:100%;padding:11px;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer;margin-bottom:8px"><i class="fas fa-paper-plane"></i> Reenviar</button><button onclick="closeForwardModal()" style="background:#f0f0f0;color:#555;border:none;width:100%;padding:11px;border-radius:10px;font-size:.9rem;font-weight:800;cursor:pointer">Cancelar</button></div></div>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
 <script src="private-chat.js"></script>
 </body>
 </html>

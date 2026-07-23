@@ -9,5 +9,23 @@ service firebase.storage {
       allow write: if request.resource.size < 2 * 1024 * 1024
                    && request.resource.contentType.matches('image/.*');
     }
+
+    match /chat/{allPaths=**} {
+      // Chat publico - qualquer um pode ver videos
+      allow read: if true;
+      // Upload de videos ate 30MB para usuarios autenticados
+      allow write: if request.auth != null
+                   && request.resource.size < 30 * 1024 * 1024
+                   && request.resource.contentType.matches('video/.*');
+    }
+
+    match /private/{allPaths=**} {
+      // Chat privado - qualquer um pode ver videos
+      allow read: if true;
+      // Upload de videos ate 30MB para usuarios autenticados
+      allow write: if request.auth != null
+                   && request.resource.size < 30 * 1024 * 1024
+                   && request.resource.contentType.matches('video/.*');
+    }
   }
 }
