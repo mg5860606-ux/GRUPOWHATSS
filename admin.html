@@ -221,6 +221,8 @@
     </style>
 </head>
 <body>
+    <!-- LOADING SCREEN -->
+    <div class="loading-overlay" id="loadingOverlay" style="display:none"></div>
     <!-- LOGIN -->
     <div id="loginOverlay" class="login-overlay">
         <div class="login-card">
@@ -796,7 +798,8 @@
 
         function timeAgo(ts) {
             if (!ts) return '';
-            const diff = Date.now() - ts;
+            var tsMs = ts.toDate ? ts.toDate().getTime() : (typeof ts === 'object' && ts.seconds ? ts.seconds * 1000 : ts);
+            const diff = Date.now() - tsMs;
             const mins = Math.floor(diff / 60000);
             if (mins < 1) return 'agora';
             if (mins < 60) return mins + 'min';
@@ -870,7 +873,7 @@
                 if (page === 'moderation') loadPending();
                 if (page === 'vips') loadVips();
                 if (page === 'analytics') loadAnalytics();
-                if (page === 'settings') loadConfig();
+                if (page === 'settings') { loadConfig(); loadBlacklist(); }
             });
         });
 
@@ -936,7 +939,7 @@
             const sorted = [...allGroups].sort((a, b) => (b.dataCriacao || 0) - (a.dataCriacao || 0)).slice(0, 8);
             document.getElementById('recentGroups').innerHTML = sorted.length ? sorted.map(g => `
                 <div class="log-item">
-                    <img src="${escHtml(g.imagem)}" class="log-icon" style="object-fit:cover;width:36px;height:36px;border-radius:8px">
+                    <img src="${escHtml(g.imagem || '')}" class="log-icon" style="object-fit:cover;width:36px;height:36px;border-radius:8px" onerror="this.style.display='none';this.parentNode.querySelector('.log-fallback')&&(this.parentNode.querySelector('.log-fallback').style.display='flex')"><div class="log-fallback log-icon" style="display:${g.imagem?'none':'flex'};background:${g.cor||'#21262d'};font-size:.78rem;color:#8b949e"><i class="fas fa-image"></i></div>
                     <div class="log-text"><strong>${escHtml(g.nome)}</strong><br><span style="font-size:.75rem;color:#8b949e">${escHtml(g.categoria || 'geral')} · ${escHtml(g.status || 'pendente')}</span></div>
                     <span class="log-time">${timeAgo(g.dataCriacao)}</span>
                 </div>
@@ -1973,6 +1976,249 @@
                 if (page === 'tools') loadTopGroups();
             });
         });
+
+        // ===== MISSING FUNCTIONS =====
+
+        // FILTER PENDING
+        window.filterPending = function() {
+            var q = (document.getElementById('pendingSearch')?.value || '').toLowerCase();
+            var items = document.querySelectorAll('#pendingList .pend-item');
+            items.forEach(function(el) {
+                var txt = el.textContent.toLowerCase();
+                el.style.display = txt.indexOf(q) === -1 ? 'none' : '';
+            });
+        };
+
+        // BULK APPROVE ALL PENDING
+        window.bulkApprovePending = async function() {
+            if (!confirm('Aprovar TODOS os grupos pendentes?')) return;
+            var btn = event.target;
+            btn.disabled = true;
+            btn.textContent = 'Aprovando...';
+            try {
+                for (var i = 0; i < allPending.length; i++) {
+                    var g = allPending[i];
+                    await setDoc(doc(db, 'grupos', g.id), {
+                        nome: g.nome,
+                        descricao: g.descricao || '',
+                        link: g.link || '',
+                        imagem: g.imagem || '',
+                        categoria: g.categoria || 'outros',
+                        status: 'aprovado',
+                        visitas: 0,
+                        likes: 0,
+                        reportes: 0,
+                        dataCriacao: Date.now(),
+                        vip: false
+                    });
+                    await deleteDoc(doc(db, 'gruposPendentes', g.id));
+                }
+                showToast(allPending.length + ' grupos aprovados!');
+                await loadAdminData();
+                loadPending();
+            } catch (e) {
+                console.error(e);
+                showToast('Erro ao aprovar grupos', 'error');
+            }
+            btn.disabled = false;
+            btn.textContent = 'Aprovar Todos';
+        };
+
+        // BULK REJECT ALL PENDING
+        window.bulkRejectPending = async function() {
+            if (!confirm('Rejeitar TODOS os grupos pendentes?')) return;
+            var btn = event.target;
+            btn.disabled = true;
+            btn.textContent = 'Rejeitando...';
+            try {
+                for (var i = 0; i < allPending.length; i++) {
+                    var g = allPending[i];
+                    await setDoc(doc(db, 'grupos', g.id), {
+                        nome: g.nome,
+                        descricao: g.descricao || '',
+                        link: g.link || '',
+                        imagem: g.imagem || '',
+                        categoria: g.categoria || 'outros',
+                        status: 'reprovado',
+                        visitas: 0,
+                        likes: 0,
+                        dataCriacao: Date.now(),
+                        vip: false
+                    });
+                    await deleteDoc(doc(db, 'gruposPendentes', g.id));
+                }
+                showToast(allPending.length + ' grupos rejeitados!');
+                await loadAdminData();
+                loadPending();
+            } catch (e) {
+                console.error(e);
+                showToast('Erro ao rejeitar grupos', 'error');
+            }
+            btn.disabled = false;
+            btn.textContent = 'Rejeitar Todos';
+        };
+
+        // GIVE VIP BY ID
+        window.giveVipById = async function() {
+            var id = document.getElementById('vipGroupId').value.trim();
+            var days = parseInt(document.getElementById('vipDays').value) || 7;
+            if (!id) { showToast('Digite um ID de grupo', 'error'); return; }
+            try {
+                var ref = doc(db, 'grupos', id);
+                var snap = await getDoc(ref);
+                if (!snap.exists()) { showToast('Grupo nao encontrado!', 'error'); return; }
+                await updateDoc(ref, {
+                    vip: true,
+                    vipExpires: Date.now() + days * 24 * 60 * 60 * 1000
+                });
+                showToast('VIP ativado por ' + days + ' dias!');
+                document.getElementById('vipGroupId').value = '';
+                loadVips();
+            } catch (e) {
+                console.error(e);
+                showToast('Erro ao ativar VIP', 'error');
+            }
+        };
+
+        // SAVE ADMIN CONFIG
+        window.saveAdminConfig = async function() {
+            var data = {
+                homeNotice: document.getElementById('cfgHomeNotice').value.trim(),
+                promisseToken: document.getElementById('cfgPromisseToken').value.trim(),
+                imgbbApiKey: document.getElementById('cfgImgbbApiKey').value.trim(),
+                adminPassword: document.getElementById('cfgAdminPassword').value.trim(),
+                supportPhone: document.getElementById('cfgSupportPhone').value.trim(),
+                emailjsPublicKey: document.getElementById('cfgEmailjsPublicKey').value.trim(),
+                emailjsServiceId: document.getElementById('cfgEmailjsServiceId').value.trim(),
+                emailjsTemplateCupons: document.getElementById('cfgEmailjsTemplateCupons').value.trim(),
+                emailjsTemplateRecibo: document.getElementById('cfgEmailjsTemplateRecibo').value.trim()
+            };
+            try {
+                await setDoc(doc(db, 'configuracoes', 'global'), data, { merge: true });
+                showToast('Configuracoes salvas!');
+            } catch (e) {
+                console.error(e);
+                showToast('Erro ao salvar configuracoes', 'error');
+            }
+        };
+
+        // UNBAN USER
+        window.unbanUser = async function(id) {
+            if (!confirm('Remover ban deste usuario?')) return;
+            try {
+                await deleteDoc(doc(db, 'blacklist', id));
+                showToast('Usuario desbanido!');
+                loadBlacklist();
+            } catch (e) {
+                console.error(e);
+                showToast('Erro ao desbanir', 'error');
+            }
+        };
+
+        // DOWNLOAD SITEMAP
+        window.downloadSitemap = function() {
+            var xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+            xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+            var pages = ['index.html','chat.html','inbox.html','private-chat.html','planos.html','grupos.html'];
+            pages.forEach(function(p) {
+                xml += '  <url>\n    <loc>https://gruposwhats.app/' + p + '</loc>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>\n';
+            });
+            allGroups.filter(function(g) { return g.status === 'aprovado'; }).forEach(function(g) {
+                xml += '  <url>\n    <loc>https://gruposwhats.app/group.html?id=' + encodeURIComponent(g.id) + '</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.5</priority>\n  </url>\n';
+            });
+            xml += '</urlset>';
+            var blob = new Blob([xml], { type: 'text/xml' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'sitemap.xml';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Sitemap baixado!');
+        };
+
+        // EXPORT ADMIN CSV
+        window.exportAdminCSV = function() {
+            var headers = ['ID','Nome','Categoria','Status','Link','Visitas','Curtidas','VIP','Data'];
+            var rows = allGroups.map(function(g) {
+                return [g.id, g.nome, g.categoria||'', g.status||'', g.link||'', g.visitas||0, g.likes||0, g.vip?'Sim':'Nao', new Date(g.dataCriacao).toLocaleDateString()];
+            });
+            var csv = headers.join(',') + '\n' + rows.map(function(r) { return r.map(csvEscape).join(','); }).join('\n');
+            var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'grupos_export.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('CSV exportado!');
+        };
+
+        // EXPORT PENDING CSV
+        window.exportPendingCSV = function() {
+            var headers = ['ID','Nome','Categoria','Link','Data'];
+            var rows = allPending.map(function(g) {
+                return [g.id, g.nome, g.categoria||'', g.link||'', new Date(g.dataCriacao).toLocaleDateString()];
+            });
+            var csv = headers.join(',') + '\n' + rows.map(function(r) { return r.map(csvEscape).join(','); }).join('\n');
+            var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'grupos_pendentes_export.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Pendentes exportados!');
+        };
+
+        // CLEAR REJECTED
+        window.clearRejected = async function() {
+            if (!confirm('Deletar TODOS os grupos reprovados?')) return;
+            try {
+                var rejected = allGroups.filter(function(g) { return g.status === 'reprovado'; });
+                for (var i = 0; i < rejected.length; i++) {
+                    await deleteDoc(doc(db, 'grupos', rejected[i].id));
+                }
+                showToast(rejected.length + ' grupos removidos!');
+                await loadAdminData();
+            } catch (e) {
+                console.error(e);
+                showToast('Erro ao limpar', 'error');
+            }
+        };
+
+        // CLEAR BROKEN LINKS
+        window.clearBrokenLinks = async function() {
+            if (!confirm('Deletar grupos com link vazio ou quebrado?')) return;
+            try {
+                var broken = allGroups.filter(function(g) { return !g.link || g.link === '' || g.link === 'undefined' || g.link === 'null' || g.link.indexOf('chat.whatsapp.com') === -1; });
+                for (var i = 0; i < broken.length; i++) {
+                    await deleteDoc(doc(db, 'grupos', broken[i].id));
+                }
+                showToast(broken.length + ' grupos removidos!');
+                await loadAdminData();
+            } catch (e) {
+                console.error(e);
+                showToast('Erro ao limpar', 'error');
+            }
+        };
+
+        // PUNIR GRUPO
+        window.punirGrupo = async function(id) {
+            if (!confirm('Punir este grupo? Ele sera removido e o usuario reportado.')) return;
+            try {
+                await updateDoc(doc(db, 'grupos', id), {
+                    status: 'reprovado',
+                    punido: true,
+                    punidoEm: Date.now()
+                });
+                showToast('Grupo punido!');
+                loadAnalytics();
+            } catch (e) {
+                console.error(e);
+                showToast('Erro ao punir grupo', 'error');
+            }
+        };
     </script>
 </body>
 </html>

@@ -8,7 +8,8 @@
 <meta name="keywords" content="chat privado, mensagem privada, chat direto, conversa privada, whatsapp privado, mensagens anonimas, chat seguro, gruposwhats privado">
 <meta name="robots" content="noindex, nofollow">
 <meta name="author" content="GruposWhats">
-<meta name="theme-color" content="#1a252f">
+<meta name="theme-color" id="metaTheme" content="#1a252f">
+<script>!function(){var t=localStorage.getItem('gw_theme');if(t==='dark'){var d=document.documentElement;d.classList.add('dark');var l=document.createElement('link');l.rel='stylesheet';l.href='dark-theme.css';document.head.appendChild(l);var m=document.getElementById('metaTheme');if(m)m.content='#0b141a';}}();</script>
 <link rel="canonical" href="https://mg5860606-ux.github.io/GRUPOWHATSS/private-chat.html">
 <link rel="icon" type="image/svg+xml" href="logo.svg">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -95,16 +96,16 @@ html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-ap
 .mb.mn{flex-direction:row-reverse;align-self:flex-end;animation:fo .35s cubic-bezier(.2,.9,.3,1)}
 @keyframes fi{from{opacity:0;transform:translateX(-8px) translateY(4px)}to{opacity:1;transform:translateX(0) translateY(0)}}
 @keyframes fo{from{opacity:0;transform:translateX(8px) translateY(4px)}to{opacity:1;transform:translateX(0) translateY(0)}}
-.ma{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;color:#fff;flex-shrink:0;overflow:hidden}
+.ma{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;color:#fff;flex-shrink:0;overflow:hidden}
 .ma img{width:100%;height:100%;object-fit:cover}
-.mc{background:#fff;border-radius:8px;border-top-left-radius:2px;padding:6px 9px;box-shadow:0 1px 1px rgba(0,0,0,.07);min-width:0;position:relative}
+.mc{background:#fff;border-radius:8px 8px 8px 0;padding:7px 10px;box-shadow:0 1px 1px rgba(0,0,0,.08);min-width:0;position:relative}
 .mc::before{content:'';position:absolute;top:10px;left:-5px;width:9px;height:9px;background:#fff;transform:rotate(45deg);border-radius:1px}
-.mb.mn .mc{background:#dcf8c6;border-top-left-radius:8px;border-top-right-radius:2px}
-.mb.mn .mc::before{left:auto;right:-5px;background:#dcf8c6}
-.mu{font-size:.68rem;font-weight:800;margin-bottom:1px}.mu:hover{text-decoration:underline}
-.mt{font-size:.88rem;color:#303030;word-break:break-word;line-height:1.3}
-.mti{font-size:.58rem;color:rgba(0,0,0,.45);white-space:nowrap;margin-left:auto;padding-left:6px;flex-shrink:0;line-height:1}
-.msts{display:inline-flex;align-items:center;gap:1px;margin-left:2px;font-size:.5rem;vertical-align:middle;line-height:1;flex-shrink:0}
+.mb.mn .mc{background:#d9fdd3;border-radius:8px 8px 0 8px}
+.mb.mn .mc::before{left:auto;right:-5px;background:#d9fdd3}
+.mu{font-size:.7rem;font-weight:800;margin-bottom:1px;cursor:pointer;color:#00a884}.mu:hover{text-decoration:underline}
+.mt{font-size:.88rem;color:#111b21;word-break:break-word;line-height:1.35}
+.mti{font-size:.6rem;color:#667781;white-space:nowrap;margin-left:auto;padding-left:6px;flex-shrink:0;line-height:1}
+.msts{display:inline-flex;align-items:center;gap:1px;margin-left:2px;font-size:.52rem;vertical-align:middle;line-height:1;flex-shrink:0}
 .msts .sck{color:rgba(0,0,0,.3)}
 .msts .sck.sr{color:#53bdeb}
 .mdoc{display:flex;align-items:center;gap:8px;padding:7px 9px;background:rgba(0,0,0,.03);border-radius:8px;margin-top:3px;cursor:pointer;text-decoration:none;color:inherit}
@@ -317,9 +318,18 @@ html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-ap
 .crop-modal .crop-grid::before{content:'';position:absolute;top:33.33%;bottom:33.33%;left:0;right:0;border-top:1px solid rgba(255,255,255,.4);border-bottom:1px solid rgba(255,255,255,.4)}
 .crop-modal .crop-grid::after{content:'';position:absolute;left:33.33%;right:33.33%;top:0;bottom:0;border-left:1px solid rgba(255,255,255,.4);border-right:1px solid rgba(255,255,255,.4)}
 .crop-modal .crop-hint{color:rgba(255,255,255,.35);font-size:.7rem;padding:8px;font-weight:600;flex-shrink:0;text-align:center}
+.crop-modal .crop-zoom{display:flex;align-items:center;justify-content:center;gap:14px;padding:6px 8px 10px;flex-shrink:0}
+.crop-modal .crop-zoom button{background:rgba(255,255,255,.12);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.72rem;transition:all .15s}
+.crop-modal .crop-zoom button:hover{background:rgba(255,255,255,.22);transform:scale(1.05)}
+.crop-modal .crop-zoom button:active{transform:scale(.92)}
+.crop-modal .crop-zoom span{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);min-width:38px;text-align:center}
 </style>
 </head>
-<body><div class="cp">
+<body><!-- LOADING SCREEN -->
+<div class="loading-overlay" id="loadingOverlay"><div class="loading-logo">GRUPOS<span style="-webkit-text-fill-color:#25D366">WHATS</span></div><div class="loading-spinner"></div><div class="loading-text">Carregando...</div><div class="loading-progress"><div class="loading-progress-bar" id="loadingProgressBar"></div></div></div>
+<!-- OFFLINE BANNER -->
+<div class="offline-banner" id="offlineBanner"><i class="fas fa-wifi-slash"></i> Sem conexão com a internet</div>
+<div class="cp">
 <div class="ct">
 <button class="bb" onclick="window.location.href='chat.html'"><i class="fas fa-arrow-left"></i></button>
 <div class="ci">
@@ -329,6 +339,7 @@ html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-ap
 <div class="oc"><span id="presenceDot" class="offd"></span><span id="presenceText">offline</span></div>
 </div>
 </div>
+<button class="hb" onclick="window.location.href='settings.html'" title="Configurações"><i class="fas fa-cog"></i></button>
 <button class="hb" onclick="window.location.href='inbox.html'" title="Conversas"><i class="fas fa-comments"></i></button>
 <button class="hb" onclick="toggleSearch()" title="Buscar mensagens"><i class="fas fa-search"></i></button>
 <button class="hb" onclick="openMediaGallery()" title="Galeria de midia"><i class="fas fa-images"></i></button>
@@ -341,7 +352,8 @@ html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-ap
 <div id="messagesList"></div>
 </div>
 <div class="tib" id="typingBar"><div class="tdots"><span></span><span></span><span></span></div><span id="typingText"></span></div>
-<div class="ipb" id="imgPreviewBar"><img id="imgPreviewThumb" src="" alt=""><span style="font-size:.78rem;font-weight:700;color:#333">Foto selecionada</span><button class="cip" onclick="cancelImgPreview()"><i class="fas fa-times-circle"></i></button><button class="sip" onclick="sendImage()"><i class="fas fa-paper-plane"></i> Enviar</button></div>
+<div class="ipb" id="imgPreviewBar"><img id="imgPreviewThumb" src="" alt=""><span style="font-size:.78rem;font-weight:700;color:#333">Foto selecionada</span><button class="vo-btn" id="imgVoBtn" onclick="toggleViewOnce('img')" title="Visualização única"><i class="fas fa-circle-notch"></i></button><button class="cip" onclick="cancelImgPreview()"><i class="fas fa-times-circle"></i></button><button class="sip" onclick="sendImage()"><i class="fas fa-paper-plane"></i> Enviar</button></div>
+<div class="ipb" id="videoPreviewBar"><video id="videoPreviewThumb" src="" style="height:45px;width:60px;object-fit:cover;border-radius:8px"></video><span style="font-size:.78rem;font-weight:700;color:#333">Video selecionado</span><button class="vo-btn" id="videoVoBtn" onclick="toggleViewOnce('video')" title="Visualização única"><i class="fas fa-circle-notch"></i></button><button class="cip" onclick="cancelVideoPreview()"><i class="fas fa-times-circle"></i></button><button class="sip" onclick="sendVideoFile()"><i class="fas fa-paper-plane"></i> Enviar</button></div>
 <div class="ipb" id="videoPreviewBar"><video id="videoPreviewThumb" src="" alt="" style="height:45px;width:60px;object-fit:cover;border-radius:8px"></video><span style="font-size:.78rem;font-weight:700;color:#333">Video selecionado</span><button class="cip" onclick="cancelVideoPreview()"><i class="fas fa-times-circle"></i></button><button class="sip" onclick="sendVideoFile()"><i class="fas fa-paper-plane"></i> Enviar</button></div>
 <div class="rbb" id="recordingBar"><div class="rd"></div><span class="rt" id="recTime">00:00</span><button class="rc" onclick="cancelRecording()"><i class="fas fa-times"></i> Cancelar</button><button class="rs" onclick="sendAudio()"><i class="fas fa-paper-plane"></i> Enviar</button></div>
 <div class="ep" id="emojiPicker"></div>
@@ -401,8 +413,20 @@ html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-ap
 <div class="crop-mask"></div>
 <div class="crop-grid"></div>
 </div>
-<div class="crop-hint">Arraste para ajustar a foto</div>
+<div class="crop-zoom">
+<button onclick="cropZoomOut()" title="Reduzir"><i class="fas fa-minus"></i></button>
+<span id="cropZoomLevel">100%</span>
+<button onclick="cropZoomIn()" title="Ampliar"><i class="fas fa-plus"></i></button>
 </div>
 </div>
+</div>
+<script>
+// Hide loading screen
+window.addEventListener('load',function(){var lo=document.getElementById('loadingOverlay');if(lo){setTimeout(function(){lo.classList.add('hide');setTimeout(function(){lo.style.display='none';},500);},300);}});
+// Offline detection
+window.addEventListener('offline',function(){var b=document.getElementById('offlineBanner');if(b)b.classList.add('show');});
+window.addEventListener('online',function(){var b=document.getElementById('offlineBanner');if(b)b.classList.remove('show');});
+var pBar=document.getElementById('loadingProgressBar');if(pBar){setTimeout(function(){pBar.style.width='60%';},100);setTimeout(function(){pBar.style.width='90%';},400);setTimeout(function(){pBar.style.width='100%';},700);}
+</script>
 </body>
 </html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Configurações | GruposWhats</title>
+<meta name="description" content="Configurações do GruposWhats - Tema, Notificações e Privacidade">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" id="metaTheme" content="#1a252f">
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+:root{--bg:#f0f2f5;--card:#fff;--text:#1a252f;--text2:#555;--text3:#888;--border:#f0f0f0;--header-bg:#1a252f;--header-text:#fff;--icon:#54656f;--hover:#f0f2f5;--toggle-bg:#ccc;--toggle-on:#25d366;--input-bg:#f0f2f5;--danger:#e74c3c;--accent:#00a884}
+:root.dark{--bg:#0b141a;--card:#1f2c33;--text:#e9edef;--text2:#aebac1;--text3:#8696a0;--border:#2a3942;--header-bg:#1f2c33;--header-text:#e9edef;--icon:#aebac1;--hover:#2a3942;--toggle-bg:#3b4a54;--toggle-on:#00a884;--input-bg:#2a3942;--danger:#e74c3c;--accent:#00a884}
+
+.wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;background:var(--bg);color:var(--text);transition:background .2s,color .2s}
+.hdr{background:var(--header-bg);color:var(--header-text);display:flex;align-items:center;gap:14px;padding:12px 16px;flex-shrink:0;min-height:56px;transition:background .2s}
+.hdr button{background:none;border:none;color:var(--header-text);font-size:1.2rem;cursor:pointer;padding:4px;display:flex;opacity:.85}
+.hdr h1{font-size:1.1rem;font-weight:700}
+.body{flex:1;overflow-y:auto;padding:8px 0;scroll-behavior:smooth}
+.body::-webkit-scrollbar{width:4px}
+.body::-webkit-scrollbar-thumb{background:var(--text3);border-radius:4px}
+
+/* ===== SECTIONS ===== */
+.sec{margin:0 0 10px}
+.sec-title{font-size:.65rem;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.3px;padding:10px 20px 6px;transition:color .2s}
+.sec-item{display:flex;align-items:center;gap:14px;padding:13px 20px;background:var(--card);cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border);min-height:52px}
+.sec-item:hover{background:var(--hover)}
+.sec-item:last-child{border-bottom:none}
+.sec-item .si-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;color:#fff;flex-shrink:0}
+.sec-item .si-info{flex:1;min-width:0}
+.sec-item .si-info .si-label{font-size:.88rem;font-weight:700;color:var(--text);transition:color .2s}
+.sec-item .si-info .si-desc{font-size:.72rem;color:var(--text3);margin-top:1px;transition:color .2s}
+.sec-item .si-arrow{color:var(--text3);font-size:.7rem;flex-shrink:0}
+.sec-item .si-value{font-size:.78rem;color:var(--text3);margin-right:6px;text-align:right;flex-shrink:0;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ===== TOGGLE ===== */
+.tgl{width:42px;height:24px;background:var(--toggle-bg);border-radius:12px;position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;-webkit-tap-highlight-color:transparent}
+.tgl.on{background:var(--toggle-on)}
+.tgl .tgl-knob{position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tgl.on .tgl-knob{transform:translateX(18px)}
+
+/* ===== SUBPAGE ===== */
+.sub{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);flex-direction:column;animation:slideIn .2s ease}
+.sub.sh{display:flex}
+@keyframes slideIn{from{transform:translateX(30px);opacity:0}to{transform:translateX(0);opacity:1}}
+.sub-body{flex:1;overflow-y:auto;padding:8px 0}
+
+/* ===== BLOCKED LIST ===== */
+.blk-item{display:flex;align-items:center;gap:12px;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--border)}
+.blk-item .blk-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.75rem;color:#fff;flex-shrink:0;overflow:hidden}
+.blk-item .blk-av img{width:100%;height:100%;object-fit:cover}
+.blk-item .blk-info{flex:1;min-width:0}
+.blk-item .blk-name{font-size:.85rem;font-weight:700;color:var(--text)}
+.blk-item .blk-uid{font-size:.65rem;color:var(--text3);word-break:break-all}
+.blk-item .blk-unlock{background:none;border:none;color:var(--accent);font-size:.75rem;font-weight:700;cursor:pointer;padding:6px 10px;border-radius:6px;transition:background .15s}
+.blk-item .blk-unlock:hover{background:rgba(0,168,132,.1)}
+.blk-empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:.82rem;line-height:1.6}
+.blk-empty i{font-size:2.5rem;display:block;margin-bottom:12px;opacity:.3}
+
+/* ===== THEME PREVIEW ===== */
+.theme-opt{display:flex;gap:12px;padding:16px 20px}
+.theme-card{flex:1;border-radius:12px;padding:16px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.theme-card:active{transform:scale(.97)}
+.theme-card.sel{border-color:var(--accent)}
+.theme-card .tc-icon{font-size:1.6rem;margin-bottom:6px}
+.theme-card .tc-name{font-size:.78rem;font-weight:700;color:var(--text)}
+.theme-light{background:#fff;color:#1a252f;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.theme-dark{background:#1f2c33;color:#e9edef;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.theme-light.sel,.theme-dark.sel{box-shadow:0 0 0 2px var(--accent),0 2px 12px rgba(0,168,132,.2)}
+
+/* ===== RADIO GROUP ===== */
+.rg{padding:0}
+.rg-item{display:flex;align-items:center;gap:12px;padding:13px 20px;background:var(--card);border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;min-height:48px}
+.rg-item:hover{background:var(--hover)}
+.rg-item:last-child{border-bottom:none}
+.rg-item .rg-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--text3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.rg-item.sel .rg-radio{border-color:var(--accent)}
+.rg-item .rg-radio::after{content:'';width:10px;height:10px;border-radius:50%;background:transparent;transition:background .2s}
+.rg-item.sel .rg-radio::after{background:var(--accent)}
+.rg-item .rg-label{font-size:.85rem;font-weight:600;color:var(--text);flex:1;transition:color .2s}
+.rg-item .rg-desc{font-size:.72rem;color:var(--text3);flex:1;margin-top:1px}
+
+/* ===== ABOUT ===== */
+.about-info{text-align:center;padding:30px 20px}
+.about-info .ab-logo{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#00a884,#25d366);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;margin:0 auto 12px}
+.about-info h2{font-size:1.1rem;font-weight:800;color:var(--text)}
+.about-info p{font-size:.8rem;color:var(--text3);margin-top:4px;line-height:1.5}
+.about-info .ab-ver{display:inline-block;background:var(--input-bg);padding:4px 12px;border-radius:12px;font-size:.7rem;font-weight:700;color:var(--text3);margin-top:10px}
+
+/* ===== RESPONSIVE ===== */
+@media(min-width:768px){.wrap{max-width:640px;margin:0 auto;border-left:1px solid var(--border);border-right:1px solid var(--border)}}
+</style>
+</head>
+<body><!-- LOADING SCREEN -->
+<div class="loading-overlay" id="loadingOverlay"><div class="loading-logo">GRUPOS<span style="-webkit-text-fill-color:#25D366">WHATS</span></div><div class="loading-spinner"></div><div class="loading-text">Carregando...</div><div class="loading-progress"><div class="loading-progress-bar" id="loadingProgressBar"></div></div></div>
+<div class="wrap" id="appWrap">
+<div class="hdr">
+<button onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
+<h1>Configurações</h1>
+</div>
+<div class="body" id="mainBody">
+
+<!-- CONTA -->
+<div class="sec">
+<div class="sec-title">Conta</div>
+<div class="sec-item" onclick="editNickname()">
+<div class="si-icon" style="background:#7f66ff"><i class="fas fa-user"></i></div>
+<div class="si-info">
+<div class="si-label">Nome</div>
+<div class="si-desc" id="nameVal">Carregando...</div>
+</div>
+<i class="fas fa-chevron-right si-arrow"></i>
+</div>
+<div class="sec-item" onclick="window.location.href='inbox.html';localStorage.setItem('gw_open_profile','1')">
+<div class="si-icon" style="background:#3498db"><i class="fas fa-id-card"></i></div>
+<div class="si-info">
+<div class="si-label">Perfil</div>
+<div class="si-desc">Editar foto, capa e bio</div>
+</div>
+<i class="fas fa-chevron-right si-arrow"></i>
+</div>
+</div>
+
+<!-- PRIVACIDADE -->
+<div class="sec">
+<div class="sec-title">Privacidade</div>
+<div class="sec-item" onclick="openSub('privacyStatus')">
+<div class="si-icon" style="background:#25d366"><i class="fas fa-globe"></i></div>
+<div class="si-info">
+<div class="si-label">Status online</div>
+<div class="si-desc" id="statusDesc">Todos podem ver</div>
+</div>
+<i class="fas fa-chevron-right si-arrow"></i>
+</div>
+<div class="sec-item" onclick="openSub('blocked')">
+<div class="si-icon" style="background:#e74c3c"><i class="fas fa-ban"></i></div>
+<div class="si-info">
+<div class="si-label">Bloqueados</div>
+<div class="si-desc" id="blockedDesc">Nenhum usuário bloqueado</div>
+</div>
+<i class="fas fa-chevron-right si-arrow"></i>
+</div>
+</div>
+
+<!-- NOTIFICAÇÕES -->
+<div class="sec">
+<div class="sec-title">Notificações</div>
+<div class="sec-item" style="cursor:default">
+<div class="si-icon" style="background:#00a884"><i class="fas fa-bell"></i></div>
+<div class="si-info">
+<div class="si-label">Som</div>
+<div class="si-desc">Tocar som ao receber mensagem</div>
+</div>
+<div class="tgl" id="soundToggle" onclick="toggleSetting('sound',this)"><div class="tgl-knob"></div></div>
+</div>
+<div class="sec-item" style="cursor:default">
+<div class="si-icon" style="background:#e67e22"><i class="fas fa-eye"></i></div>
+<div class="si-info">
+<div class="si-label">Pré-visualização</div>
+<div class="si-desc">Mostrar prévia da mensagem nas notificações</div>
+</div>
+<div class="tgl on" id="previewToggle" onclick="toggleSetting('preview',this)"><div class="tgl-knob"></div></div>
+</div>
+</div>
+
+<!-- TEMA -->
+<div class="sec">
+<div class="sec-title">Tema</div>
+<div class="theme-opt">
+<div class="theme-card theme-light" data-theme="light" onclick="setTheme('light',this)">
+<div class="tc-icon">☀️</div>
+<div class="tc-name">Claro</div>
+</div>
+<div class="theme-card theme-dark" data-theme="dark" onclick="setTheme('dark',this)">
+<div class="tc-icon">🌙</div>
+<div class="tc-name">Escuro</div>
+</div>
+</div>
+</div>
+
+<!-- SOBRE -->
+<div class="sec">
+<div class="sec-title">Sobre</div>
+<div class="sec-item" onclick="openSub('about')">
+<div class="si-icon" style="background:#54656f"><i class="fas fa-info-circle"></i></div>
+<div class="si-info">
+<div class="si-label">Sobre o GruposWhats</div>
+<div class="si-desc">Versão, licenças e informações</div>
+</div>
+<i class="fas fa-chevron-right si-arrow"></i>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ===== SUBPAGES ===== -->
+
+<!-- Privacy Status -->
+<div class="sub" id="subPrivacyStatus">
+<div class="hdr">
+<button onclick="closeSub('privacyStatus')"><i class="fas fa-arrow-left"></i></button>
+<h1>Status online</h1>
+</div>
+<div class="sub-body">
+<div class="sec">
+<div class="sec-title">Quem pode ver quando você está online</div>
+<div class="rg">
+<div class="rg-item sel" data-val="all" onclick="selectPrivacy(this,'all')">
+<div class="rg-radio"></div>
+<div class="rg-label">Todos</div>
+</div>
+<div class="rg-item" data-val="contacts" onclick="selectPrivacy(this,'contacts')">
+<div class="rg-radio"></div>
+<div class="rg-label">Meus contatos</div>
+</div>
+<div class="rg-item" data-val="none" onclick="selectPrivacy(this,'none')">
+<div class="rg-radio"></div>
+<div style="flex:1">
+<div class="rg-label">Ninguém</div>
+<div class="rg-desc">Você não aparecerá online para ninguém</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Blocked Users -->
+<div class="sub" id="subBlocked">
+<div class="hdr">
+<button onclick="closeSub('blocked')"><i class="fas fa-arrow-left"></i></button>
+<h1>Usuários Bloqueados</h1>
+</div>
+<div class="sub-body" id="blockedList">
+<div class="blk-empty"><i class="fas fa-shield-alt"></i>Nenhum usuário bloqueado</div>
+</div>
+</div>
+
+<!-- About -->
+<div class="sub" id="subAbout">
+<div class="hdr">
+<button onclick="closeSub('about')"><i class="fas fa-arrow-left"></i></button>
+<h1>Sobre</h1>
+</div>
+<div class="sub-body">
+<div class="about-info">
+<div class="ab-logo"><i class="fas fa-comments"></i></div>
+<h2>GruposWhats</h2>
+<p>Chat ao vivo e mensagens privadas<br>gratuito, anônimo e seguro.</p>
+<div class="ab-ver">v2.0.1</div>
+</div>
+<div class="sec">
+<div class="sec-item"><div class="si-info"><div class="si-label">Feito com</div></div><span style="font-size:.75rem;color:var(--text3)"><i class="fas fa-heart" style="color:#e74c3c"></i> para o Brasil</span></div>
+<div class="sec-item"><div class="si-info"><div class="si-label">Firebase</div><div class="si-desc">Firestore + Auth + Storage</div></div></div>
+<div class="sec-item"><div class="si-info"><div class="si-label">Licença</div><div class="si-desc">Código aberto</div></div></div>
+</div>
+</div>
+</div>
+
+<!-- ===== NICKNAME MODAL ===== -->
+<div class="sub" id="subNickname">
+<div class="hdr">
+<button onclick="closeSub('nickname')"><i class="fas fa-arrow-left"></i></button>
+<h1>Alterar nome</h1>
+<button onclick="saveNickname()" id="nickSaveBtn" style="color:#00a884;font-weight:700;font-size:.85rem">Salvar</button>
+</div>
+<div class="sub-body" style="padding:20px">
+<input type="text" id="nickInput" placeholder="Seu nome..." maxlength="20" autocomplete="off" style="width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:10px;font-size:.9rem;outline:none;background:var(--input-bg);color:var(--text);font-family:inherit;transition:border-color .2s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+<p style="font-size:.72rem;color:var(--text3);margin-top:8px">Máximo de 20 caracteres</p>
+</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+<script>
+var cfg={apiKey:"AIzaSyDgtqqGgjGgYmmNYg9cxhHIc-VIPASz3uE",authDomain:"grupos-whats-app.firebaseapp.com",projectId:"grupos-whats-app",storageBucket:"grupos-whats-app.appspot.com",messagingSenderId:"326359053624",appId:"1:326359053624:web:6a73ed5758052f2331e8be"};
+if(!firebase.apps.length)firebase.initializeApp(cfg);
+var SETTINGS_KEY = 'gw_settings';
+var defaultSettings = {
+
+function loadSettings(){
+    try{
+        var s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+        return Object.assign({}, defaultSettings, s);
+    }catch(e){return Object.assign({}, defaultSettings);}
+}
+
+function saveSettings(){
+    try{localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));}catch(e){}
+    updateUI();
+}
+
+var settings = loadSettings();
+
+// Theme
+function applyTheme(t){
+    var root = document.documentElement;
+    var meta = document.getElementById('metaTheme');
+    if(t === 'dark'){
+        root.classList.add('dark');
+        if(meta) meta.content = '#0b141a';
+    }else{
+        root.classList.remove('dark');
+        if(meta) meta.content = '#1a252f';
+    }
+    // Apply to all pages via localStorage
+    localStorage.setItem('gw_theme', t);
+    // Update all theme cards
+    document.querySelectorAll('.theme-card').forEach(function(c){
+        c.classList.toggle('sel', c.dataset.theme === t);
+    });
+}
+
+window.setTheme = function(t, el){
+    settings.theme = t;
+    applyTheme(t);
+    saveSettings();
+};
+
+// Init theme from settings or stored preference
+(function(){
+    var stored = localStorage.getItem('gw_theme');
+    if(stored) settings.theme = stored;
+    applyTheme(settings.theme);
+})();
+
+// Toggles
+window.toggleSetting = function(key, el){
+    settings[key] = !settings[key];
+    el.classList.toggle('on', settings[key]);
+    saveSettings();
+};
+
+// Pronounce
+function updateUI(){
+    // Name
+    var nick = localStorage.getItem('gw_chat_nick') || 'Não definido';
+    document.getElementById('nameVal').textContent = nick;
+
+    // Privacy
+    var privacyLabels = {all:'Todos podem ver', contacts:'Meus contatos', none:'Ninguém'};
+    document.getElementById('statusDesc').textContent = privacyLabels[settings.privacy] || 'Todos podem ver';
+
+    // Blocked count
+    var blk = settings.blocked || [];
+    document.getElementById('blockedDesc').textContent = blk.length > 0 ? blk.length + ' usuário(s) bloqueado(s)' : 'Nenhum usuário bloqueado';
+
+    // Toggles
+    document.getElementById('soundToggle').classList.toggle('on', settings.sound);
+    document.getElementById('previewToggle').classList.toggle('on', settings.preview);
+}
+
+// Nickname
+window.editNickname = function(){
+    var inp = document.getElementById('nickInput');
+    inp.value = localStorage.getItem('gw_chat_nick') || '';
+    inp.focus();
+    openSub('nickname');
+};
+
+window.saveNickname = function(){
+    var name = document.getElementById('nickInput').value.trim();
+    if(!name || name.length < 2){alert('Nome precisa ter pelo menos 2 caracteres.'); return;}
+    localStorage.setItem('gw_chat_nick', name);
+    // Also save to Firestore if we're authenticated
+    try{
+        if(typeof firebase !== 'undefined' && firebase.apps.length){
+            var uid = localStorage.getItem('gw_chat_uid');
+            if(uid){
+                firebase.firestore().collection('chatProfiles').doc(uid).set({name: name}, {merge: true}).catch(function(){});
+            }
+        }
+    }catch(e){}
+    document.getElementById('nameVal').textContent = name;
+    closeSub('nickname');
+};
+
+// Nickname: Enter to save
+document.addEventListener('DOMContentLoaded', function(){
+    var inp = document.getElementById('nickInput');
+    if(inp){
+        inp.addEventListener('keydown', function(e){
+            if(e.key === 'Enter') saveNickname();
+        });
+    }
+});
+
+// Subpages
+window.openSub = function(id){
+    var el = document.getElementById('sub' + id.charAt(0).toUpperCase() + id.slice(1));
+    if(el){
+        el.classList.add('sh');
+        // If blocked, render blocked users
+        if(id === 'blocked') renderBlocked();
+        // If privacy, select current option
+        if(id === 'privacyStatus') selectPrivacyOption();
+    }
+};
+
+window.closeSub = function(id){
+    var el = document.getElementById('sub' + id.charAt(0).toUpperCase() + id.slice(1));
+    if(el) el.classList.remove('sh');
+};
+
+window.goBack = function(){
+    var openSub = document.querySelector('.sub.sh');
+    if(openSub){
+        openSub.classList.remove('sh');
+    }else{
+        window.location.href = 'inbox.html';
+    }
+};
+
+// Privacy selection
+window.selectPrivacy = function(el, val){
+    settings.privacy = val;
+    document.querySelectorAll('#subPrivacyStatus .rg-item').forEach(function(i){i.classList.remove('sel');});
+    el.classList.add('sel');
+    saveSettings();
+};
+
+function selectPrivacyOption(){
+    document.querySelectorAll('#subPrivacyStatus .rg-item').forEach(function(i){
+        i.classList.toggle('sel', i.dataset.val === settings.privacy);
+    });
+}
+
+// Blocked users
+function renderBlocked(){
+    var list = document.getElementById('blockedList');
+    var blk = settings.blocked || [];
+    if(blk.length === 0){
+        list.innerHTML = '<div class="blk-empty"><i class="fas fa-shield-alt"></i>Nenhum usuário bloqueado</div>';
+        return;
+    }
+    var h = '<div class="sec"><div class="sec-title">Toque para desbloquear</div>';
+    blk.forEach(function(u, idx){
+        var name = u.name || 'Usuário';
+        var uid = u.uid || u;
+        var color = u.color || '#888';
+        var photo = u.photo || '';
+        var init = name.substring(0,2).toUpperCase();
+        h += '<div class="blk-item">';
+        h += '<div class="blk-av" style="background:'+color+'">'+(photo?'<img src="'+photo+'">':init)+'</div>';
+        h += '<div class="blk-info"><div class="blk-name">'+escHtml(name)+'</div><div class="blk-uid">'+uid+'</div></div>';
+        h += '<button class="blk-unlock" onclick="unblockUser('+idx+')"><i class="fas fa-unlock"></i> Desbloquear</button>';
+        h += '</div>';
+    });
+    h += '</div>';
+    list.innerHTML = h;
+}
+
+window.unblockUser = function(idx){
+    if(!confirm('Desbloquear este usuário?')) return;
+    var blk = settings.blocked || [];
+    blk.splice(idx, 1);
+    settings.blocked = blk;
+    saveSettings();
+    syncBlockedUsers();
+    renderBlocked();
+};
+
+// Helper
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+// Init
+updateUI();
+
+// Auto-open profile from settings
+if(localStorage.getItem('gw_open_profile')){
+    localStorage.removeItem('gw_open_profile');
+}
+
+function syncBlockedUsers(){
+    var blk = settings.blocked || [];
+    var simple = blk.map(function(u){return u.uid || u;});
+    try{localStorage.setItem('gw_blocked_users', JSON.stringify(simple));}catch(e){}
+}
+<script>
+// Hide loading screen
+window.addEventListener('load',function(){var lo=document.getElementById('loadingOverlay');if(lo){setTimeout(function(){lo.classList.add('hide');setTimeout(function(){lo.style.display='none';},500);},300);}});
+var pBar=document.getElementById('loadingProgressBar');if(pBar){setTimeout(function(){pBar.style.width='60%';},100);setTimeout(function(){pBar.style.width='90%';},400);setTimeout(function(){pBar.style.width='100%';},700);}
+syncBlockedUsers();
+</script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+/* ===== DARK THEME - GruposWhats ===== */
+/* Apply via: document.documentElement.classList.add('dark') + this stylesheet */
+
+/* Backgrounds */
+.ct,.wa-shdr,.crop-hdr,.wa-chdr{background:#1f2c33 !important}
+.cp,.wa-wrap,.wa-sidebar,.wa-main,.cm,.wa-list,.body,#mainBody,.sub-body{background:#0b141a !important}
+.wa-main::before{opacity:.03 !important}
+
+/* Messages */
+.mc{background:#1f2c33 !important;color:#e9edef !important}
+.mc::before{background:#1f2c33 !important}
+.mb.mn .mc{background:#005c4b !important;border-radius:8px 8px 0 8px !important}
+.mb.mn .mc::before{background:#005c4b !important}
+.mc{background:#1f2c33 !important;border-radius:8px 8px 8px 0 !important}
+.mt{color:#e9edef !important}
+.mti{color:#8696a0 !important}
+.msts .sck{color:#667781 !important}
+.mt{color:#e9edef !important}
+.mti{color:rgba(255,255,255,.45) !important}
+.ms{background:rgba(31,44,51,.85) !important;color:rgba(233,237,239,.7) !important}
+.lmb{background:#1f2c33 !important;border-color:#3b4a54 !important;color:#aebac1 !important}
+
+/* Input bars */
+.cib,.ipb,.rbb,.ep,.sp,.tib,.sel-bar,.srb{background:#1f2c33 !important}
+.tin,.srb input,.gifpop .gifsrch input{background:#2a3942 !important;color:#e9edef !important}
+.tin:focus{box-shadow:0 0 0 1px #00a884 !important}
+.srch-inner{background:#2a3942 !important}
+.srch-inner input{color:#e9edef !important}
+.srch-inner:focus-within{box-shadow:0 0 0 2px #00a884 !important;background:#1f2c33 !important}
+
+/* Modals / Popups */
+.nmb,.pmb,.rmb,.vlb,.fmb,.upop,.mctx,.map,.rpk,.gifpop,.apop,.upop .uh,.upop .ub{background:#1f2c33 !important}
+.mo{background:rgba(0,0,0,.7) !important}
+.pbio{background:#2a3942 !important;color:#aebac1 !important}
+.pbio.em{color:#5a6a76 !important}
+
+/* Text colors */
+.mu,.pn,.wa-nome,.si-label,.cname,.ctt,.ib-name,.blk-name,.rg-label{color:#e9edef !important}
+.pid,.wa-time,.ib-time,.si-desc,.wa-prev,.rg-desc,.about-info p,.blk-uid,.upop .uh .uid{color:#8696a0 !important}
+.wa-ss .wa-ssl{color:#8696a0 !important}
+.wa-ssi .ssn{color:#aebac1 !important}
+.ct .oc{color:rgba(255,255,255,.5) !important}
+
+/* Sidebar / Lists */
+.wa-li,.ib-item{border-color:#2a3942 !important}
+.wa-li:hover,.ib-item:hover{background:#2a3942 !important}
+.wa-li.pub{background:linear-gradient(135deg,#0b3328,#0b141a) !important}
+.wa-li.pub:hover{background:linear-gradient(135deg,#0b3328,#1f2c33) !important}
+.wa-srch,.wa-ss{background:#1f2c33 !important}
+.wa-tabs button{background:#1f2c33 !important;color:#8696a0 !important}
+.wa-tabs button.act{color:#e9edef !important}
+.wa-tabs button.act::after{background:#00a884 !important}
+.wa-tabs{border-color:#2a3942 !important}
+.wa-list{background:#0b141a !important}
+.wa-empty{background:#0b141a !important;color:#5a6a76 !important}
+
+/* Search */
+.srb input{background:#2a3942 !important;color:#e9edef !important;border:none !important}
+.srb input:focus{box-shadow:0 0 0 1px #00a884 !important}
+.srb .sn{color:#8696a0 !important}
+
+/* Buttons & Actions */
+.abtn{color:#aebac1 !important}
+.abtn:hover{background:#2a3942 !important}
+.abtn.act{color:#00a884 !important}
+.spt button{background:#2a3942 !important;color:#aebac1 !important}
+.spt button.sact{background:#00a884 !important;color:#fff !important}
+.sp .si:hover,.ep .ei:hover,.map-top button:hover{background:#2a3942 !important}
+.map-bot button{background:#2a3942 !important;color:#aebac1 !important}
+.map{background:#1f2c33 !important}
+.mctx button{color:#aebac1 !important}
+.mctx button:hover{background:#2a3942 !important}
+.ma{background-color:#2a3942 !important}
+.od{background:#00a884 !important}
+
+/* Pinned / Reply */
+.pibar{background:linear-gradient(135deg,#0b3328,#1f2c33) !important;border-left-color:#ffc107 !important}
+.pibar .pitx .pit,.pibar .pitx .pinm{color:#aebac1 !important}
+.rpv{background:#0b3328 !important;border-left-color:#00a884 !important}
+.rpv .rpx .rpn{color:#00a884 !important}
+
+/* Typing */
+.tib span,.wa-typ{color:#00a884 !important}
+
+/* Stickers */
+.sp .sg .si:hover{background:#2a3942 !important}
+.sp .si{background:transparent !important}
+
+/* User popup */
+.upop .ub button{background:#2a3942 !important;color:#aebac1 !important}
+.upop .ub button:hover{background:#3b4a54 !important}
+
+/* Full image */
+.fio{background:rgba(0,0,0,.95) !important}
+.fio-actions button{background:rgba(255,255,255,.1) !important}
+
+/* Gif */
+.gifpop .gifsrch{border-color:#2a3942 !important}
+.gifpop .gifsrch input{border-color:#3b4a54 !important}
+.gifpop .gifsrch input:focus{border-color:#00a884 !important}
+
+/* Media gallery */
+#mediaGalleryGrid img{background:#1f2c33 !important}
+
+/* Inbox list (legacy) */
+.ib-avatar{border-color:#1f2c33 !important}
+.ib-item{border-color:#2a3942 !important}
+.ib-item.act{background:#2a3942 !important}
+.ib-name{color:#e9edef !important}
+.ib-preview,.ib-time{color:#8696a0 !important}
+.ib-badge{background:#00a884 !important}
+
+/* Chat header extras */
+.ct .hb,.ct .mpb,.ct .rb{background:rgba(255,255,255,.08) !important;color:#aebac1 !important}
+.ct .hb:hover,.ct .mpb:hover{background:rgba(255,255,255,.15) !important}
+.ct .bb{color:#aebac1 !important}
+.wa-shdr .wa-acts button{color:#8696a0 !important}
+.wa-shdr .wa-acts button:hover{color:#e9edef !important;background:rgba(255,255,255,.08) !important}
+
+/* Selection bar */
+.sel-bar{background:#1f2c33 !important}
+.sel-bar .sa{background:rgba(255,255,255,.1) !important}
+.sel-bar .sa:hover{background:rgba(255,255,255,.18) !important}
+
+/* Pinned modal */
+#pinnedModalContent .mrq{background:rgba(255,255,255,.03) !important;border-left-color:rgba(255,255,255,.1) !important;color:#aebac1 !important}
+#pinnedModalContent .mrqn{color:#00a884 !important}
+
+/* Settings page overrides */
+.wrap{background:#0b141a !important;color:#e9edef !important}
+.hdr{background:#1f2c33 !important}
+.sec-item{background:#1f2c33 !important;border-color:#2a3942 !important;color:#e9edef !important}
+.sec-item:hover{background:#2a3942 !important}
+.sec-title{color:#8696a0 !important}
+.rg-item{background:#1f2c33 !important;border-color:#2a3942 !important}
+.rg-item:hover{background:#2a3942 !important}
+.theme-card.theme-dark{background:#1f2c33 !important;color:#e9edef !important}
+.theme-card.theme-light{background:#fff !important;color:#1a252f !important}
+.about-info .ab-logo{background:linear-gradient(135deg,#00a884,#25d366) !important}
+.about-info .ab-ver{background:#2a3942 !important;color:#aebac1 !important}
+#nickInput{background:#2a3942 !important;color:#e9edef !important;border-color:#3b4a54 !important}
+#nickInput:focus{border-color:#00a884 !important}

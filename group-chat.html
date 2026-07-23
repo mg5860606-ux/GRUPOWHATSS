@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Chat em Grupo | GruposWhats</title>
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script>!function(){var t=localStorage.getItem('gw_theme');if(t==='dark'){document.documentElement.classList.add('dark');var l=document.createElement('link');l.rel='stylesheet';l.href='dark-theme.css';document.head.appendChild(l);var m=document.getElementById('metaTheme');if(m)m.content='#0b141a';}}();</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:#f0f2f5;font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.cp{height:100dvh;display:flex;flex-direction:column;max-width:100%;margin:0 auto;position:relative;background:radial-gradient(ellipse at 50% 0,#e8f5e9 0,#f0f2f5 70%);overflow:hidden}
+.dark .cp{background:radial-gradient(ellipse at 50% 0,#1a2a1a 0,#0b141a 70%)!important}
+.ct{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#1a252f;color:#fff;flex-shrink:0;z-index:10;min-height:56px}
+.ct .bb{background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.ct .bb:hover{background:rgba(255,255,255,.1)}
+.ct .ci{flex:1;display:flex;align-items:center;gap:10px;min-width:0;cursor:pointer}
+.ct .ci .cav{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;color:#fff;flex-shrink:0;overflow:hidden;background:#54656f}
+.ct .ci .cav img{width:100%;height:100%;object-fit:cover}
+.ct .ci .cinfo{flex:1;min-width:0}
+.ct .ci .cinfo .ctt{font-size:.95rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ct .ci .cinfo .sub{font-size:.7rem;color:rgba(255,255,255,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ct .hb{background:none;border:none;color:#fff;font-size:1.05rem;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0}
+.ct .hb:hover{background:rgba(255,255,255,.1)}
+
+.cm{flex:1;overflow-y:auto;padding:10px 12px 6px;display:flex;flex-direction:column;gap:2px;scroll-behavior:smooth}
+.cm::-webkit-scrollbar{width:4px}
+.cm::-webkit-scrollbar-thumb{background:#ccc;border-radius:4px}
+.dark .cm::-webkit-scrollbar-thumb{background:#333}
+
+.ms{text-align:center;font-size:.7rem;color:#5e5e5e;padding:5px 12px;font-weight:600;background:rgba(226,226,226,.65);border-radius:8px;align-self:center;margin:4px 0;max-width:fit-content}
+.dark .ms{color:#aebac1;background:rgba(30,40,50,.65)}
+
+.mb{display:flex;gap:8px;max-width:80%;animation:fi .35s cubic-bezier(.2,.9,.3,1)}
+.mb.mn{flex-direction:row-reverse;align-self:flex-end;animation:fo .35s cubic-bezier(.2,.9,.3,1)}
+@keyframes fi{from{opacity:0;transform:translateX(-8px) translateY(4px)}to{opacity:1;transform:translateX(0) translateY(0)}}
+@keyframes fo{from{opacity:0;transform:translateX(8px) translateY(4px)}to{opacity:1;transform:translateX(0) translateY(0)}}
+.ma{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;color:#fff;flex-shrink:0;cursor:pointer;overflow:hidden}
+.ma img{width:100%;height:100%;object-fit:cover}
+.mc{background:#fff;border-radius:8px 8px 8px 0;padding:6px 9px;box-shadow:0 1px 1px rgba(0,0,0,.07);min-width:0;position:relative}
+.dark .mc{background:#1f2c33!important}
+.mc::before{content:'';position:absolute;top:10px;left:-5px;width:9px;height:9px;background:#fff;transform:rotate(45deg);border-radius:1px}
+.dark .mc::before{background:#1f2c33!important}
+.mb.mn .mc{background:#d9fdd3;border-radius:8px 8px 0 8px}
+.dark .mb.mn .mc{background:#005c4b!important}
+.mb.mn .mc::before{left:auto;right:-5px;background:#d9fdd3}
+.dark .mb.mn .mc::before{background:#005c4b!important}
+.mu{font-size:.68rem;font-weight:800;margin-bottom:1px;cursor:pointer;color:#00a884}.mu:hover{text-decoration:underline}
+.dark .mu{color:#01a884!important}
+.mt{font-size:.88rem;color:#303030;word-break:break-word;line-height:1.3}
+.dark .mt{color:#e9edef!important}
+.mti{font-size:.58rem;color:rgba(0,0,0,.45);white-space:nowrap;margin-left:auto;padding-left:6px;flex-shrink:0;line-height:1}
+.dark .mti{color:#8696a0!important}
+.mi{max-width:220px;border-radius:8px;cursor:pointer;display:block;margin:2px 0}
+.mi-vo{filter:blur(20px);cursor:pointer}
+.mlk{display:block;background:#f5f6f7;border-radius:8px;padding:10px 14px;color:#128C7E;font-size:.82rem;font-weight:600;text-decoration:none;margin:2px 0;word-break:break-all}
+.mlk:hover{text-decoration:underline}
+
+/* Input bar */
+.cib{display:flex;align-items:flex-end;gap:6px;padding:8px 10px;background:#f0f2f5;flex-shrink:0;border-top:1px solid #e0e0e0}
+.dark .cib{background:#1f2c33;border-color:#2a3a45}
+.cib .abtn{background:none;border:none;color:#888;font-size:1.3rem;cursor:pointer;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
+.cib .abtn:hover{background:rgba(0,0,0,.05)}
+.dark .cib .abtn{color:#8696a0}
+.dark .cib .abtn:hover{background:rgba(255,255,255,.08)}
+.cib .tin{flex:1;border:none;border-radius:18px;padding:8px 12px;font-size:.85rem;outline:none;min-width:0;resize:none;max-height:70px;font-family:inherit;line-height:1.3;background:#fff}
+.dark .cib .tin{background:#2a3a45;color:#e9edef}
+.cib .tin::placeholder{color:#bbb}
+.dark .cib .tin::placeholder{color:#8696a0}
+.cib .sbn{background:none;border:none;color:#25d366;font-size:1.2rem;cursor:pointer;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.cib .sbn:hover{background:rgba(37,211,102,.1)}
+
+/* Attach popup */
+.ap{position:absolute;bottom:70px;left:10px;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.15);padding:12px;display:none;z-index:20;flex-direction:column;gap:4px;min-width:180px}
+.dark .ap{background:#1f2c33;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.ap.sh{display:flex}
+.api{display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;cursor:pointer;transition:background .15s;border:none;background:none;font-size:.82rem;font-weight:600;color:#333;font-family:inherit;width:100%;text-align:left}
+.api:hover{background:#f0f2f5}
+.dark .api{color:#e9edef}
+.dark .api:hover{background:#2a3a45}
+.api .aic{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.9rem;flex-shrink:0}
+
+/* Preview bars */
+.ipb{display:none;align-items:center;gap:8px;padding:8px 12px;background:#fff;border-top:1px solid #e0e0e0;flex-shrink:0}
+.dark .ipb{background:#1f2c33;border-color:#2a3a45}
+.ipb.sh{display:flex}
+.ipb img,.ipb video{height:40px;width:40px;object-fit:cover;border-radius:6px}
+.ipb span{flex:1;font-size:.78rem;color:#333;font-weight:600}
+.dark .ipb span{color:#e9edef}
+.ipb .cip{background:none;border:none;color:#e74c3c;font-size:1.1rem;cursor:pointer;padding:4px}
+.ipb .sip{background:#25d366;color:#fff;border:none;padding:7px 14px;border-radius:18px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.ipb .sip:hover{background:#1fb855}
+.ipb .sip:disabled{opacity:.5;cursor:default}
+
+/* Picker */
+.picker{position:absolute;bottom:0;left:0;right:0;background:#fff;z-index:15;display:none;max-height:40vh;overflow-y:auto;border-radius:16px 16px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,.1)}
+.dark .picker{background:#1f2c33}
+.picker.sh{display:block}
+.picker .phdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #f0f2f5;position:sticky;top:0;background:#fff;z-index:2;font-weight:700;font-size:.85rem}
+.dark .picker .phdr{background:#1f2c33;border-color:#2a3a45;color:#e9edef}
+.picker .phdr button{background:none;border:none;color:#888;font-size:1rem;cursor:pointer}
+
+/* Modal overlay */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.mo.sh{display:flex}
+.mo .mob{background:#fff;border-radius:16px;max-width:400px;width:90%;max-height:85vh;overflow-y:auto}
+.dark .mo .mob{background:#1f2c33;color:#e9edef}
+.mo .mob h3{padding:20px 20px 10px;font-size:1.05rem;font-weight:800}
+.mo .mob .mbody{padding:0 20px 20px}
+.mo .mob .mclose{background:none;border:none;color:#888;font-size:1.2rem;cursor:pointer;position:absolute;top:12px;right:12px}
+
+/* Member list */
+.member-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f2f5}.member-item:last-child{border:none}
+.dark .member-item{border-color:#2a3a45}
+.member-item .ma{width:36px;height:36px;font-size:.78rem;flex-shrink:0}
+.member-item .minfo{flex:1}
+.member-item .minfo .mnome{font-size:.85rem;font-weight:700;color:#1a1a1a}
+.dark .member-item .minfo .mnome{color:#e9edef}
+.member-item .minfo .mstatus{font-size:.7rem;color:#888}
+.member-item .badge-admin{font-size:.6rem;background:rgba(0,168,132,.1);color:#00a884;padding:2px 8px;border-radius:10px;font-weight:700}
+
+/* Invite link */
+.invite-box{display:flex;align-items:center;gap:8px;padding:12px;background:#f0f2f5;border-radius:10px;margin-bottom:12px;cursor:pointer;transition:background .15s}
+.dark .invite-box{background:#2a3a45}
+.invite-box:hover{background:#e4e6e9}
+.dark .invite-box:hover{background:#334455}
+.invite-box i{color:#25d366;font-size:1.2rem}
+.invite-box span{flex:1;font-size:.82rem;color:#555;font-weight:600}
+.dark .invite-box span{color:#aebac1}
+.invite-box .copy-badge{font-size:.7rem;background:#25d366;color:#fff;padding:3px 10px;border-radius:12px;font-weight:700}
+
+/* Member actions */
+.btn-sm{padding:6px 12px;border:none;border-radius:8px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-danger{background:#f85149;color:#fff}
+.btn-danger:hover{background:#da3633}
+.btn-outline{background:transparent;border:1px solid #ddd;color:#555}
+.dark .btn-outline{border-color:#2a3a45;color:#aebac1}
+.btn-outline:hover{background:#f0f2f5}
+.dark .btn-outline:hover{background:#2a3a45}
+</style>
+</head>
+<body>
+<!-- LOADING SCREEN -->
+<div class="loading-overlay" id="loadingOverlay"><div class="loading-logo">GRUPOS<span style="-webkit-text-fill-color:#25D366">WHATS</span></div><div class="loading-spinner"></div><div class="loading-text">Carregando...</div></div>
+
+<div class="cp">
+<!-- HEADER -->
+<div class="ct">
+<button class="bb" onclick="window.location.href='inbox.html'"><i class="fas fa-arrow-left"></i></button>
+<div class="ci" onclick="openGroupInfo()">
+<div class="cav" id="groupAvatar">G</div>
+<div class="cinfo">
+<div class="ctt" id="groupName">Carregando...</div>
+<div class="sub" id="groupSub">Carregando...</div>
+</div>
+</div>
+<button class="hb" onclick="window.location.href='inbox.html'" title="Conversas"><i class="fas fa-comments"></i></button>
+<button class="hb" onclick="openGroupInfo()" title="Info do grupo"><i class="fas fa-info-circle"></i></button>
+</div>
+
+<!-- MESSAGES -->
+<div class="cm" id="chatMessages">
+<div id="messagesList"></div>
+<div id="loadingOlder" style="display:none;text-align:center;padding:8px;color:#888;font-size:.75rem"><i class="fas fa-circle-notch fa-spin"></i> Carregando...</div>
+</div>
+
+<!-- PREVIEW BARS -->
+<div class="ipb" id="imgPreviewBar"><img id="imgPreviewThumb" src=""><span>Foto selecionada</span><button class="cip" onclick="cancelImgPreview()"><i class="fas fa-times-circle"></i></button><button class="sip" onclick="sendImage()"><i class="fas fa-paper-plane"></i> Enviar</button></div>
+<div class="ipb" id="videoPreviewBar"><video id="videoPreviewThumb" style="height:40px;width:40px;object-fit:cover;border-radius:6px"></video><span>Video selecionado</span><button class="cip" onclick="cancelVideoPreview()"><i class="fas fa-times-circle"></i></button><button class="sip" onclick="sendVideoFile()"><i class="fas fa-paper-plane"></i> Enviar</button></div>
+
+<!-- INPUT BAR -->
+<div class="cib" id="chatInputBar" style="position:relative">
+<button class="abtn" onclick="toggleAttach()" id="clipBtn"><i class="fas fa-plus-circle"></i></button>
+<textarea class="tin" id="chatInput" placeholder="Digite uma mensagem..." rows="1" style="height:38px"></textarea>
+<button class="sbn" onclick="sendMessage()" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+<input type="file" id="photoInput" accept="image/*" style="display:none" onchange="previewImg(event)">
+<input type="file" id="videoInput" accept="video/*" style="display:none" onchange="previewVideo(event)">
+<input type="file" id="docInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar" style="display:none" onchange="sendDocument(event)">
+
+<!-- ATTACH POPUP -->
+<div class="ap" id="attachPopup">
+<button class="api" onclick="document.getElementById('photoInput').click();closeAttach()"><div class="aic" style="background:#7f66ff"><i class="fas fa-image"></i></div> Foto</button>
+<button class="api" onclick="document.getElementById('videoInput').click();closeAttach()"><div class="aic" style="background:#007bfc"><i class="fas fa-video"></i></div> Video</button>
+<button class="api" onclick="document.getElementById('docInput').click();closeAttach()"><div class="aic" style="background:#e67e22"><i class="fas fa-file"></i></div> Documento</button>
+</div>
+</div>
+
+<!-- REPLY PREVIEW -->
+<div class="ipb" id="replyPreview" style="display:none"><span id="replyInfo">Respondendo</span><button class="cip" onclick="cancelReply()"><i class="fas fa-times-circle"></i></button></div>
+</div>
+
+<!-- GROUP INFO MODAL -->
+<div class="mo" id="groupInfoModal">
+<div class="mob">
+<h3><i class="fas fa-info-circle" style="color:#25d366"></i> Info do Grupo</h3>
+<div class="mbody">
+<div style="text-align:center;margin-bottom:16px">
+<div id="modalGroupAvatar" style="width:80px;height:80px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#fff;background:#54656f;overflow:hidden"><span id="modalGroupInitial">G</span></div>
+<div id="modalGroupName" style="font-size:1.2rem;font-weight:800">Nome do Grupo</div>
+<div id="modalGroupMemberCount" style="font-size:.78rem;color:#888;margin-top:4px">0 membros</div>
+</div>
+<div class="invite-box" id="inviteBox" onclick="copyInviteLink()">
+<i class="fas fa-link"></i>
+<span>Clique para copiar link de convite</span>
+<div class="copy-badge" id="inviteBadge">Copiar</div>
+</div>
+<div style="font-size:.8rem;font-weight:700;color:#888;margin:16px 0 8px;text-transform:uppercase;letter-spacing:.3px">Membros</div>
+<div id="membersList"></div>
+<div style="margin-top:16px;display:flex;gap:8px">
+<button class="btn-sm btn-outline" onclick="copyInviteLink()" style="flex:1"><i class="fas fa-share"></i> Convidar</button>
+<button class="btn-sm btn-danger" onclick="leaveGroup()" style="flex:1"><i class="fas fa-sign-out-alt"></i> Sair</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- FULL IMAGE MODAL -->
+<div class="mo" id="fullImgModal" onclick="closeFullImg()">
+<img id="fullImgView" style="max-width:90%;max-height:90%;border-radius:12px;object-fit:contain">
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
+<script src="group-chat.js"></script>
+<script>
+window.addEventListener('load',function(){var lo=document.getElementById('loadingOverlay');if(lo){setTimeout(function(){lo.classList.add('hide');setTimeout(function(){lo.style.display='none';},500);},200);}});
+</script>
+</body>
+</html>
